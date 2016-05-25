@@ -1,0 +1,44 @@
+/********************* STYLES FOR FLEX TOUR ********************/
+
+/********************* BUBBLES STYLE ***************************/
+
+/** Credits to: http://nicolasgallagher.com/pure-css-speech-bubbles/demo/ **/
+.flextour-tour-bubble {
+    position: relative;
+    padding: 10px;
+    margin: 5px 0 3em;
+    text-align: left;
+    color: #fff;
+    background: #333;
+}
+
+.flextour-tour-bubble:before {
+    content: "";
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    width: 100px;
+    height: 20px;
+    margin: 0 0 0 -50px;
+    background: #333;
+}
+
+.flextour-tour-bubble:after {
+    content: "";
+    position: absolute;
+    top: -20px;
+    left: 0;
+    width: 50%;
+    height: 20px;
+    background: transparent;
+}
+
+.flextour-tour-bubble p:before {
+    content: "";
+    position: absolute;
+    top: -20px;
+    right: 0;
+    width: 50%;
+    height: 20px;
+    background: transparent;
+}

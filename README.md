@@ -1,1 +1,3 @@
 # DynamicGuideJS
+
+# WORK IN PROGRESS
