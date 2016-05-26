@@ -1,0 +1,165 @@
+/********************* STYLES FOR FLEX TOUR ********************/
+
+@OverlayBackground: rgba(0, 0, 0, 0.5);
+@BubbleBackground: #2F4F4F;
+@ContentColor: #FFFFFF;
+
+/********************* BUBBLES STYLE ***************************/
+
+/** Credits to: http://nicolasgallagher.com/pure-css-speech-bubbles/demo/ **/
+.flextour-tour-bubble {
+  position: relative;
+  padding: 5px;
+  background: @BubbleBackground;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  border: @BubbleBackground solid 3px;
+  text-align: left;
+  margin: 1em 0 3em;
+  color: @ContentColor;
+  z-index: 20;
+
+  .right {
+
+    &:before {
+      content: '';
+      position: absolute;
+      border-style: solid;
+      border-width: 15px 15px 15px 0;
+      border-color: transparent @BubbleBackground;
+      display: block;
+      width: 0;
+      z-index: 1;
+      margin-top: -15px;
+      left: -15px;
+      top: 50%;
+    }
+
+    &:after {
+      content: '';
+      position: absolute;
+      border-style: solid;
+      border-width: 17px 17px 17px 0;
+      border-color: transparent @BubbleBackground;
+      display: block;
+      width: 0;
+      z-index: 0;
+      margin-top: -17px;
+      left: -20px;
+      top: 50%;
+    }
+  }
+
+  .left {
+    &:before {
+      content: '';
+      position: absolute;
+      border-style: solid;
+      border-width: 17px 0 17px 17px;
+      border-color: transparent @BubbleBackground;
+      display: block;
+      width: 0;
+      z-index: 0;
+      margin-top: -17px;
+      right: -20px;
+      top: 50%;
+    }
+
+    &:after {
+      content: '';
+      position: absolute;
+      border-style: solid;
+      border-width: 15px 0 15px 15px;
+      border-color: transparent @BubbleBackground;
+      display: block;
+      width: 0;
+      z-index: 1;
+      margin-top: -15px;
+      right: -15px;
+      top: 50%;
+    }
+  }
+
+  .bottom {
+    &:before {
+      content: '';
+      position: absolute;
+      border-style: solid;
+      border-width: 0 17px 17px;
+      border-color: @BubbleBackground transparent;
+      display: block;
+      width: 0;
+      z-index: 0;
+      margin-left: -17px;
+      top: -20px;
+      left: 50%;
+    }
+
+    &:after {
+      content: '';
+      position: absolute;
+      border-style: solid;
+      border-width: 0 15px 15px;
+      border-color: @BubbleBackground transparent;
+      display: block;
+      width: 0;
+      z-index: 1;
+      margin-left: -15px;
+      top: -15px;
+      left: 50%;
+    }
+  }
+
+  .top {
+    &:before {
+      content: '';
+      position: absolute;
+      border-style: solid;
+      border-width: 17px 17px 0;
+      border-color: @BubbleBackground transparent;
+      display: block;
+      width: 0;
+      z-index: 0;
+      margin-left: -17px;
+      bottom: -20px;
+      left: 50%;
+    }
+
+    &:after {
+      content: '';
+      position: absolute;
+      border-style: solid;
+      border-width: 15px 15px 0;
+      border-color: @BubbleBackground transparent;
+      display: block;
+      width: 0;
+      z-index: 1;
+      margin-left: -15px;
+      bottom: -15px;
+      left: 50%;
+    }
+  }
+}
+
+/*******************************OVERLAY STYLES***********************************/
+
+.flextour-overlay-styles {
+  position: absolute;
+  z-index: 10;
+  background-color: @OverlayBackground; /*Enough to dim the back ground*/
+  box-shadow: 0 0 0 9999px @OverlayBackground;
+}
+
+.flextour-fixed-overlay {
+  position: fixed;
+}
+
+.flextour-target-border {
+  background: none !important;
+  border: @BubbleBackground solid 2px;
+
+  .interactable {
+    pointer-events: none;
+  }
+}

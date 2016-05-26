@@ -30,6 +30,7 @@
     const OVERLAY_STYLE = "flextour-overlay-styles";
 
     const TARGET_BORDER = "flextour-target-border";
+    const TARGET_INTERACTABLE = "interactable";
     const TOUR_BUBBLE = "flextour-tour-bubble";
 
     const ICON = "flextour-icon";
@@ -53,7 +54,7 @@
 
     FlexTour.get = function(tourId) {
 
-    }
+    };
 
     /**
      *
@@ -66,14 +67,14 @@
 
         var currentTour = this.__currentTour = __clone({}, this.__toursMap[this.__currentTourIndex]);
 
-    }
+    };
 
     FlexTour.greetings = function greetings() {
         this.__currentTour = __clone({}, this.__toursMap[this.__currentTourIndex]);
         if(this.__currentTour["greetings"]) {
             _greetingsNewUser(this.__currentTour["greetings"]);
         }
-    }
+    };
 
     /**
      * Used to set the descriptions of tour(s). Can either be a single object contains tour description or an array of several tours
@@ -89,7 +90,7 @@
         if(this.__toursMap.length > 0) {
             this.__currentTourIndex = 0;
         }
-    }
+    };
 
     /*******************************TOUR RUNNER*********************************************/
 
@@ -171,130 +172,41 @@
         return __isValid(element);
     }
 
-    /*******************************UTILITIES**********************************************/
+    /*******************************ADD TOUR BUBBLE TO STEP*********************************/
 
     /**
-     * Deep extending object from object A to object B
-     * __clone({},A,B) Exactly how it works in Jquery
-     * @param output        New Object that contains merge of A and B
-     * @returns {*|{}}      Return new object
+     * Create a border around target by generating an overlay over target. The overlay can be clicked through only when the step can be interated or triggerable
+     * @param stepDesc        Object contains info of current step
      */
-    function __clone (output) {
-        output = output || {};
+    function _addBorderAroundTarget(stepDesc) {
+        var element = document.querySelector(stepDesc.target);
+        var borderWidth = 2;
+        if (__isValid(element)) {
+            var rect = element.getBoundingClientRect();
 
-        for(var i = 1; i < arguments.length; i++) {
-            var obj = arguments[i];
+            var borderOverlay = document.createElement("div");
+            topOverlay.className(TARGET_BORDER);
+            topOverlay.setAttribute("style", "width: " + rect.width + borderWidth * 2 + "px; height: " + rect.height + borderWidth * 2 + "px; top: " + rect.top - borderWidth + "px; left: " + rect.left - borderWidth + "px;");
 
-            if(!__isValid(obj))
-                continue;
-
-            for(var key in obj) {
-                if(obj.hasOwnProperty(key)) {
-                    if(typeof obj[key] === 'object') {
-                        output[key] = __clone(output[key], obj[key]);
-                    } else {
-                        output[key] = obj[key];
-                    }
-                }
+            if (stepDesc.canInteract || stepDesc.nextOnTargetClick) {
+                topOverlay.className += " " + TARGET_INTERACTABLE;
             }
-        }
-        return output;
-    }
 
-    /**
-     * Check if a given object a valid object with content
-     * @param object        Any object, array, variable
-     * @returns {boolean}   True if valid, false otherwise
-     */
-    function __isValid(object) {
-        if(object == null || typeof object == 'undefined') {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Get the content of the next tour based on the given tourId
-     * @param tourId        The id of tour that needs to be looked up
-     * @returns Return the content of tour if it matches tourId, return null otherwise
-     */
-    function _getTourFromId(tourId) {
-        for (var i = 0; i < this.__toursMap.length; i++) {
-            if(this.__toursMap[i].id === tourId) {
-                return this.__toursMap[i];
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Get the next tour in line. Only used when there multiple tours given at the beginning
-     * @returns     If there isn't any tour return nothing, otherwise return subsequent tour
-     */
-    function __getNextTourInLine() {
-        if(this.__toursMap.length === this.__currentTourIndex + 1) {
-            return -1;
-        }
-        var newTourIndex = this.__currentTourIndex + 1;
-
-        this.__currentTourIndex = newTourIndex;
-
-        return this.__toursMap[newTourIndex];
-    }
-
-    /**
-     * Add event to element without unnecessarily overrid original handlers
-     * @param el        Element to be attached listener/event on
-     * @param type      Type of event to listen to
-     * @param callback  Callback function when event is fired
-     */
-    function __addEvent(el, type, callback) {
-        if(!__isValid(el))
-            return;
-        if(el.addEventListener) {
-            el.addEventListener(type,callback,false);
-        } else if(el.attachEvent) {
-            el.attachEvent("on" + type, callback);
-        } else {
-            el["on" + type] = callback;
+            document.body.appendChild(borderOverlay);
         }
     }
 
     /**
-     * Remove event listener for cleaning up
-     * @param el        Element that contains event that needs to be removed
-     * @param type      Type of event that was attached
-     * @param callback  Callback function triggered to handle this scenario
+     * Add bubble contains content next to target depends on where it should be
+     * @param stepDesc      Object contains info of current step
      */
-    function __removeEvent(el, type, callback) {
-        if(!__isValid(el))
-            return;
-        if(el.removeEventListener) {
-            el.removeEventListener(type, callback);
-        } else if(el.detachEvent) {
-            el.detachEvent(type, callback);
-        } else {
-            el["off"+type] = callback;
+    function _addBubbleContent(stepDesc) {
+        var element = document.querySelector(stepDesc.target);
+        if (__isValid(element)) {
+            
         }
     }
 
-    /**
-     * Add window resize event to recalculate location of tour step.
-     * The event is namespaced to avoid conflict with program's handler and easier to unbind later on.
-     */
-    function _addResizeWindowListener() {
-        __addEvent(window, "flextour.resize", function(event) {
-            console.log("Doing resizing window event");
-        });
-    }
-
-    /**
-     * Remove resize listener from window without detaching other handlers from main program
-     */
-    function _unbindResizeWindowListener() {
-        __removeEvent(window, "flextour.resize");
-    }
 
     /*******************************ADD OVERLAY BLOCKS*************************************/
 
@@ -448,6 +360,132 @@
         _removeLeftOverlay();
         _removeTourBubble();
         _removeBorder();
+    }
+
+
+    /*******************************UTILITIES**********************************************/
+
+    /**
+     * Deep extending object from object A to object B
+     * __clone({},A,B) Exactly how it works in Jquery
+     * @param output        New Object that contains merge of A and B
+     * @returns {*|{}}      Return new object
+     */
+    function __clone(output) {
+        output = output || {};
+
+        for (var i = 1; i < arguments.length; i++) {
+            var obj = arguments[i];
+
+            if (!__isValid(obj))
+                continue;
+
+            for (var key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    if (typeof obj[key] === 'object') {
+                        output[key] = __clone(output[key], obj[key]);
+                    } else {
+                        output[key] = obj[key];
+                    }
+                }
+            }
+        }
+        return output;
+    }
+
+    /**
+     * Check if a given object a valid object with content
+     * @param object        Any object, array, variable
+     * @returns {boolean}   True if valid, false otherwise
+     */
+    function __isValid(object) {
+        if (object == null || typeof object == 'undefined') {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Get the content of the next tour based on the given tourId
+     * @param tourId        The id of tour that needs to be looked up
+     * @returns Return the content of tour if it matches tourId, return null otherwise
+     */
+    function _getTourFromId(tourId) {
+        for (var i = 0; i < this.__toursMap.length; i++) {
+            if (this.__toursMap[i].id === tourId) {
+                return this.__toursMap[i];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the next tour in line. Only used when there multiple tours given at the beginning
+     * @returns     If there isn't any tour return nothing, otherwise return subsequent tour
+     */
+    function __getNextTourInLine() {
+        if (this.__toursMap.length === this.__currentTourIndex + 1) {
+            return -1;
+        }
+        var newTourIndex = this.__currentTourIndex + 1;
+
+        this.__currentTourIndex = newTourIndex;
+
+        return this.__toursMap[newTourIndex];
+    }
+
+    /**
+     * Add event to element without unnecessarily overrid original handlers
+     * @param el        Element to be attached listener/event on
+     * @param type      Type of event to listen to
+     * @param callback  Callback function when event is fired
+     */
+    function __addEvent(el, type, callback) {
+        if (!__isValid(el))
+            return;
+        if (el.addEventListener) {
+            el.addEventListener(type, callback, false);
+        } else if (el.attachEvent) {
+            el.attachEvent("on" + type, callback);
+        } else {
+            el["on" + type] = callback;
+        }
+    }
+
+    /**
+     * Remove event listener for cleaning up
+     * @param el        Element that contains event that needs to be removed
+     * @param type      Type of event that was attached
+     * @param callback  Callback function triggered to handle this scenario
+     */
+    function __removeEvent(el, type, callback) {
+        if (!__isValid(el))
+            return;
+        if (el.removeEventListener) {
+            el.removeEventListener(type, callback);
+        } else if (el.detachEvent) {
+            el.detachEvent(type, callback);
+        } else {
+            el["off" + type] = callback;
+        }
+    }
+
+    /**
+     * Add window resize event to recalculate location of tour step.
+     * The event is namespaced to avoid conflict with program's handler and easier to unbind later on.
+     */
+    function _addResizeWindowListener() {
+        __addEvent(window, "flextour.resize", function (event) {
+            console.log("Doing resizing window event");
+        });
+    }
+
+    /**
+     * Remove resize listener from window without detaching other handlers from main program
+     */
+    function _unbindResizeWindowListener() {
+        __removeEvent(window, "flextour.resize");
     }
 
     var flexTour = function(tourDesc) {

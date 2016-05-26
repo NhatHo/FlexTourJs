@@ -1,15 +1,100 @@
 /********************* STYLES FOR FLEX TOUR ********************/
-
 /********************* BUBBLES STYLE ***************************/
-
 /** Credits to: http://nicolasgallagher.com/pure-css-speech-bubbles/demo/ **/
 .flextour-tour-bubble {
     position: relative;
-    padding: 10px;
-    margin: 5px 0 3em;
+    padding: 15px;
+    margin: 1em 0 3em;
+    border: 5px solid #333;
     text-align: left;
     color: #fff;
     background: #333;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    z-index: 20;
+}
+
+.flextour-tour-bubble:before {
+    content: "";
+    position: absolute;
+    bottom: 20px;
+    left: 40px;
+    border-width: 20px 20px 0;
+    border-style: solid;
+    border-color: #333 transparent;
+    display: block;
+    width: 0;
+}
+
+.flextour-tour-bubble:after {
+    content: "";
+    position: absolute;
+    bottom: 13px;
+    left: 47px;
+    border-width: 13px 13px 0;
+    border-style: solid;
+    border-color: #333 transparent;
+    display: block;
+    width: 0;
+}
+
+.flextour-tour-bubble .right {
+    margin-left: 30px;
+}
+
+.flextour-tour-bubble .right:before {
+    top: 10px;
+    bottom: auto;
+    left: -30px;
+    border-width: 15px 30px 15px 0;
+    border-color: transparent #333;
+}
+
+.flextour-tour-bubble .right:after {
+    top: 16px;
+    bottom: auto;
+    left: -21px;
+    border-width: 9px 21px 9px 0;
+    border-color: transparent #333;
+}
+
+.flextour-tour-bubble .left {
+    margin-right: 30px;
+}
+
+.flextour-tour-bubble .left:before {
+    top: 10px;
+    bottom: auto;
+    left: auto;
+    right: -30px;
+    border-width: 15px 0 15px 30px;
+    border-color: transparent #333;
+}
+
+.flextour-tour-bubble .left:after {
+    top: 16px;
+    bottom: auto;
+    left: auto;
+    right: -21px;
+    border-width: 9px 0 9px 21px;
+    border-color: transparent #333;
+}
+
+.flextour-tour-bubble .bottom:before {
+    top: -20px;
+    bottom: auto;
+    left: auto;
+    right: 40px;
+    border-width: 0 20px 20px;
+}
+
+.flextour-tour-bubble .bottom:after {
+    top: -13px;
+    bottom: auto;
+    left: auto;
+    right: 47px;
+    border-width: 0 13px 13px;
 }
 
 .flextour-tour-bubble:before {
@@ -32,7 +117,6 @@
     height: 20px;
     background: transparent;
 }
-
 .flextour-tour-bubble p:before {
     content: "";
     position: absolute;
@@ -41,4 +125,26 @@
     width: 50%;
     height: 20px;
     background: transparent;
+}
+
+/*******************************OVERLAY STYLES***********************************/
+.flextour-overlay-styles {
+    position: absolute;
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 0.5);
+    /*Enough to dim the back ground*/
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+}
+
+.flextour-fixed-overlay {
+    position: fixed;
+}
+
+.flextour-target-border {
+    background: none !important;
+    border: #333 solid 2px;
+}
+
+.flextour-target-border .interactable {
+    pointer-events: none;
 }
