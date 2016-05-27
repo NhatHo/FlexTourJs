@@ -3,12 +3,15 @@
 @OverlayBackground: rgba(0, 0, 0, 0.5);
 @BubbleBackground: #2F4F4F;
 @ContentColor: #FFFFFF;
+@ButtonColor: #F4511E;
 
 /********************* BUBBLES STYLE ***************************/
 
 /** Credits to: http://nicolasgallagher.com/pure-css-speech-bubbles/demo/ **/
 .flextour-tour-bubble {
   position: relative;
+  width: 450px;
+  height: auto;
   padding: 5px;
   background: @BubbleBackground;
   -webkit-border-radius: 10px;
@@ -142,6 +145,111 @@
   }
 }
 
+.flextour-button-group {
+  display: inline-block;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  background-color: @ButtonColor;
+  border: none;
+  color: @ContentColor;
+  font-size: 12pt;
+  padding: 10px;
+  width: 50px;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 5px;
+
+  span {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    -webkit-transition: 0.5s;
+    -moz-transition: 0.5s;
+    -ms-transition: 0.5s;
+    -o-transition: 0.5s;
+    transition: 0.5s;
+  }
+}
+
+.flextour-skip-button {
+  span {
+    &:before {
+      content: "<<";
+      position: absolute;
+      opacity: 0;
+      top: 0;
+      left: -20px;
+      -webkit-transition: 0.5s;
+      -moz-transition: 0.5s;
+      -ms-transition: 0.5s;
+      -o-transition: 0.5s;
+      transition: 0.5s;
+    }
+  }
+
+  &:hover span {
+    padding-left: 25px;
+
+    &:before {
+      opacity: 1;
+      left: 0;
+    }
+  }
+}
+
+.flextour-back-button {
+  span {
+    &:before {
+      content: "<";
+      position: absolute;
+      opacity: 0;
+      top: 0;
+      left: -20px;
+      -webkit-transition: 0.5s;
+      -moz-transition: 0.5s;
+      -ms-transition: 0.5s;
+      -o-transition: 0.5s;
+      transition: 0.5s;
+    }
+  }
+
+  &:hover span {
+    padding-left: 25px;
+
+    &:before {
+      opacity: 1;
+      left: 0;
+    }
+  }
+}
+
+.flextour-next-button {
+  span {
+    &:after {
+      content: ">";
+      position: absolute;
+      opacity: 0;
+      top: 0;
+      right: -20px;
+      -webkit-transition: 0.5s;
+      -moz-transition: 0.5s;
+      -ms-transition: 0.5s;
+      -o-transition: 0.5s;
+      transition: 0.5s;
+    }
+  }
+
+  &:hover span {
+    padding-right: 25px;
+
+    &:after {
+      opacity: 1;
+      right: 0;
+    }
+  }
+}
+
 /*******************************OVERLAY STYLES***********************************/
 
 .flextour-overlay-styles {
@@ -158,6 +266,7 @@
 .flextour-target-border {
   background: none !important;
   border: @BubbleBackground solid 2px;
+  position: absolute;
 
   .interactable {
     pointer-events: none;

@@ -16,33 +16,11 @@
     'use strict';
 
     var tether = require('node_modules/dist/js/tether.js');
+    var constants = require('constants.js');
 
     this.__toursMap = []; // Initialize the map contains all tours for this library after preprocessing
     this.__currentTour = {}; // Initialize object contains description of current tour
     this.__currentTourIndex = -1; // Initialize the index of the current tour
-
-    const TOP_OVERLAY = "flextour-top-overlay";
-    const RIGHT_OVERLAY = "flextour-right-overlay";
-    const BOTTOM_OVERLAY = "flextour-bottom-overlay";
-    const LEFT_OVERLAY = "flextour-left-overlay";
-    const CLASS = ".";
-
-    const OVERLAY_STYLE = "flextour-overlay-styles";
-
-    const TARGET_BORDER = "flextour-target-border";
-    const TARGET_INTERACTABLE = "interactable";
-    const TOUR_BUBBLE = "flextour-tour-bubble";
-
-    const ICON = "flextour-icon";
-    const CLOSE_TOUR = "flextour-close";
-
-    const DEFAULT_STEP_SETTINGS = {
-        type: "info",
-        position: "bottom-middle",
-        stepNumber: false,
-        canInteract: false,
-        nextOnTargetClick: false
-    };
 
     /**
      * Constructor of FlexTour library
@@ -57,7 +35,7 @@
     };
 
     /**
-     *
+     * Run the preset tour. Start with the first tour
      */
     FlexTour.run = function run() {
         if(this.__currentTourIndex < 0) {
@@ -66,9 +44,11 @@
         }
 
         var currentTour = this.__currentTour = __clone({}, this.__toursMap[this.__currentTourIndex]);
-
     };
 
+    /**
+     * Greet and ask user to run the tour that they want
+     */
     FlexTour.greetings = function greetings() {
         this.__currentTour = __clone({}, this.__toursMap[this.__currentTourIndex]);
         if(this.__currentTour["greetings"]) {
@@ -117,7 +97,7 @@
             // Fill in information for each step in case anything important is missing
             if(__isValid(rawTour["steps"])) {
                 var numOfSteps = rawTour["steps"].length;
-                rawTour.steps = __clone({}, DEFAULT_STEP_SETTINGS,  rawTour["steps"]);
+                rawTour.steps = __clone({}, constants.DEFAULT_STEP_SETTINGS, rawTour["steps"]);
             }
 
             this.__toursMap.push(rawTour);
@@ -141,6 +121,14 @@
     }
 
     function _skipStep() {
+
+    }
+
+    function _prevStep() {
+
+    }
+
+    function _nextStep() {
 
     }
 
@@ -185,11 +173,11 @@
             var rect = element.getBoundingClientRect();
 
             var borderOverlay = document.createElement("div");
-            topOverlay.className(TARGET_BORDER);
-            topOverlay.setAttribute("style", "width: " + rect.width + borderWidth * 2 + "px; height: " + rect.height + borderWidth * 2 + "px; top: " + rect.top - borderWidth + "px; left: " + rect.left - borderWidth + "px;");
+            borderOverlay.className(constants.TARGET_BORDER);
+            borderOverlay.setAttribute("style", "width: " + rect.width + borderWidth * 2 + "px; height: " + rect.height + borderWidth * 2 + "px; top: " + rect.top - borderWidth + "px; left: " + rect.left - borderWidth + "px;");
 
             if (stepDesc.canInteract || stepDesc.nextOnTargetClick) {
-                topOverlay.className += " " + TARGET_INTERACTABLE;
+                borderOverlay.className += " " + constants.TARGET_INTERACTABLE;
             }
 
             document.body.appendChild(borderOverlay);
@@ -201,10 +189,76 @@
      * @param stepDesc      Object contains info of current step
      */
     function _addBubbleContent(stepDesc) {
-        var element = document.querySelector(stepDesc.target);
-        if (__isValid(element)) {
-            
+        var element = document.querySelector(constants.CLASS + constants.TARGET_BORDER);
+        var targetPosition = element.getBoundingClientRect();
+        var top = targetPosition.top;
+        var left = targetPosition.left;
+        var bottom = top + targetPosition.height;
+        var right = left + targetPosition.width;
+
+        var bubble = document.createElement("div");
+
+        var contentDiv = document.createElement("p");
+        contentDiv.innerText = stepDesc.content;
+
+        // TODO add icon to bubble here
+
+        bubble.className = constants.TOUR_BUBBLE;
+
+        switch (stepDesc.position) {
+            case "top":
+                bubble.className += " top";
+                break;
+            case "right":
+                bubble.className += " right";
+                break;
+            case "left":
+                bubble.className += " left";
+                break;
+            default: // This is either bottom or something that doesn't exist
+                bubble.className += " bottom";
+                break;
         }
+        bubble.appendChild(contentDiv);
+
+        if (!__isValid(stepDesc.nextOnTargetClick) && !__isValid(stepDesc.noButtons)) {
+            let buttonGroup = document.createElement("div");
+            buttonGroup.className = "flextour-button-group";
+
+            if (!__isValid(stepDesc.noSkip)) {
+                let skipButton = document.createElement("button");
+                skipButton.addClass("flextour-skip-button");
+                __addEvent(skipButton, constants.FLEX_CLICK, function (event) {
+                    _noDefault(event);
+                    _skipStep();
+                });
+                buttonGroup.appendChild(skipButton);
+            }
+
+            if (!__isValid(stepDesc.noBack)) {
+                let backButton = document.createElement("button");
+                backButton.className("flextour-back-button");
+                __addEvent(backButton, constants.FLEX_CLICK, function (event) {
+                    _noDefault(event);
+                    _prevStep();
+                });
+                buttonGroup.appendChild(backButton);
+            }
+
+            if (!__isValid(stepDesc.noNext)) {
+                // Unlikely to be used
+                let nextButton = document.createElement("button");
+                nextButton.className("flextour-next-button");
+                __addEvent(nextButton, constants.FLEX_CLICK, function (event) {
+                    _noDefault(event);
+                    _nextStep();
+                });
+                buttonGroup.appendChild(nextButton);
+            }
+            bubble.appendChild(buttonGroup);
+        }
+
+        document.appendChild(bubble);
     }
 
 
@@ -266,7 +320,7 @@
      */
     function __generateOverlay(width, height, top, left) {
         var topOverlay = document.createElement("div");
-        topOverlay.className(OVERLAY_STYLE);
+        topOverlay.className(constants.OVERLAY_STYLE);
         topOverlay.setAttribute("style", "width: " + width + "px; height: " + height + "px; top: " + top + "px; left: " + left + "px;");
 
         document.body.appendChild(topOverlay);
@@ -287,6 +341,10 @@
         }
     }
 
+    function _endTourOnOverlayClick() {
+
+    }
+
     /*******************************TEAR DOWN*********************************************/
 
     /**
@@ -294,7 +352,7 @@
      * @private topOverlay contains the DOM element of top overlay
      */
     function _removeTopOverlay() {
-        var topOverlay = document.querySelector(CLASS + TOP_OVERLAY);
+        var topOverlay = document.querySelector(constants.CLASS + constants.TOP_OVERLAY);
         if(__isValid(topOverlay))
             topOverlay.parentNode.removeChild(topOverlay);
     }
@@ -304,7 +362,7 @@
      * @private rightOverlay contains the DOM element of right overlay
      */
     function _removeRightOverlay() {
-        var rightOverlay = document.querySelector(CLASS + RIGHT_OVERLAY);
+        var rightOverlay = document.querySelector(constants.CLASS + constants.RIGHT_OVERLAY);
         if(__isValid(rightOverlay))
             rightOverlay.parentNode.removeChild(rightOverlay);
     }
@@ -314,7 +372,7 @@
      * @private bottomOverlay contains the DOM element of bottom overlay
      */
     function _removeBottomOverlay() {
-        var bottomOverlay = document.querySelector(CLASS + BOTTOM_OVERLAY);
+        var bottomOverlay = document.querySelector(constants.CLASS + constants.BOTTOM_OVERLAY);
         if(__isValid(bottomOverlay))
             bottomOverlay.parentNode.removeChild(bottomOverlay);
     }
@@ -324,7 +382,7 @@
      * @private leftOverlay contains the DOM element of the left overlay
      */
     function _removeLeftOverlay() {
-        var leftOverlay = document.querySelector(CLASS + LEFT_OVERLAY);
+        var leftOverlay = document.querySelector(constants.CLASS + constants.LEFT_OVERLAY);
         if(__isValid(leftOverlay))
             leftOverlay.parentNode.removeChild(leftOverlay);
     }
@@ -334,7 +392,7 @@
      * @private targetBorder contains the DOM element of border around target
      */
     function _removeBorder() {
-        var targetBorder = document.querySelector(CLASS + TARGET_BORDER);
+        var targetBorder = document.querySelector(constants.CLASS + constants.TARGET_BORDER);
         if(__isValid(targetBorder))
             targetBorder.parentNode.removeChild(targetBorder);
     }
@@ -344,7 +402,7 @@
      * @private tourBubble contains the DOM element of the bubble display step description
      */
     function _removeTourBubble() {
-        var tourBubble = document.querySelector(CLASS + TOUR_BUBBLE);
+        var tourBubble = document.querySelector(constants.CLASS + constants.TOUR_BUBBLE);
         if(__isValid(tourBubble))
             tourBubble.parentNode.removeChild(tourBubble);
     }
@@ -486,6 +544,15 @@
      */
     function _unbindResizeWindowListener() {
         __removeEvent(window, "flextour.resize");
+    }
+
+    /**
+     * Prevent event to propagate and behave by default. Generally used for click event
+     * @param event     The event to be stopped default behavior
+     */
+    function _noDefault(event) {
+        event.preventDefault();
+        event.stopPropagation();
     }
 
     var flexTour = function(tourDesc) {
