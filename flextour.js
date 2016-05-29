@@ -107,8 +107,8 @@
                 currentStep[constants.NO_NEXT] = currentStep[constants.NO_NEXT] || rawTour[constants.NO_NEXT];
                 currentStep[constants.NO_BACK] = currentStep[constants.NO_BACK] || rawTour[constants.NO_BACK];
                 currentStep[constants.NO_SKIP] = currentStep[constants.NO_SKIP] || rawTour[constants.NO_SKIP];
-                currentStep[constants.CAN_INTERACT] = currentStep[constants.CAN_INTERACT] || rawTour[constants.CAN_INTERACT];
                 currentStep[constants.NEXT_ON_TARGET] = currentStep[constants.NEXT_ON_TARGET] || false;
+                currentStep[constants.CAN_INTERACT] = currentStep[constants.CAN_INTERACT] || currentStep[constants.NEXT_ON_TARGET] || rawTour[constants.CAN_INTERACT]; // This mean that if target can trigger next step on click, it must be clickable
             }
 
             __toursMap.push(rawTour);
@@ -124,7 +124,7 @@
         let targetElement = document.querySelector(stepDesc[constants.TARGET]);
         if (__isValid(targetElement)) {
             _addOverlaysAroundTarget(targetElement);
-            _addBorderAroundTarget(targetElement, stepDesc[constants.NEXT_ON_TARGET]);
+            _addBorderAroundTarget(targetElement, stepDesc[constants.CAN_INTERACT]);
             _addBubbleContent(stepDesc);
         } else {
             console.log("Target of step: " + JSON.stringify(stepDesc) + " is not found.");
@@ -210,19 +210,20 @@
 
     /**
      * Create a border around target by generating an overlay over target. The overlay can be clicked through only when the step can be interated or triggerable
-     * @param stepDesc        Object contains info of current step
+     * @param element           Element of target of the step
+     * @param canInteract     Boolean value to see if user can interact with the UI
      */
-    function _addBorderAroundTarget(element, nextOnTargetClick) {
+    function _addBorderAroundTarget(element, canInteract) {
         let borderWidth = 2;
         if (__isValid(element)) {
             let rect = element.getBoundingClientRect();
 
             let borderOverlay = document.createElement("div");
-            borderOverlay.className(constants.TARGET_BORDER);
+            borderOverlay.classList.add(constants.TARGET_BORDER);
             borderOverlay.setAttribute("style", "width: " + rect.width + borderWidth * 2 + "px; height: " + rect.height + borderWidth * 2 + "px; top: " + rect.top - borderWidth + "px; left: " + rect.left - borderWidth + "px;");
 
-            if (stepDesc.canInteract || nextOnTargetClick) {
-                borderOverlay.className += " " + constants.TARGET_INTERACTABLE;
+            if (canInteract) {
+                borderOverlay.classList.add(constants.TARGET_INTERACTABLE);
             }
 
             document.body.appendChild(borderOverlay);
@@ -234,7 +235,7 @@
      * @param stepDesc      Object contains info of current step
      */
     function _addBubbleContent(stepDesc) {
-        let element = document.querySelector(constants.CLASS + constants.TARGET_BORDER);
+        let element = document.querySelector(_getClassName(constants.TARGET_BORDER));
         let targetPosition = element.getBoundingClientRect();
         let top = targetPosition.top;
         let left = targetPosition.left;
@@ -243,36 +244,39 @@
 
         let bubble = document.createElement("div");
 
+        let iconDiv = document.createElement("div");
+        iconDiv.classList.add(constants.ICON);
+
+        bubble.appendChild(iconDiv);
+
         let contentDiv = document.createElement("p");
         contentDiv.innerText = stepDesc.content;
 
-        // TODO add icon to bubble here
-
-        bubble.className = constants.TOUR_BUBBLE;
+        bubble.classList.add(constants.TOUR_BUBBLE);
 
         switch (stepDesc.position) {
             case "top":
-                bubble.className += " top";
+                bubble.classList.add("top");
                 break;
             case "right":
-                bubble.className += " right";
+                bubble.classList.add("right");
                 break;
             case "left":
-                bubble.className += " left";
+                bubble.classList.add("left");
                 break;
             default: // This is either bottom or something that doesn't exist
-                bubble.className += " bottom";
+                bubble.classList.add("bottom");
                 break;
         }
         bubble.appendChild(contentDiv);
 
-        if (!__isValid(stepDesc.nextOnTargetClick) && !__isValid(stepDesc.noButtons)) {
+        if (!__isValid(stepDesc[constants.NEXT_ON_TARGET]) && !__isValid(stepDesc[constants.NO_BUTTONS])) {
             let buttonGroup = document.createElement("div");
-            buttonGroup.className = constants.BUTTON_GROUP;
+            buttonGroup.classList.add(constants.BUTTON_GROUP);
 
-            if (!__isValid(stepDesc.noSkip)) {
+            if (!__isValid(stepDesc[constants.NO_SKIP])) {
                 let skipButton = document.createElement("button");
-                skipButton.addClass(constants.SKIP_BUTTON);
+                skipButton.classList.add(constants.SKIP_BUTTON);
                 __addEvent(skipButton, constants.FLEX_CLICK, function (event) {
                     _noDefault(event);
                     _skipStep();
@@ -280,9 +284,9 @@
                 buttonGroup.appendChild(skipButton);
             }
 
-            if (!__isValid(stepDesc.noBack)) {
+            if (!__isValid(stepDesc[constants.NO_BACK])) {
                 let backButton = document.createElement("button");
-                backButton.className(constants.BACK_BUTTON);
+                backButton.classList.add(constants.BACK_BUTTON);
                 __addEvent(backButton, constants.FLEX_CLICK, function (event) {
                     _noDefault(event);
                     _prevStep();
@@ -290,10 +294,10 @@
                 buttonGroup.appendChild(backButton);
             }
 
-            if (!__isValid(stepDesc.noNext) && !_isLastStep()) {
+            if (!__isValid(stepDesc[constants.NO_NEXT]) && !_isLastStep()) {
                 // Unlikely to be used
                 let nextButton = document.createElement("button");
-                nextButton.className(constants.NEXT_BUTTON);
+                nextButton.classList.add(constants.NEXT_BUTTON);
                 __addEvent(nextButton, constants.FLEX_CLICK, function (event) {
                     _noDefault(event);
                     _nextStep();
@@ -303,7 +307,7 @@
 
             if (_isLastStep()) {
                 let doneButton = document.createElement("button");
-                doneButton.className(constants.DONE_BUTTON);
+                doneButton.classList.add(constants.DONE_BUTTON);
                 __addEvent(doneButton, constants.FLEX_CLICK, function (event) {
                     _noDefault(event);
                     _exitTour();
@@ -311,6 +315,12 @@
             }
             bubble.appendChild(buttonGroup);
         }
+
+        let closeButton = document.createElement("a");
+        closeButton.appendChild(document.createTextNode(constants.EMPTY));
+        closeButton.classList.add(constants.CLOSE_TOUR);
+
+        bubble.appendChild(closeButton);
 
         document.body.appendChild(bubble);
     }
@@ -368,21 +378,26 @@
     }
 
     /**
-     * Generate generic overlay element from given height and width
-     * @param width     Width of overlay element
-     * @param height    Height of overlay element
+     * Generate generic overlay from given width, height, top and left
+     * @param width     The width of current overlay
+     * @param height    The height of current overlay
+     * @param top       Top location of current overlay
+     * @param left      Left location of current overlay
      */
     function __generateOverlay(width, height, top, left) {
         let overlay = document.createElement("div");
-        overlay.className(constants.OVERLAY_STYLE);
-        overlay.setAttribute("style", "width: " + width + "px; height: " + height + "px; top: " + top + "px; left: " + left + "px;");
+        overlay.classList.add(constants.OVERLAY_STYLE);
+        overlay.width = width;
+        overlay.height = height;
+        overlay.top = top;
+        overlay.left = left;
 
         document.body.appendChild(overlay);
     }
 
     /**
      * Main function to add overlay around target: top right bottom left like padding settings
-     * @param target        Target element which is used to put overlays around
+     * @param element        Target element which is used to put overlays around
      */
     function _addOverlaysAroundTarget(element) {
         let elementRect = element.getBoundingClientRect();
@@ -399,7 +414,7 @@
      * @private topOverlay contains the DOM element of top overlay
      */
     function _removeTopOverlay() {
-        let topOverlay = document.querySelector(constants.CLASS + constants.TOP_OVERLAY);
+        let topOverlay = document.querySelector(_getClassName(constants.TOP_OVERLAY));
         if(__isValid(topOverlay))
             topOverlay.parentNode.removeChild(topOverlay);
     }
@@ -409,7 +424,7 @@
      * @private rightOverlay contains the DOM element of right overlay
      */
     function _removeRightOverlay() {
-        let rightOverlay = document.querySelector(constants.CLASS + constants.RIGHT_OVERLAY);
+        let rightOverlay = document.querySelector(_getClassName(constants.RIGHT_OVERLAY));
         if(__isValid(rightOverlay))
             rightOverlay.parentNode.removeChild(rightOverlay);
     }
@@ -419,7 +434,7 @@
      * @private bottomOverlay contains the DOM element of bottom overlay
      */
     function _removeBottomOverlay() {
-        let bottomOverlay = document.querySelector(constants.CLASS + constants.BOTTOM_OVERLAY);
+        let bottomOverlay = document.querySelector(_getClassName(constants.BOTTOM_OVERLAY));
         if(__isValid(bottomOverlay))
             bottomOverlay.parentNode.removeChild(bottomOverlay);
     }
@@ -429,7 +444,7 @@
      * @private leftOverlay contains the DOM element of the left overlay
      */
     function _removeLeftOverlay() {
-        let leftOverlay = document.querySelector(constants.CLASS + constants.LEFT_OVERLAY);
+        let leftOverlay = document.querySelector(_getClassName(constants.LEFT_OVERLAY));
         if(__isValid(leftOverlay))
             leftOverlay.parentNode.removeChild(leftOverlay);
     }
@@ -439,7 +454,7 @@
      * @private targetBorder contains the DOM element of border around target
      */
     function _removeBorder() {
-        let targetBorder = document.querySelector(constants.CLASS + constants.TARGET_BORDER);
+        let targetBorder = document.querySelector(_getClassName(constants.TARGET_BORDER));
         if(__isValid(targetBorder))
             targetBorder.parentNode.removeChild(targetBorder);
     }
@@ -449,7 +464,7 @@
      * @private tourBubble contains the DOM element of the bubble display step description
      */
     function _removeTourBubble() {
-        let tourBubble = document.querySelector(constants.CLASS + constants.TOUR_BUBBLE);
+        let tourBubble = document.querySelector(_getClassName(constants.TOUR_BUBBLE));
         if(__isValid(tourBubble))
             tourBubble.parentNode.removeChild(tourBubble);
     }
@@ -504,10 +519,7 @@
      * @returns {boolean}   True if valid, false otherwise
      */
     function __isValid(object) {
-        if (object == null || typeof object == 'undefined') {
-            return false;
-        }
-        return true;
+        return (object == null || typeof object == 'undefined');
     }
 
     /**
@@ -530,14 +542,13 @@
      * @returns     If there isn't any tour return nothing, otherwise return subsequent tour
      */
     function __getNextTourInLine() {
-        if (__toursMap.length === __currentTourIndex + 1) {
-            return -1;
+        if (__toursMap.length - 1 > __currentTourIndex) {
+            let newTourIndex = __currentTourIndex + 1;
+
+            __currentTourIndex = newTourIndex;
+
+            return __toursMap[newTourIndex];
         }
-        let newTourIndex = __currentTourIndex + 1;
-
-        __currentTourIndex = newTourIndex;
-
-        return __toursMap[newTourIndex];
     }
 
     /**
@@ -607,12 +618,19 @@
      * @return {boolean} true if it is, false otherwise
      */
     function _isLastStep() {
-        let numberOfStep = __currentTour.steps.length;
-        if (__currentStep >= numberOfStep - 1) {
-            return true;
-        }
-        return false;
+        return (__currentStep >= __currentTour[constants.STEPS].length - 1);
     }
+
+    /**
+     * Simple function to create Class Name selector from give html class
+     * @param className     class name of give DOM element
+     * @returns {*}     .className for query selector
+     */
+    function _getClassName(className) {
+        return constants.CLASS + className;
+    }
+
+    /***********************************FLEX TOUR OBJECT******************************/
 
     let flexTour = function (tourDesc) {
 

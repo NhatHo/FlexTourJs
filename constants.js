@@ -61,3 +61,5 @@ export const DEFAULT_TYPE = "info";
 export const DEFAULT_POSITION = "bottom";
 
 export const TOUR = "tour";
+
+export const EMPTY = "&nbsp;";

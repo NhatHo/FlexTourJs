@@ -250,6 +250,52 @@
   }
 }
 
+.flextour-done-button {
+  span {
+    &:after {
+      content: "!";
+      position: absolute;
+      opacity: 0;
+      top: 0;
+      right: -20px;
+      -webkit-transition: 0.5s;
+      -moz-transition: 0.5s;
+      -ms-transition: 0.5s;
+      -o-transition: 0.5s;
+      transition: 0.5s;
+    }
+  }
+
+  &:hover span {
+    padding-right: 25px;
+
+    &:after {
+      opacity: 1;
+      right: 0;
+    }
+  }
+}
+
+a.flextour-close {
+  float: right;
+  margin-top: -10px;
+  margin-right: -10px;
+  cursor: pointer;
+  color: @ContentColor;
+  border: 1px solid #AEAEAE;
+  border-radius: 15px;
+  background: #605F61;
+  font-size: 15px;
+  font-weight: bold;
+  display: inline-block;
+  line-height: 0px;
+  padding: 11px 3px;
+
+  &:before {
+    content: "&times;";
+  }
+}
+
 /*******************************OVERLAY STYLES***********************************/
 
 .flextour-overlay-styles {
