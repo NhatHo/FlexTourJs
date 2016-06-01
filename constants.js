@@ -28,8 +28,8 @@ export const DONE_BUTTON = "flextour-done-button";
 export const BUTTON_GROUP = "flextour-button-group";
 
 // Event Block
-export const FLEX_CLICK = "flextour.click";
-export const FLEX_RESIZE = "flextour.resize";
+export const FLEX_CLICK = "click.flextour";
+export const FLEX_RESIZE = "resize.flextour";
 
 // Tour Attributes Block
 export const TOUR_DEFAULT_SETTINGS = {
@@ -56,6 +56,9 @@ export const CONTENT = "content";
 export const TARGET = "target";
 export const POSITION = "position";
 export const NEXT_ON_TARGET = "nextOnTargetClick";
+export const TIME_INTERVAL = "timeIntervals";
+export const RETRIES = "retries";
+export const END_ON_ESC = "endOnEsc";
 
 export const DEFAULT_TYPE = "info";
 export const DEFAULT_POSITION = "bottom";

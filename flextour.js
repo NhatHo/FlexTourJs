@@ -20,20 +20,15 @@
     let tether = require('node_modules/dist/js/tether.js');
     let Tether = new tether();
 
-    let __toursMap; // Initialize the map contains all tours for this library after preprocessing
-    let __currentTour; // Initialize object contains description of current tour
-    let __currentTourIndex; // Initialize the index of the current tour
-    let __currentStep; // Initialize the index of current step
-
     /**
      * Constructor of FlexTour library
      * @constructor
      */
     function FlexTour() {
-        __toursMap = [];
-        __currentTour = {};
-        __currentTourIndex = -1;
-        __currentStep = -1;
+        this.__toursMap = [];
+        this.__currentTour = {};
+        this.__currentTourIndex = -1;
+        this.__currentStep = -1;
     }
 
     FlexTour.prototype.get = function (tourId) {
@@ -44,17 +39,17 @@
      * Run the preset tour. Start with the first tour
      */
     FlexTour.prototype.run = function run() {
-        if (__currentTourIndex < 0) {
+        if (this.__currentTourIndex < 0) {
             console.log("There is NOT any available tour to run.");
             return;
         }
 
-        let currentTour = __currentTour = __clone({}, __toursMap[__currentTourIndex]);
-        __currentStep = 0;
+        let currentTour = this.__currentTour = __clone({}, this.__toursMap[this.__currentTourIndex]);
+        this.__currentStep = 0;
 
         let steps = currentTour[constants.STEPS];
         if (__isValid(steps)) {
-            let firstStep = steps[__currentStep];
+            let firstStep = steps[this.__currentStep];
             _centralOrganizer(firstStep);
         }
         console.log("Tour does NOT contain any step to display.");
@@ -72,8 +67,8 @@
 
         _preProcessingTour(tourDesc);
 
-        if (__toursMap.length > 0) {
-            __currentTourIndex = 0;
+        if (this.__toursMap.length > 0) {
+            this.__currentTourIndex = 0;
         }
     };
 
@@ -107,11 +102,11 @@
                 currentStep[constants.NO_NEXT] = currentStep[constants.NO_NEXT] || rawTour[constants.NO_NEXT];
                 currentStep[constants.NO_BACK] = currentStep[constants.NO_BACK] || rawTour[constants.NO_BACK];
                 currentStep[constants.NO_SKIP] = currentStep[constants.NO_SKIP] || rawTour[constants.NO_SKIP];
-                currentStep[constants.NEXT_ON_TARGET] = currentStep[constants.NEXT_ON_TARGET] || false;
                 currentStep[constants.CAN_INTERACT] = currentStep[constants.CAN_INTERACT] || currentStep[constants.NEXT_ON_TARGET] || rawTour[constants.CAN_INTERACT]; // This mean that if target can trigger next step on click, it must be clickable
+                currentStep[constants.TIME_INTERVAL] = currentStep[constants.TIME_INTERVAL] || rawTour[constants.TIME_INTERVAL];
+                currentStep[constants.RETRIES] = currentStep[constants.RETRIES] || rawTour[constants.RETRIES];
             }
-
-            __toursMap.push(rawTour);
+            this.__toursMap.push(rawTour);
         }
     }
 
@@ -205,6 +200,23 @@
         let element = document.querySelector(target);
         return __isValid(element);
     }
+
+    /**
+     * Wait For which ever condition set in the step
+     * @param waitFor       Wait for query that explain what to wait for
+     */
+    function __waitFor(waitFor) {
+
+    }
+
+    /**
+     * Skip current step if some condition is met.
+     * @param skipCond  True of false, if it's true the current step would be skipped, stay otherwise.
+     */
+    function __skipStepIf(skipCond) {
+
+    }
+
 
     /*******************************ADD TOUR BUBBLE TO STEP*********************************/
 
@@ -319,6 +331,11 @@
         let closeButton = document.createElement("a");
         closeButton.appendChild(document.createTextNode(constants.EMPTY));
         closeButton.classList.add(constants.CLOSE_TOUR);
+
+        __addEvent(closeButton, constants.FLEX_CLICK, function (event) {
+            _noDefault(event);
+            _exitTour();
+        });
 
         bubble.appendChild(closeButton);
 
@@ -528,9 +545,9 @@
      * @returns Return the content of tour if it matches tourId, return null otherwise
      */
     function _getTourFromId(tourId) {
-        for (let i = 0; i < __toursMap.length; i++) {
-            if (__toursMap[i].id === tourId) {
-                return __toursMap[i];
+        for (let i = 0; i < this.__toursMap.length; i++) {
+            if (this.__toursMap[i].id === tourId) {
+                return this.__toursMap[i];
             }
         }
 
@@ -542,12 +559,12 @@
      * @returns     If there isn't any tour return nothing, otherwise return subsequent tour
      */
     function __getNextTourInLine() {
-        if (__toursMap.length - 1 > __currentTourIndex) {
-            let newTourIndex = __currentTourIndex + 1;
+        if (this.__toursMap.length - 1 > this.__currentTourIndex) {
+            let newTourIndex = this.__currentTourIndex + 1;
 
-            __currentTourIndex = newTourIndex;
+            this.__currentTourIndex = newTourIndex;
 
-            return __toursMap[newTourIndex];
+            return this.__toursMap[newTourIndex];
         }
     }
 
@@ -618,7 +635,7 @@
      * @return {boolean} true if it is, false otherwise
      */
     function _isLastStep() {
-        return (__currentStep >= __currentTour[constants.STEPS].length - 1);
+        return (this.__currentStep >= this.__currentTour[constants.STEPS].length - 1);
     }
 
     /**
