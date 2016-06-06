@@ -4,4 +4,4 @@
  * Inspired by Introjs <https://github.com/usablica/intro.js>
  */
 
-module.exports = require('./main/Framework');
+module.exports = require('./main/scripts/Framework');
