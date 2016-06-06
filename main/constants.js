@@ -61,8 +61,10 @@ export const RETRIES = "retries";
 export const END_ON_ESC = "endOnEsc";
 
 export const DEFAULT_TYPE = "info";
+export const ACTION_TYPE = "action";
 export const DEFAULT_POSITION = "bottom";
 
 export const TOUR = "tour";
 
 export const EMPTY = "&nbsp;";
+export const BORDER_WIDTH = 2;
