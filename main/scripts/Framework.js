@@ -53,23 +53,113 @@ function _centralOrganizer(stepDesc, isLastStep) {
         component.addOverlays();
         component.addBorderAroundTarget(stepDesc[Constants.CAN_INTERACT]);
         component.createContentBubble(isLastStep);
+
+        _addClickEvents();
+        _addResizeWindowListener();
     } else {
         console.log("Target of step: " + JSON.stringify(stepDesc) + " is not found.");
-
     }
 }
 
 /**
  *
  * @param isLastStep
- * @private
  */
 function _addClickEvents(isLastStep) {
-    let overlays = document.querySelectorAll(Utils.getClassName(Constants.OVERLAY_STYLE));
+    let overlays = Utils.getElesFromClassName(Constants.OVERLAY_STYLE);
     for (let overlay in overlays) {
-
+        Utils.addEvent(overlay, Constants.FLEX_CLICK, this.exit);
     }
 
+    let skipButton = Utils.getEleFromClassName(Constants.SKIP_BUTTON);
+    if (Utils.isValid(skipButton)) {
+        Utils.addEvent(skipButton, Constants.FLEX_CLICK, _skipStep);
+    }
+
+    let backButton = Utils.getEleFromClassName(Constants.BACK_BUTTON);
+    if (Utils.isValid(backButton)) {
+        Utils.addEvent(backButton, Constants.FLEX_CLICK, _previousStep);
+    }
+
+    let nextButton = Utils.getEleFromClassName(Constants.NEXT_BUTTON);
+    if (Utils.isValid(nextButton)) {
+        Utils.addEvent(nextButton, Constants.FLEX_CLICK, _nextStep);
+    }
+
+    let doneButton = Utils.getEleFromClassName(Constants.DONE_BUTTON);
+    if (Utils.isValid(doneButton)) {
+        Utils.addEvent(doneButton, Constants.FLEX_CLICK, this.exit);
+    }
+
+    let closeButton = Utils.getEleFromClassName(Constants.CLOSE_TOUR);
+    if (Utils.isValid(closeButton)) {
+        Utils.addEvent(closeButton, Constants.FLEX_CLICK, this.exit);
+    }
+}
+
+/**
+ *
+ * @private
+ */
+function _removeEvents() {
+    let overlays = Utils.getElesFromClassName(Constants.OVERLAY_STYLE);
+    for (let overlay in overlays) {
+        Utils.removeEvent(overlay, Constants.FLEX_CLICK, this.exit);
+    }
+
+    let skipButton = Utils.getEleFromClassName(Constants.SKIP_BUTTON);
+    if (Utils.isValid(skipButton)) {
+        Utils.removeEvent(skipButton, Constants.FLEX_CLICK, _skipStep);
+    }
+
+    let backButton = Utils.getEleFromClassName(Constants.BACK_BUTTON);
+    if (Utils.isValid(backButton)) {
+        Utils.removeEvent(backButton, Constants.FLEX_CLICK, _previousStep);
+    }
+
+    let nextButton = Utils.getEleFromClassName(Constants.NEXT_BUTTON);
+    if (Utils.isValid(nextButton)) {
+        Utils.removeEvent(nextButton, Constants.FLEX_CLICK, _nextStep);
+    }
+
+    let doneButton = Utils.getEleFromClassName(Constants.DONE_BUTTON);
+    if (Utils.isValid(doneButton)) {
+        Utils.removeEvent(doneButton, Constants.FLEX_CLICK, this.exit);
+    }
+
+    let closeButton = Utils.getEleFromClassName(Constants.CLOSE_TOUR);
+    if (Utils.isValid(closeButton)) {
+        Utils.removeEvent(closeButton, Constants.FLEX_CLICK, this.exit);
+    }
+}
+
+function _skipStep() {
+
+}
+
+function _previousStep() {
+
+}
+
+function _nextStep() {
+
+}
+
+/**
+ * Add window resize event to recalculate location of tour step.
+ * The event is namespaced to avoid conflict with program's handler and easier to unbind later on.
+ */
+function _addResizeWindowListener() {
+    this.addEvent(window, Constants.FLEX_RESIZE, function (event) {
+        console.log("Doing resizing window event");
+    });
+}
+
+/**
+ * Remove resize listener from window without detaching other handlers from main program
+ */
+function _unbindResizeWindowListener() {
+    this.removeEvent(window, Constants.FLEX_RESIZE);
 }
 
 module.exports = {
@@ -97,5 +187,14 @@ module.exports = {
             _centralOrganizer(firstStep);
         }
         console.log("Tour does NOT contain any step to display.");
+    },
+
+    exit: function () {
+        _removeEvents();
+        _unbindResizeWindowListener();
+
+        Components.removeAllOverlay();
+        Components.clearContentBubble();
+        Components.clearBorderAroundTarget();
     }
 };

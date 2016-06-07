@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="JSLintConfiguration">
-    <option ass="true" />
-    <option bitwise="true" />
+  <component name="JSLintConfiguration" json="true">
     <option browser="true" />
     <option continue="true" />
     <option couch="true" />
-    <option debug="true" />
     <option devel="true" />
     <option eqeq="true" />
     <option indent="4" />

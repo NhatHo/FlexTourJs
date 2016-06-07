@@ -41,7 +41,7 @@ module.exports = {
         let width = this.rect.left;
 
         // Put overlay over space on the left of target
-        this._createOverlayNode(width, height.this.rect.top, 0);
+        this._createOverlayNode(width, height, this.rect.top, 0);
     },
 
     /**
@@ -73,6 +73,9 @@ module.exports = {
         document.body.appendChild(overlay);
     },
 
+    /**
+     * Add all overlays around target for better visual
+     */
     addOverlays: function () {
         this._createTopOverlay();
         this._createBottomOverlay();
@@ -80,12 +83,22 @@ module.exports = {
         this._createRightOverlay();
     },
 
+    /**
+     * Remove all overlays from document body for cleaning up
+     */
     removeAllOverlay: function () {
-
+        let overlays = Utils.getElesFromClassName(Constants.OVERLAY_STYLE);
+        for (let overlay in overlays) {
+            document.body.removeChild(overlay);
+        }
     },
 
+    /**
+     * Create content bubble next to target to display the content of the step
+     * @param {boolean} isLastStep  True if it is the last step of the tour
+     */
     createContentBubble: function (isLastStep) {
-        let element = document.querySelector(Utils.getClassName(Constants.TARGET_BORDER));
+        let element = Utils.getEleFromClassName(Constants.TARGET_BORDER);
         let targetPosition = element.getBoundingClientRect();
         let top = targetPosition.top;
         let left = targetPosition.left;
@@ -160,8 +173,12 @@ module.exports = {
         document.body.appendChild(bubble);
     },
 
+    /**
+     * Remove content bubble from document body for cleaning up
+     */
     clearContentBubble: function () {
-
+        let contentBubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE);
+        document.body.removeChild(contentBubble);
     },
 
     /**
@@ -184,5 +201,13 @@ module.exports = {
 
             document.body.appendChild(borderOverlay);
         }
+    },
+
+    /**
+     * Clear the border around target for cleaning up
+     */
+    clearBorderAroundTarget: function () {
+        let borderOverlay = Utils.getEleFromClassName(Constants.TARGET_BORDER);
+        document.body.removeChild(borderOverlay);
     }
 };

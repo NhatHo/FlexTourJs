@@ -126,23 +126,6 @@ module.exports = {
     },
 
     /**
-     * Add window resize event to recalculate location of tour step.
-     * The event is namespaced to avoid conflict with program's handler and easier to unbind later on.
-     */
-    addResizeWindowListener: function () {
-        this.addEvent(window, Constants.FLEX_RESIZE, function (event) {
-            console.log("Doing resizing window event");
-        });
-    },
-
-    /**
-     * Remove resize listener from window without detaching other handlers from main program
-     */
-    unbindResizeWindowListener: function () {
-        this.removeEvent(window, Constants.FLEX_RESIZE);
-    },
-
-    /**
      * Prevent event to propagate and behave by default. Generally used for click event
      * @param event     The event to be stopped default behavior
      */
@@ -158,5 +141,21 @@ module.exports = {
      */
     getClassName: function (className) {
         return Constants.CLASS + className;
+    },
+
+    /**
+     * Get DOM Node from given classname, only return 1 Element
+     * @param className     Given classname of element we want to get the element
+     */
+    getEleFromClassName: function (className) {
+        return document.querySelector(this.getClassName(className));
+    },
+
+    /**
+     * Get multiple DOM elements from given class, usually use for multiple elements with same class name
+     * @param className     Similar classname of group of elements
+     */
+    getElesFromClassName: function (className) {
+        return document.querySelectorAll(this.getClassName(className));
     }
 };

@@ -2,12 +2,6 @@
  * Created by NhatHo on 2016-05-27.
  */
 
-// Overlay Block
-export const TOP_OVERLAY = "flextour-top-overlay";
-export const RIGHT_OVERLAY = "flextour-right-overlay";
-export const BOTTOM_OVERLAY = "flextour-bottom-overlay";
-export const LEFT_OVERLAY = "flextour-left-overlay";
-
 export const CLASS = ".";
 
 export const OVERLAY_STYLE = "flextour-overlay-styles";
