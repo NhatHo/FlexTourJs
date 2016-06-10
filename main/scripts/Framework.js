@@ -62,13 +62,12 @@ function _centralOrganizer(stepDesc, isLastStep) {
 }
 
 /**
- *
- * @param isLastStep
+ * Attached all necessary handlers to the elements
  */
 function _addClickEvents(isLastStep) {
     let overlays = Utils.getElesFromClassName(Constants.OVERLAY_STYLE);
     for (let overlay in overlays) {
-        Utils.addEvent(overlay, Constants.FLEX_CLICK, this.exit);
+        Utils.addEvent(overlay, Constants.FLEX_CLICK, _cleanUp);
     }
 
     let skipButton = Utils.getEleFromClassName(Constants.SKIP_BUTTON);
@@ -88,23 +87,22 @@ function _addClickEvents(isLastStep) {
 
     let doneButton = Utils.getEleFromClassName(Constants.DONE_BUTTON);
     if (Utils.isValid(doneButton)) {
-        Utils.addEvent(doneButton, Constants.FLEX_CLICK, this.exit);
+        Utils.addEvent(doneButton, Constants.FLEX_CLICK, _cleanUp);
     }
 
     let closeButton = Utils.getEleFromClassName(Constants.CLOSE_TOUR);
     if (Utils.isValid(closeButton)) {
-        Utils.addEvent(closeButton, Constants.FLEX_CLICK, this.exit);
+        Utils.addEvent(closeButton, Constants.FLEX_CLICK, _cleanUp);
     }
 }
 
 /**
- *
- * @private
+ * Remove all attached event to avoid leaking memories
  */
 function _removeEvents() {
     let overlays = Utils.getElesFromClassName(Constants.OVERLAY_STYLE);
     for (let overlay in overlays) {
-        Utils.removeEvent(overlay, Constants.FLEX_CLICK, this.exit);
+        Utils.removeEvent(overlay, Constants.FLEX_CLICK, _cleanUp);
     }
 
     let skipButton = Utils.getEleFromClassName(Constants.SKIP_BUTTON);
@@ -124,25 +122,45 @@ function _removeEvents() {
 
     let doneButton = Utils.getEleFromClassName(Constants.DONE_BUTTON);
     if (Utils.isValid(doneButton)) {
-        Utils.removeEvent(doneButton, Constants.FLEX_CLICK, this.exit);
+        Utils.removeEvent(doneButton, Constants.FLEX_CLICK, _cleanUp);
     }
 
     let closeButton = Utils.getEleFromClassName(Constants.CLOSE_TOUR);
     if (Utils.isValid(closeButton)) {
-        Utils.removeEvent(closeButton, Constants.FLEX_CLICK, this.exit);
+        Utils.removeEvent(closeButton, Constants.FLEX_CLICK, _cleanUp);
     }
 }
 
+// TODO: skip a step but make sure the step ahead condition is met ... maybe display a message
 function _skipStep() {
 
 }
 
+/**
+ * Decrement current step counter and go back to previous step ... Obviously it will not be the last step
+ */
 function _previousStep() {
-
+    _cleanUp();
+    this.currentStep--;
+    if (this.currentStep >= 0 && this.currentTour[Constants.STEPS][this.currentStep]) {
+        _centralOrganizer(this.currentTour[Constants.STEPS][this.currentStep], false);
+    }
 }
 
+/**
+ * Trigger next step of the tour. If the next step is the last step, trigger the isLastStep flag
+ */
 function _nextStep() {
+    _cleanUp();
+    this.currentStep++;
 
+    let steps = this.currentTour[Constants.STEPS];
+
+    if (this.currentStep >= steps.length - 1) {
+        _centralOrganizer(this.currentTour[Constants.STEPS][this.currentStep], true);
+    } else {
+        _centralOrganizer(this.currentTour[Constants.STEPS][this.currentStep], false);
+    }
 }
 
 /**
@@ -162,6 +180,18 @@ function _unbindResizeWindowListener() {
     this.removeEvent(window, Constants.FLEX_RESIZE);
 }
 
+/**
+ * Clean up everything in the DOM from running the tour
+ */
+function _cleanUp() {
+    _removeEvents();
+    _unbindResizeWindowListener();
+
+    Components.removeAllOverlay();
+    Components.clearContentBubble();
+    Components.clearBorderAroundTarget();
+}
+
 module.exports = {
     Framework: function (tourDesc) {
         this.toursMap = [];
@@ -172,7 +202,10 @@ module.exports = {
         _preprocessingTours(tourDesc);
     },
 
-    run: function (tourId) {
+    /**
+     * Run the first step of the tour
+     */
+    run: function () {
         if (this.currentTourIndex < 0) {
             console.log("There is NOT any available tour to run.");
             return;
@@ -189,12 +222,10 @@ module.exports = {
         console.log("Tour does NOT contain any step to display.");
     },
 
+    /**
+     * Exit the current tour engine
+     */
     exit: function () {
-        _removeEvents();
-        _unbindResizeWindowListener();
-
-        Components.removeAllOverlay();
-        Components.clearContentBubble();
-        Components.clearBorderAroundTarget();
+        _cleanUp();
     }
 };
