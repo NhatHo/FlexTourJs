@@ -2,7 +2,7 @@
  * Created by NhatHo on 2016-06-01.
  */
 
-import * as Constants from "./Constants";
+var Constants = require("./Constants");
 
 module.exports = {
 

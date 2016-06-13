@@ -2,13 +2,13 @@
  * Created by NhatHo on 2016-06-01.
  */
 
-import * as Constants from "./Constants";
-import * as Utils from "./Utilities";
+var Constants = require("./Constants");
+var Utils = require("./Utilities");
 
 module.exports = {
     Component: function (stepDescription) {
         this.stepDescription = Utils.clone({}, stepDescription);
-        this.rect = document.querySelector(stepDescription.target).getBoundingClientRect();
+        this.rect = document.querySelector(stepDescription[Constants.TARGET]).getBoundingClientRect();
     },
 
     /**
@@ -113,11 +113,11 @@ module.exports = {
         bubble.appendChild(iconDiv);
 
         let contentDiv = document.createElement("p");
-        contentDiv.innerText = this.stepDescription.content;
+        contentDiv.innerText = this.stepDescription[Constants.CONTENT];
 
         bubble.classList.add(Constants.TOUR_BUBBLE);
 
-        switch (this.stepDescription.position) {
+        switch (this.stepDescription[Constants.POSITION]) {
             case "top":
                 bubble.classList.add("top");
                 break;

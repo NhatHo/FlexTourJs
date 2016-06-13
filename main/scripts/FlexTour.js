@@ -2,9 +2,10 @@
  * Created by NhatHo on 2016-06-01.
  */
 
-import * as Components from "./Components";
-import * as Constants from "./Constants";
-import * as Utils from "./Utilities";
+var Components = require("./Components");
+var Constants = require("./Constants");
+var Utils = require("./Utilities");
+var Tether = require("../../node_modules/tether/dist/js/tether");
 
 /**
  * Pre-process all information for all tours make sure each step and each tour contains necessary
@@ -192,40 +193,40 @@ function _cleanUp() {
     Components.clearBorderAroundTarget();
 }
 
-module.exports = {
-    Framework: function (tourDesc) {
-        this.toursMap = [];
-        this.currentTourIndex = -1;
-        this.currentStep = 0;
-        this.currentTour = {};
+function FlexTour(tourDesc) {
+    this.toursMap = [];
+    this.currentTourIndex = -1;
+    this.currentStep = 0;
+    this.currentTour = {};
 
-        _preprocessingTours(tourDesc);
-    },
+    _preprocessingTours(tourDesc);
+}
 
-    /**
-     * Run the first step of the tour
-     */
-    run: function () {
-        if (this.currentTourIndex < 0) {
-            console.log("There is NOT any available tour to run.");
-            return;
-        }
-
-        this.currentTour = Utils.clone({}, this.toursMap[this.currentTourIndex]);
-        this.currentStep = 0;
-
-        let steps = this.currentTour[Constants.STEPS];
-        if (Utils.isValid(steps)) {
-            let firstStep = steps[this.currentStep];
-            _centralOrganizer(firstStep);
-        }
-        console.log("Tour does NOT contain any step to display.");
-    },
-
-    /**
-     * Exit the current tour engine
-     */
-    exit: function () {
-        _cleanUp();
+/**
+ * Run the first step of the tour
+ */
+FlexTour.prototype.run = function () {
+    if (this.currentTourIndex < 0) {
+        console.log("There is NOT any available tour to run.");
+        return;
     }
+
+    this.currentTour = Utils.clone({}, this.toursMap[this.currentTourIndex]);
+    this.currentStep = 0;
+
+    let steps = this.currentTour[Constants.STEPS];
+    if (Utils.isValid(steps)) {
+        let firstStep = steps[this.currentStep];
+        _centralOrganizer(firstStep);
+    }
+    console.log("Tour does NOT contain any step to display.");
 };
+
+/**
+ * Exit the current tour engine
+ */
+FlexTour.prototype.exit = function () {
+    _cleanUp();
+};
+
+module.exports = FlexTour;
