@@ -1,6 +1,7 @@
-/**
- * Created by NhatHo on 2016-06-01.
- */
+/*******************************************************************************
+ * Copyright (c) 2016. MIT License.
+ * NhatHo-nhatminhhoca@gmail.com
+ ******************************************************************************/
 
 var Components = require("./Components");
 var Constants = require("./Constants");
@@ -13,10 +14,8 @@ var Tether = require("../../node_modules/tether/dist/js/tether");
  * @param tourDesc      JSON description file that has all information needed
  */
 function _preprocessingTours(tourDesc) {
-    let _tourDesc = Utils.deepClone({}, tourDesc);
-
-    for (let i = 0; i < _tourDesc.length; i++) {
-        let rawTour = _tourDesc[i];
+    for (let i = 0; i < tourDesc.length; i++) {
+        let rawTour = tourDesc[i];
 
         // Fill in information for each tour in case any important information is missing
         rawTour[Constants.ID] = rawTour[Constants.ID] || Constants.TOUR + i;
@@ -206,7 +205,7 @@ function FlexTour(tourDesc) {
  * Run the first step of the tour
  */
 FlexTour.prototype.run = function () {
-    if (this.currentTourIndex < 0) {
+    if (this.toursMap.length === 0) {
         console.log("There is NOT any available tour to run.");
         return;
     }

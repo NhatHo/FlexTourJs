@@ -1,3 +1,8 @@
+/*******************************************************************************
+ * Copyright (c) 2016. MIT License.
+ * NhatHo-nhatminhhoca@gmail.com
+ ******************************************************************************/
+
 var FlexTour =
     /******/ (function (modules) { // webpackBootstrap
     /******/ 	// The module cache
@@ -1224,7 +1229,7 @@ var FlexTour =
 
             var _get = function get(_x6, _x7, _x8) {
                 var _again = true;
-                _function: while (_again) {
+                while (_again) {
                     var object = _x6, property = _x7, receiver = _x8;
                     _again = false;
                     if (object === null) object = Function.prototype;

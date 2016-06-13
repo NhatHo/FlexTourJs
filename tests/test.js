@@ -1,8 +1,9 @@
-/**
- * Created by NhatHo on 2016-06-12.
- */
+/*******************************************************************************
+ * Copyright (c) 2016. MIT License.
+ * NhatHo-nhatminhhoca@gmail.com
+ ******************************************************************************/
 
-var object = {
+var object = [{
     id: "test",
     endOnOverlayClick: true,
     endOnEsc: true,
@@ -19,10 +20,9 @@ var object = {
         content: "Big box of nothing",
         position: "top"
     }]
-};
+}];
 
 document.querySelector("#trigger").onclick = function () {
-    alert("Ready!");
     var flexTour = new FlexTour(object);
     flexTour.run();
 };

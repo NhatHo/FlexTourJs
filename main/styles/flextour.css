@@ -1,6 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2016. MIT License.
+ * NhatHo-nhatminhhoca@gmail.com
+ ******************************************************************************/
+
 /********************* STYLES FOR FLEX TOUR ********************/
 /********************* BUBBLES STYLE ***************************/
-/** Credits to: http://nicolasgallagher.com/pure-css-speech-bubbles/demo/ **/
 .flextour-tour-bubble {
   position: relative;
   width: 450px;
@@ -16,7 +20,6 @@
   color: #FFFFFF;
   z-index: 20;
 }
-
 .flextour-tour-bubble .right:before {
   content: '';
   position: absolute;
@@ -30,7 +33,6 @@
   left: -15px;
   top: 50%;
 }
-
 .flextour-tour-bubble .right:after {
   content: '';
   position: absolute;
@@ -44,7 +46,6 @@
   left: -20px;
   top: 50%;
 }
-
 .flextour-tour-bubble .left:before {
   content: '';
   position: absolute;
@@ -58,7 +59,6 @@
   right: -20px;
   top: 50%;
 }
-
 .flextour-tour-bubble .left:after {
   content: '';
   position: absolute;
@@ -72,7 +72,6 @@
   right: -15px;
   top: 50%;
 }
-
 .flextour-tour-bubble .bottom:before {
   content: '';
   position: absolute;
@@ -86,7 +85,6 @@
   top: -20px;
   left: 50%;
 }
-
 .flextour-tour-bubble .bottom:after {
   content: '';
   position: absolute;
@@ -100,7 +98,6 @@
   top: -15px;
   left: 50%;
 }
-
 .flextour-tour-bubble .top:before {
   content: '';
   position: absolute;
@@ -114,7 +111,6 @@
   bottom: -20px;
   left: 50%;
 }
-
 .flextour-tour-bubble .top:after {
   content: '';
   position: absolute;
@@ -128,7 +124,6 @@
   bottom: -15px;
   left: 50%;
 }
-
 .flextour-button-group {
   display: inline-block;
   -webkit-border-radius: 4px;
@@ -144,7 +139,6 @@
   cursor: pointer;
   margin: 5px;
 }
-
 .flextour-button-group span {
   cursor: pointer;
   display: inline-block;
@@ -155,7 +149,6 @@
   -o-transition: 0.5s;
   transition: 0.5s;
 }
-
 .flextour-skip-button span:before {
   content: "<<";
   position: absolute;
@@ -168,16 +161,13 @@
   -o-transition: 0.5s;
   transition: 0.5s;
 }
-
 .flextour-skip-button:hover span {
   padding-left: 25px;
 }
-
 .flextour-skip-button:hover span:before {
   opacity: 1;
   left: 0;
 }
-
 .flextour-back-button span:before {
   content: "<";
   position: absolute;
@@ -190,16 +180,13 @@
   -o-transition: 0.5s;
   transition: 0.5s;
 }
-
 .flextour-back-button:hover span {
   padding-left: 25px;
 }
-
 .flextour-back-button:hover span:before {
   opacity: 1;
   left: 0;
 }
-
 .flextour-next-button span:after {
   content: ">";
   position: absolute;
@@ -212,14 +199,54 @@
   -o-transition: 0.5s;
   transition: 0.5s;
 }
-
 .flextour-next-button:hover span {
   padding-right: 25px;
 }
-
 .flextour-next-button:hover span:after {
   opacity: 1;
   right: 0;
+}
+
+.flextour-done-button span:after {
+  content: "!";
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  -webkit-transition: 0.5s;
+  -moz-transition: 0.5s;
+  -ms-transition: 0.5s;
+  -o-transition: 0.5s;
+  transition: 0.5s;
+}
+
+.flextour-done-button:hover span {
+  padding-right: 25px;
+}
+
+.flextour-done-button:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+
+a.flextour-close {
+  float: right;
+  margin-top: -10px;
+  margin-right: -10px;
+  cursor: pointer;
+  color: #FFFFFF;
+  border: 1px solid #AEAEAE;
+  border-radius: 15px;
+  background: #605F61;
+  font-size: 15px;
+  font-weight: bold;
+  display: inline-block;
+  line-height: 0;
+  padding: 11px 3px;
+}
+
+a.flextour-close:before {
+  content: "&times;";
 }
 /*******************************OVERLAY STYLES***********************************/
 .flextour-overlay-styles {

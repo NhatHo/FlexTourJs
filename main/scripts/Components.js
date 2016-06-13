@@ -1,6 +1,7 @@
-/**
- * Created by NhatHo on 2016-06-01.
- */
+/*******************************************************************************
+ * Copyright (c) 2016. MIT License.
+ * NhatHo-nhatminhhoca@gmail.com
+ ******************************************************************************/
 
 var Constants = require("./Constants");
 var Utils = require("./Utilities");
