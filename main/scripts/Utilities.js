@@ -160,7 +160,13 @@ module.exports = {
         return document.querySelectorAll(this.getClassName(className));
     },
 
+    /**
+     * Check if the description of this step is valid.
+     * Step must at least have target and description
+     * @param stepDesc      The description of the step
+     * @returns {*|boolean} True if it has target AND content, false otherwise
+     */
     isValidStep: function (stepDesc) {
-        
+        return (this.isValid(stepDesc[Constants.TARGET]) && this.isValid(stepDesc[Constants.CONTENT]));
     }
 };

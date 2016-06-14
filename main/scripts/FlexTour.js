@@ -60,7 +60,7 @@ function _initializeTour(tour) {
  */
 function _centralOrganizer(stepDesc, isLastStep) {
     let component = new Components(stepDesc);
-    if (Utils.isValid(component) && Utils.isValid(component.rect)) {
+    if (Utils.isValid(component) && Utils.isValid(component.getRect())) {
         component.addOverlays();
         component.addBorderAroundTarget(stepDesc[Constants.CAN_INTERACT]);
         component.createContentBubble(isLastStep);
@@ -179,7 +179,7 @@ function _nextStep() {
  * The event is namespaced to avoid conflict with program's handler and easier to unbind later on.
  */
 function _addResizeWindowListener() {
-    this.addEvent(window, Constants.FLEX_RESIZE, function (event) {
+    Utils.addEvent(window, Constants.FLEX_RESIZE, function (event) {
         console.log("Doing resizing window event");
     });
 }
@@ -188,7 +188,7 @@ function _addResizeWindowListener() {
  * Remove resize listener from window without detaching other handlers from main program
  */
 function _unbindResizeWindowListener() {
-    this.removeEvent(window, Constants.FLEX_RESIZE);
+    Utils.removeEvent(window, Constants.FLEX_RESIZE);
 }
 
 /**
@@ -228,7 +228,6 @@ FlexTour.prototype.run = function () {
         let firstStep = steps[FlexTour.currentStep];
         _centralOrganizer(firstStep);
     }
-    console.log("Tour does NOT contain any step to display.");
 };
 
 FlexTour.prototype.exit = function () {

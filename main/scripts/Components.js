@@ -7,9 +7,18 @@ var Constants = require("./Constants");
 var Utils = require("./Utilities");
 
 function Components(stepDescription) {
-    Components.stepDescription = Utils.clone({}, stepDescription);
-    Components.rect = document.querySelector(stepDescription[Constants.TARGET]).getBoundingClientRect();
+    if (Utils.isValidStep(stepDescription)) {
+        Components.stepDescription = Utils.clone({}, stepDescription);
+        Components.rect = document.querySelector(stepDescription[Constants.TARGET]).getBoundingClientRect();
+    }
 }
+
+/**
+ * Get rect variable
+ */
+Components.prototype.getRect = function () {
+    return Components.rect;
+};
 
 /**
  * Add top overlay into document body
@@ -19,18 +28,18 @@ function _createTopOverlay() {
     let width = document.body.getBoundingClientRect().width;
 
     // Put overlay on top left of the screen
-    _createOverlayNode(width, height, 0, 0);
+    _createOverlayNode(width + Constants.PX, height + Constants.PX, 0 + Constants.PX, 0 + Constants.PX);
 }
 
 /**
  * Generate Bottom overlay rect
  */
 function _createBottomOverlay() {
-    let height = document.body.getBoundingClientRect().height - Components.rect.top - Components.rect.height;
+    let height = "100vh";
     let width = document.body.getBoundingClientRect().width;
 
     // Put over on the bottom of target rect
-    _createOverlayNode(width, height, Components.rect.top + Components.rect.height, 0);
+    _createOverlayNode(width + Constants.PX, height, Components.rect.top + Components.rect.height + Constants.PX, 0 + Constants.PX);
 }
 
 /**
@@ -41,7 +50,7 @@ function _createLeftOverlay() {
     let width = Components.rect.left;
 
     // Put overlay over space on the left of target
-    _createOverlayNode(width, height, Components.rect.top, 0);
+    _createOverlayNode(width + Constants.PX, height + Constants.PX, Components.rect.top + Constants.PX, 0 + Constants.PX);
 }
 
 /**
@@ -52,7 +61,7 @@ function _createRightOverlay() {
     let width = document.body.getBoundingClientRect().width - Components.rect.left - Components.rect.width;
 
     // Put overlay on the top right of the target rect
-    _createOverlayNode(width, height, Components.rect.top, Components.rect.left + Components.rect.width);
+    _createOverlayNode(width + Constants.PX, height + Constants.PX, Components.rect.top + Constants.PX, Components.rect.left + Components.rect.width + Constants.PX);
 }
 
 /**
@@ -65,10 +74,10 @@ function _createRightOverlay() {
 function _createOverlayNode(width, height, top, left) {
     let overlay = document.createElement("div");
     overlay.classList.add(Constants.OVERLAY_STYLE);
-    overlay.width = width;
-    overlay.height = height;
-    overlay.top = top;
-    overlay.left = left;
+    overlay.style.width = width;
+    overlay.style.height = height;
+    overlay.style.top = top;
+    overlay.style.left = left;
 
     document.body.appendChild(overlay);
 }
