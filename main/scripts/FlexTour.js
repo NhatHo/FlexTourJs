@@ -3,10 +3,9 @@
  * NhatHo-nhatminhhoca@gmail.com
  ******************************************************************************/
 
-var Components = require("./Components");
-var Constants = require("./Constants");
-var Utils = require("./Utilities");
-var Tether = require("../../node_modules/tether/dist/js/tether");
+let Components = require("./Components");
+let Constants = require("./Constants");
+let Utils = require("./Utilities");
 
 /**
  * Pre-process all information for all tours make sure each step and each tour contains necessary
@@ -14,31 +13,43 @@ var Tether = require("../../node_modules/tether/dist/js/tether");
  * @param tourDesc      JSON description file that has all information needed
  */
 function _preprocessingTours(tourDesc) {
-    for (let i = 0; i < tourDesc.length; i++) {
-        let rawTour = tourDesc[i];
-
-        // Fill in information for each tour in case any important information is missing
-        rawTour[Constants.ID] = rawTour[Constants.ID] || Constants.TOUR + i;
-        rawTour = Utils.deepClone({}, Constants.TOUR_DEFAULT_SETTINGS, rawTour);
-
-        // Fill in information for each step in case anything important is missing
-        let numOfSteps = rawTour[Constants.STEPS].length;
-
-        for (let i = 0; i < numOfSteps; i++) {
-            let currentStep = rawTour[Constants.STEPS][i];
-
-            currentStep[Constants.TYPE] = currentStep[Constants.TYPE] || Constants.DEFAULT_TYPE;
-            currentStep[Constants.POSITION] = currentStep[Constants.POSITION] || Constants.DEFAULT_POSITION;
-            currentStep[Constants.NO_BUTTONS] = currentStep[Constants.NO_BUTTONS] || rawTour[Constants.NO_BUTTONS];
-            currentStep[Constants.NO_NEXT] = currentStep[Constants.NO_NEXT] || rawTour[Constants.NO_NEXT];
-            currentStep[Constants.NO_BACK] = currentStep[Constants.NO_BACK] || rawTour[Constants.NO_BACK];
-            currentStep[Constants.NO_SKIP] = currentStep[Constants.NO_SKIP] || rawTour[Constants.NO_SKIP];
-            currentStep[Constants.CAN_INTERACT] = currentStep[Constants.CAN_INTERACT] || currentStep[Constants.NEXT_ON_TARGET] || rawTour[Constants.CAN_INTERACT]; // This mean that if target can trigger next step on click, it must be clickable
-            currentStep[Constants.TIME_INTERVAL] = currentStep[Constants.TIME_INTERVAL] || rawTour[Constants.TIME_INTERVAL];
-            currentStep[Constants.RETRIES] = currentStep[Constants.RETRIES] || rawTour[Constants.RETRIES];
+    if (Array.isArray(tourDesc)) {
+        for (let i = 0; i < tourDesc.length; i++) {
+            _initializeTour(tourDesc[i]);
         }
-        this.toursMap.push(rawTour);
+    } else {
+        _initializeTour(tourDesc);
     }
+}
+
+/**
+ * Initialize raw tour object to make it legal for the framework
+ * @param tour      The tour object ---> Must be an object
+ */
+function _initializeTour(tour) {
+    let rawTour = Utils.deepClone({}, tour);
+
+    // Fill in information for each tour in case any important information is missing
+    rawTour[Constants.ID] = rawTour[Constants.ID] || Constants.TOUR + i;
+    rawTour = Utils.deepClone({}, Constants.TOUR_DEFAULT_SETTINGS, rawTour);
+
+    // Fill in information for each step in case anything important is missing
+    let numOfSteps = rawTour[Constants.STEPS].length;
+
+    for (let i = 0; i < numOfSteps; i++) {
+        let currentStep = rawTour[Constants.STEPS][i];
+
+        currentStep[Constants.TYPE] = currentStep[Constants.TYPE] || Constants.DEFAULT_TYPE;
+        currentStep[Constants.POSITION] = currentStep[Constants.POSITION] || Constants.DEFAULT_POSITION;
+        currentStep[Constants.NO_BUTTONS] = currentStep[Constants.NO_BUTTONS] || rawTour[Constants.NO_BUTTONS];
+        currentStep[Constants.NO_NEXT] = currentStep[Constants.NO_NEXT] || rawTour[Constants.NO_NEXT];
+        currentStep[Constants.NO_BACK] = currentStep[Constants.NO_BACK] || rawTour[Constants.NO_BACK];
+        currentStep[Constants.NO_SKIP] = currentStep[Constants.NO_SKIP] || rawTour[Constants.NO_SKIP];
+        currentStep[Constants.CAN_INTERACT] = currentStep[Constants.CAN_INTERACT] || currentStep[Constants.NEXT_ON_TARGET] || rawTour[Constants.CAN_INTERACT]; // This mean that if target can trigger next step on click, it must be clickable
+        currentStep[Constants.TIME_INTERVAL] = currentStep[Constants.TIME_INTERVAL] || rawTour[Constants.TIME_INTERVAL];
+        currentStep[Constants.RETRIES] = currentStep[Constants.RETRIES] || rawTour[Constants.RETRIES];
+    }
+    FlexTour.toursMap.push(rawTour);
 }
 
 /**
@@ -49,7 +60,7 @@ function _preprocessingTours(tourDesc) {
  */
 function _centralOrganizer(stepDesc, isLastStep) {
     let component = new Components(stepDesc);
-    if (Utils.isValid(component.rect)) {
+    if (Utils.isValid(component) && Utils.isValid(component.rect)) {
         component.addOverlays();
         component.addBorderAroundTarget(stepDesc[Constants.CAN_INTERACT]);
         component.createContentBubble(isLastStep);
@@ -64,7 +75,7 @@ function _centralOrganizer(stepDesc, isLastStep) {
 /**
  * Attached all necessary handlers to the elements
  */
-function _addClickEvents(isLastStep) {
+function _addClickEvents() {
     let overlays = Utils.getElesFromClassName(Constants.OVERLAY_STYLE);
     for (let overlay in overlays) {
         Utils.addEvent(overlay, Constants.FLEX_CLICK, _cleanUp);
@@ -141,9 +152,9 @@ function _skipStep() {
  */
 function _previousStep() {
     _cleanUp();
-    this.currentStep--;
-    if (this.currentStep >= 0 && this.currentTour[Constants.STEPS][this.currentStep]) {
-        _centralOrganizer(this.currentTour[Constants.STEPS][this.currentStep], false);
+    FlexTour.currentStep--;
+    if (FlexTour.currentStep >= 0 && FlexTour.currentTour[Constants.STEPS][FlexTour.currentStep]) {
+        _centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStep], false);
     }
 }
 
@@ -152,14 +163,14 @@ function _previousStep() {
  */
 function _nextStep() {
     _cleanUp();
-    this.currentStep++;
+    FlexTour.currentStep++;
 
-    let steps = this.currentTour[Constants.STEPS];
+    let steps = FlexTour.currentTour[Constants.STEPS];
 
-    if (this.currentStep >= steps.length - 1) {
-        _centralOrganizer(this.currentTour[Constants.STEPS][this.currentStep], true);
+    if (FlexTour.currentStep >= steps.length - 1) {
+        _centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStep], true);
     } else {
-        _centralOrganizer(this.currentTour[Constants.STEPS][this.currentStep], false);
+        _centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStep], false);
     }
 }
 
@@ -193,11 +204,10 @@ function _cleanUp() {
 }
 
 function FlexTour(tourDesc) {
-    this.toursMap = [];
-    this.currentTourIndex = -1;
-    this.currentStep = 0;
-    this.currentTour = {};
-
+    FlexTour.toursMap = [];
+    FlexTour.currentTourIndex = 0;
+    FlexTour.currentStep = 0;
+    FlexTour.currentTour = {};
     _preprocessingTours(tourDesc);
 }
 
@@ -205,25 +215,22 @@ function FlexTour(tourDesc) {
  * Run the first step of the tour
  */
 FlexTour.prototype.run = function () {
-    if (this.toursMap.length === 0) {
+    if (FlexTour.toursMap.length === 0) {
         console.log("There is NOT any available tour to run.");
         return;
     }
 
-    this.currentTour = Utils.clone({}, this.toursMap[this.currentTourIndex]);
-    this.currentStep = 0;
+    FlexTour.currentTour = Utils.clone({}, FlexTour.toursMap[FlexTour.currentTourIndex]);
+    FlexTour.currentStep = 0;
 
-    let steps = this.currentTour[Constants.STEPS];
+    let steps = FlexTour.currentTour[Constants.STEPS];
     if (Utils.isValid(steps)) {
-        let firstStep = steps[this.currentStep];
+        let firstStep = steps[FlexTour.currentStep];
         _centralOrganizer(firstStep);
     }
     console.log("Tour does NOT contain any step to display.");
 };
 
-/**
- * Exit the current tour engine
- */
 FlexTour.prototype.exit = function () {
     _cleanUp();
 };

@@ -87,7 +87,7 @@ module.exports = {
      * @returns {boolean}   True if valid, false otherwise
      */
     isValid: function (object) {
-        return (object == null || typeof object == 'undefined');
+        return (object != null && typeof object != 'undefined');
     },
 
     /**
@@ -158,5 +158,9 @@ module.exports = {
      */
     getElesFromClassName: function (className) {
         return document.querySelectorAll(this.getClassName(className));
+    },
+
+    isValidStep: function (stepDesc) {
+        
     }
 };
