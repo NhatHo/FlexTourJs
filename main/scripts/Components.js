@@ -10,6 +10,7 @@ function Components(stepDescription) {
     if (Utils.isValidStep(stepDescription)) {
         Components.stepDescription = Utils.clone({}, stepDescription);
         Components.rect = document.querySelector(stepDescription[Constants.TARGET]).getBoundingClientRect();
+        Components.ui = document.createElement("div");
     }
 }
 
@@ -79,36 +80,35 @@ function _createOverlayNode(width, height, top, left) {
     overlay.style.top = top;
     overlay.style.left = left;
 
-    document.body.appendChild(overlay);
+    Components.ui.appendChild(overlay);
 }
 
 /**
  * Add all overlays around target for better visual
  */
-Components.prototype.addOverlays = function () {
+function _addOverlays() {
     _createTopOverlay();
     _createBottomOverlay();
     _createLeftOverlay();
     _createRightOverlay();
-};
+}
 
 /**
  * Remove all overlays from document body for cleaning up
  */
-Components.prototype.removeAllOverlay = function () {
+function _removeAllOverlay() {
     let overlays = Utils.getElesFromClassName(Constants.OVERLAY_STYLE);
-    for (let overlay in overlays) {
-        document.body.removeChild(overlay);
+    for (let i = 0; i < overlays.length; i++) {
+        Components.ui.removeChild(overlays[i]);
     }
-};
+}
 
 /**
  * Create content bubble next to target to display the content of the step
  * @param {boolean} isLastStep  True if it is the last step of the tour
  */
-Components.prototype.createContentBubble = function (isLastStep) {
-    let element = Utils.getEleFromClassName(Constants.TARGET_BORDER);
-    let targetPosition = element.getBoundingClientRect();
+function _createContentBubble(isLastStep) {
+    let targetPosition = Components.rect;
     let top = targetPosition.top;
     let left = targetPosition.left;
     let bottom = top + targetPosition.height;
@@ -127,17 +127,17 @@ Components.prototype.createContentBubble = function (isLastStep) {
     bubble.classList.add(Constants.TOUR_BUBBLE);
 
     switch (Components.stepDescription[Constants.POSITION]) {
-        case "top":
-            bubble.classList.add("top");
+        case Constants.TOP:
+            bubble.classList.add(Constants.TOP);
             break;
-        case "right":
-            bubble.classList.add("right");
+        case Constants.RIGHT:
+            bubble.classList.add(Constants.RIGHT);
             break;
-        case "left":
-            bubble.classList.add("left");
+        case Constants.LEFT:
+            bubble.classList.add(Constants.LEFT);
             break;
         default: // This is either bottom or something that doesn't exist
-            bubble.classList.add("bottom");
+            bubble.classList.add(Constants.BOTTOM);
             break;
     }
     bubble.appendChild(contentDiv);
@@ -179,22 +179,21 @@ Components.prototype.createContentBubble = function (isLastStep) {
 
     bubble.appendChild(closeButton);
 
-    document.body.appendChild(bubble);
-};
+    Components.ui.appendChild(bubble);
+}
 
 /**
  * Remove content bubble from document body for cleaning up
  */
-Components.prototype.clearContentBubble = function () {
+function _clearContentBubble() {
     let contentBubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE);
-    document.body.removeChild(contentBubble);
-};
+    Components.ui.removeChild(contentBubble);
+}
 
 /**
  * Create a border around target by generating an overlay over target. The overlay can be clicked through only when the step can be interated or triggerable
- * @param canInteract     Boolean value to see if user can interact with the UI
  */
-Components.prototype.addBorderAroundTarget = function (canInteract) {
+function _addBorderAroundTarget() {
     if (Utils.isValid(Components.rect)) {
 
         let borderOverlay = document.createElement("div");
@@ -204,20 +203,42 @@ Components.prototype.addBorderAroundTarget = function (canInteract) {
         borderOverlay.top = Components.rect.top - Constants.BORDER_WIDTH;
         borderOverlay.left = Components.rect.left - Constants.BORDER_WIDTH;
 
-        if (canInteract) {
+        if (Components.stepDescription[Constants.CAN_INTERACT]) {
             borderOverlay.classList.add(Constants.TARGET_INTERACTABLE);
         }
 
-        document.body.appendChild(borderOverlay);
+        Components.ui.appendChild(borderOverlay);
     }
-};
+}
 
 /**
  * Clear the border around target for cleaning up
  */
-Components.prototype.clearBorderAroundTarget = function () {
+function _clearBorderAroundTarget() {
     let borderOverlay = Utils.getEleFromClassName(Constants.TARGET_BORDER);
-    document.body.removeChild(borderOverlay);
+    Components.ui.removeChild(borderOverlay);
+}
+
+/**
+ * Main function to create overlays, border around target and the content bubble next to target
+ * @param isLastStep        True if current step is last step, false otherwise
+ */
+Components.prototype.createComponents = function (isLastStep) {
+    debugger;
+    _addOverlays();
+    _addBorderAroundTarget();
+    _createContentBubble(isLastStep);
+    document.body.appendChild(Components.ui);
+};
+
+/**
+ * Main function to clean up the components that were added into the DOM.
+ */
+Components.prototype.removeComponents = function () {
+    _removeAllOverlay();
+    _clearBorderAroundTarget();
+    _clearContentBubble();
+    document.body.removeChild(Components.ui);
 };
 
 module.exports = Components;

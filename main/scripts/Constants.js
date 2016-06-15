@@ -62,5 +62,10 @@ module.exports = {
 
     EMPTY: "&nbsp,",
     BORDER_WIDTH: 2,
-    PX: "px"
+    PX: "px",
+
+    TOP: "top",
+    RIGHT: "right",
+    LEFT: "left",
+    BOTTOM: "bottom"
 };

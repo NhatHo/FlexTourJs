@@ -27,11 +27,10 @@ function _preprocessingTours(tourDesc) {
  * @param tour      The tour object ---> Must be an object
  */
 function _initializeTour(tour) {
-    let rawTour = Utils.deepClone({}, tour);
-
+    let rawTour = Utils.clone({}, tour);
     // Fill in information for each tour in case any important information is missing
     rawTour[Constants.ID] = rawTour[Constants.ID] || Constants.TOUR + i;
-    rawTour = Utils.deepClone({}, Constants.TOUR_DEFAULT_SETTINGS, rawTour);
+    rawTour = Utils.clone({}, Constants.TOUR_DEFAULT_SETTINGS, rawTour);
 
     // Fill in information for each step in case anything important is missing
     let numOfSteps = rawTour[Constants.STEPS].length;
@@ -59,11 +58,9 @@ function _initializeTour(tour) {
  * @param isLastStep        Indicator whether current step is the last step of tour
  */
 function _centralOrganizer(stepDesc, isLastStep) {
-    let component = new Components(stepDesc);
-    if (Utils.isValid(component) && Utils.isValid(component.getRect())) {
-        component.addOverlays();
-        component.addBorderAroundTarget(stepDesc[Constants.CAN_INTERACT]);
-        component.createContentBubble(isLastStep);
+    FlexTour.Component = new Components(stepDesc);
+    if (Utils.isValid(FlexTour.Component) && Utils.isValid(FlexTour.Component.getRect())) {
+        FlexTour.Component.createComponents(isLastStep);
 
         _addClickEvents();
         _addResizeWindowListener();
@@ -77,8 +74,8 @@ function _centralOrganizer(stepDesc, isLastStep) {
  */
 function _addClickEvents() {
     let overlays = Utils.getElesFromClassName(Constants.OVERLAY_STYLE);
-    for (let overlay in overlays) {
-        Utils.addEvent(overlay, Constants.FLEX_CLICK, _cleanUp);
+    for (let i = 0; i < overlays.length; i++) {
+        Utils.addEvent(overlays[i], Constants.FLEX_CLICK, _cleanUp);
     }
 
     let skipButton = Utils.getEleFromClassName(Constants.SKIP_BUTTON);
@@ -112,8 +109,8 @@ function _addClickEvents() {
  */
 function _removeEvents() {
     let overlays = Utils.getElesFromClassName(Constants.OVERLAY_STYLE);
-    for (let overlay in overlays) {
-        Utils.removeEvent(overlay, Constants.FLEX_CLICK, _cleanUp);
+    for (let i = 0; i < overlays.length; i++) {
+        Utils.removeEvent(overlays[i], Constants.FLEX_CLICK, _cleanUp);
     }
 
     let skipButton = Utils.getEleFromClassName(Constants.SKIP_BUTTON);
@@ -198,9 +195,7 @@ function _cleanUp() {
     _removeEvents();
     _unbindResizeWindowListener();
 
-    Components.removeAllOverlay();
-    Components.clearContentBubble();
-    Components.clearBorderAroundTarget();
+    FlexTour.Component.removeComponents();
 }
 
 function FlexTour(tourDesc) {
