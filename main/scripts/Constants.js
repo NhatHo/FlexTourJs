@@ -61,7 +61,7 @@ module.exports = {
     TOUR: "tour",
 
     EMPTY: "&nbsp,",
-    BORDER_WIDTH: 2,
+    BORDER_WIDTH: 3,
     PX: "px",
 
     TOP: "top",

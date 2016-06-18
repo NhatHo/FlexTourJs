@@ -6,7 +6,7 @@
 /********************* STYLES FOR FLEX TOUR ********************/
 /********************* BUBBLES STYLE ***************************/
 .flextour-tour-bubble {
-  position: relative;
+  position: absolute;
   width: 450px;
   height: auto;
   padding: 5px;
@@ -16,7 +16,6 @@
   border-radius: 10px;
   border: #2F4F4F solid 3px;
   text-align: left;
-  margin: 1em 0 3em;
   color: #FFFFFF;
   z-index: 20;
 }
@@ -255,7 +254,7 @@ a.flextour-close:before {
 }
 .flextour-target-border {
   background: none !important;
-  border: #2F4F4F solid 2px;
+  border: #FF0000 solid 3px;
   position: absolute;
 }
 .flextour-target-border .interactable {

@@ -108,12 +108,6 @@ function _removeAllOverlay() {
  * @param {boolean} isLastStep  True if it is the last step of the tour
  */
 function _createContentBubble(isLastStep) {
-    let targetPosition = Components.rect;
-    let top = targetPosition.top;
-    let left = targetPosition.left;
-    let bottom = top + targetPosition.height;
-    let right = left + targetPosition.width;
-
     let bubble = document.createElement("div");
 
     let iconDiv = document.createElement("div");
@@ -126,20 +120,6 @@ function _createContentBubble(isLastStep) {
 
     bubble.classList.add(Constants.TOUR_BUBBLE);
 
-    switch (Components.stepDescription[Constants.POSITION]) {
-        case Constants.TOP:
-            bubble.classList.add(Constants.TOP);
-            break;
-        case Constants.RIGHT:
-            bubble.classList.add(Constants.RIGHT);
-            break;
-        case Constants.LEFT:
-            bubble.classList.add(Constants.LEFT);
-            break;
-        default: // This is either bottom or something that doesn't exist
-            bubble.classList.add(Constants.BOTTOM);
-            break;
-    }
     bubble.appendChild(contentDiv);
 
     if (!Utils.isValid(Components.stepDescription[Constants.NEXT_ON_TARGET]) && !Utils.isValid(Components.stepDescription[Constants.NO_BUTTONS])) {
@@ -182,6 +162,48 @@ function _createContentBubble(isLastStep) {
     Components.ui.appendChild(bubble);
 }
 
+function _placeBubbleLocation() {
+    let targetPosition = Components.rect;
+    let top = targetPosition.top;
+    let left = targetPosition.left;
+    let bottom = top + targetPosition.height;
+    let right = left + targetPosition.width;
+
+    let bubble = document.querySelector(Utils.getClassName(Constants.TOUR_BUBBLE));
+
+    if (Utils.isValid(bubble)) {
+        let bubbleRect = bubble.getBoundingClientRect();
+        let halfBubbleHeight = bubbleRect.height / 2;
+        let halfBubbleWidth = bubbleRect.width / 2;
+
+        let halfTargetHeight = Components.rect.height / 2;
+        let halfTargetWidth = Components.rect.width / 2;
+
+        switch (Components.stepDescription[Constants.POSITION]) {
+            case Constants.TOP:
+                bubble.classList.add(Constants.TOP);
+                bubble.style.top = Components.rect.top - bubble.style.height + Constants.PX;
+                bubble.style.left = Components.rect.left + halfTargetWidth - halfBubbleWidth + Constants.PX;
+                break;
+            case Constants.RIGHT:
+                bubble.classList.add(Constants.RIGHT);
+                bubble.style.top = Components.rect.top + halfTargetHeight - halfBubbleHeight + Constants.PX;
+                bubble.style.left = right + Constants.PX;
+                break;
+            case Constants.LEFT:
+                bubble.classList.add(Constants.LEFT);
+                bubble.style.left = Components.rect.left - bubble.style.width + Constants.PX;
+                bubble.style.top = Components.rect.height + halfBubbleHeight - halfTargetHeight + Constants.PX;
+                break;
+            default: // This is either bottom or something that doesn't exist
+                bubble.classList.add(Constants.BOTTOM);
+                bubble.style.top = bottom + Constants.PX;
+                bubble.style.left = Components.rect.left + halfTargetWidth - halfBubbleWidth + Constants.PX;
+                break;
+        }
+    }
+}
+
 /**
  * Remove content bubble from document body for cleaning up
  */
@@ -198,10 +220,10 @@ function _addBorderAroundTarget() {
 
         let borderOverlay = document.createElement("div");
         borderOverlay.classList.add(Constants.TARGET_BORDER);
-        borderOverlay.width = Components.rect.width + Constants.BORDER_WIDTH * 2;
-        borderOverlay.height = Components.rect.height + Constants.BORDER_WIDTH * 2;
-        borderOverlay.top = Components.rect.top - Constants.BORDER_WIDTH;
-        borderOverlay.left = Components.rect.left - Constants.BORDER_WIDTH;
+        borderOverlay.style.width = Components.rect.width + Constants.BORDER_WIDTH * 2 + Constants.PX;
+        borderOverlay.style.height = Components.rect.height + Constants.BORDER_WIDTH * 2 + Constants.PX;
+        borderOverlay.style.top = Components.rect.top - Constants.BORDER_WIDTH * 2 + Constants.PX;
+        borderOverlay.style.left = Components.rect.left - Constants.BORDER_WIDTH * 2 + Constants.PX;
 
         if (Components.stepDescription[Constants.CAN_INTERACT]) {
             borderOverlay.classList.add(Constants.TARGET_INTERACTABLE);
@@ -224,11 +246,11 @@ function _clearBorderAroundTarget() {
  * @param isLastStep        True if current step is last step, false otherwise
  */
 Components.prototype.createComponents = function (isLastStep) {
-    debugger;
     _addOverlays();
     _addBorderAroundTarget();
     _createContentBubble(isLastStep);
     document.body.appendChild(Components.ui);
+    _placeBubbleLocation();
 };
 
 /**
