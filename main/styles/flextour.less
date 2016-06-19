@@ -1,297 +1,247 @@
 /********************* STYLES FOR FLEX TOUR ********************/
 
 @OverlayBackground: rgba(0, 0, 0, 0.5);
-@BorderColor: #FF0000;
-@BubbleBackground: #2F4F4F;
-@ContentColor: #FFFFFF;
-@ButtonColor: #F4511E;
+@BorderColor: #666;
+@ShadowColor: #888;
+@BubbleBackground: #FFFFFF;
+@HoverColor: #4F2F2F;
+@ContentColor: #000;
+@ButtonColor: #206456;
+
+.arrow-style {
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  z-index: 20;
+}
 
 /********************* BUBBLES STYLE ***************************/
 
 .flextour-tour-bubble {
   position: absolute;
-  width: 450px;
+  width: 400px;
   height: auto;
   padding: 5px;
   background: @BubbleBackground;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 10px;
-  border: @BubbleBackground solid 3px;
+  border: 4px solid @BorderColor;
   text-align: left;
   color: @ContentColor;
   z-index: 20;
+  -webkit-box-shadow: 2px 2px 4px @ShadowColor;
+  -moz-box-shadow: 2px 2px 4px @ShadowColor;
+  box-shadow: 2px 2px 4px @ShadowColor;
 
-  .right {
+  .flextour-content {
+    padding-left: 15px;
+  }
+}
 
-    &:before {
-      content: '';
-      position: absolute;
-      border-style: solid;
-      border-width: 15px 15px 15px 0;
-      border-color: transparent @BubbleBackground;
-      display: block;
-      width: 0;
-      z-index: 1;
-      margin-top: -15px;
-      left: -15px;
-      top: 50%;
+.arrow-location {
+  position: relative;
+
+  &.top {
+    .arrow-style;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-top: 20px solid @BorderColor;
+    margin-left: -20px;
+    bottom: -20px;
+    left: 50%;
+
+    .inner-arrow {
+      .arrow-style;
+      border-left: 14px solid transparent;
+      border-right: 14px solid transparent;
+      border-top: 14px solid @BubbleBackground;
+      left: -14px;
+      bottom: 6px;
     }
+  }
 
-    &:after {
-      content: '';
-      position: absolute;
-      border-style: solid;
-      border-width: 17px 17px 17px 0;
-      border-color: transparent @BubbleBackground;
-      display: block;
-      width: 0;
-      z-index: 0;
-      margin-top: -17px;
+  &.bottom {
+    .arrow-style;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 20px solid @BorderColor;
+    margin-left: -20px;
+    top: -20px;
+    left: 50%;
+
+    .inner-arrow {
+      .arrow-style;
+      border-left: 14px solid transparent;
+      border-right: 14px solid transparent;
+      border-bottom: 14px solid @BubbleBackground;
+      left: -14px;
+      top: 6px;
+    }
+  }
+
+  &.left {
+    .arrow-style;
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    border-left: 20px solid @BorderColor;
+    margin-top: -20px;
+    right: -20px;
+    top: 50%;
+
+    .inner-arrow {
+      .arrow-style;
+      border-top: 14px solid transparent;
+      border-bottom: 14px solid transparent;
+      border-left: 14px solid @BubbleBackground;
+      top: -14px;
       left: -20px;
-      top: 50%;
     }
   }
 
-  .left {
-    &:before {
-      content: '';
-      position: absolute;
-      border-style: solid;
-      border-width: 17px 0 17px 17px;
-      border-color: transparent @BubbleBackground;
-      display: block;
-      width: 0;
-      z-index: 0;
-      margin-top: -17px;
-      right: -20px;
-      top: 50%;
-    }
+  &.right {
+    .arrow-style;
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    border-right: 20px solid @BorderColor;
+    margin-top: -20px;
+    left: -20px;
+    top: 50%;
 
-    &:after {
-      content: '';
-      position: absolute;
-      border-style: solid;
-      border-width: 15px 0 15px 15px;
-      border-color: transparent @BubbleBackground;
-      display: block;
-      width: 0;
-      z-index: 1;
-      margin-top: -15px;
-      right: -15px;
-      top: 50%;
-    }
-  }
-
-  .bottom {
-    &:before {
-      content: '';
-      position: absolute;
-      border-style: solid;
-      border-width: 0 17px 17px;
-      border-color: @BubbleBackground transparent;
-      display: block;
-      width: 0;
-      z-index: 0;
-      margin-left: -17px;
-      top: -20px;
-      left: 50%;
-    }
-
-    &:after {
-      content: '';
-      position: absolute;
-      border-style: solid;
-      border-width: 0 15px 15px;
-      border-color: @BubbleBackground transparent;
-      display: block;
-      width: 0;
-      z-index: 1;
-      margin-left: -15px;
-      top: -15px;
-      left: 50%;
-    }
-  }
-
-  .top {
-    &:before {
-      content: '';
-      position: absolute;
-      border-style: solid;
-      border-width: 17px 17px 0;
-      border-color: @BubbleBackground transparent;
-      display: block;
-      width: 0;
-      z-index: 0;
-      margin-left: -17px;
-      bottom: -20px;
-      left: 50%;
-    }
-
-    &:after {
-      content: '';
-      position: absolute;
-      border-style: solid;
-      border-width: 15px 15px 0;
-      border-color: @BubbleBackground transparent;
-      display: block;
-      width: 0;
-      z-index: 1;
-      margin-left: -15px;
-      bottom: -15px;
-      left: 50%;
+    .inner-arrow {
+      .arrow-style;
+      border-top: 14px solid transparent;
+      border-bottom: 14px solid transparent;
+      border-right: 14px solid @BubbleBackground;
+      top: -14px;
+      left: 6px;
     }
   }
 }
 
 .flextour-button-group {
-  display: inline-block;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
-  background-color: @ButtonColor;
-  border: none;
-  color: @ContentColor;
-  font-size: 12pt;
-  padding: 10px;
-  width: 50px;
-  transition: all 0.5s;
-  cursor: pointer;
-  margin: 5px;
+  float: right;
 
-  span {
+  & > button {
+    padding: 5px 20px 5px 20px;
+    font-size: 10pt;
+    min-width: 100px;
+    text-decoration: none;
+    background-color: @BubbleBackground;
+    color: @ContentColor;
     cursor: pointer;
     display: inline-block;
     position: relative;
-    -webkit-transition: 0.5s;
-    -moz-transition: 0.5s;
-    -ms-transition: 0.5s;
-    -o-transition: 0.5s;
-    transition: 0.5s;
+
+    &:hover {
+      background-color: @ButtonColor;
+      color: @BubbleBackground;
+    }
+
+    &:focus {
+      outline: none;
+    }
   }
 }
 
+.flextour-empty-button {
+  border: 2px solid transparent;
+  min-width: 100px;
+  display: inline-block;
+}
+
 .flextour-skip-button {
-  span {
-    &:before {
-      content: "<<";
-      position: absolute;
-      opacity: 0;
-      top: 0;
-      left: -20px;
-      -webkit-transition: 0.5s;
-      -moz-transition: 0.5s;
-      -ms-transition: 0.5s;
-      -o-transition: 0.5s;
-      transition: 0.5s;
-    }
+  margin-right: 15px;
+  position: relative;
+  border: 2px solid @ButtonColor;
+
+  &:after {
+    content: ">>";
+    position: absolute;
+    opacity: 0;
+    right: -10px;
+    transition: 0.5s;
   }
 
-  &:hover span {
-    padding-left: 25px;
-
-    &:before {
-      opacity: 1;
-      left: 0;
-    }
+  &:hover:after {
+    opacity: 1;
+    right: 15px;
   }
 }
 
 .flextour-back-button {
-  span {
-    &:before {
-      content: "<";
-      position: absolute;
-      opacity: 0;
-      top: 0;
-      left: -20px;
-      -webkit-transition: 0.5s;
-      -moz-transition: 0.5s;
-      -ms-transition: 0.5s;
-      -o-transition: 0.5s;
-      transition: 0.5s;
-    }
+  margin-right: 5px;
+  position: relative;
+  border: 2px solid @ButtonColor;
+
+  &:after {
+    content: "<";
+    position: absolute;
+    opacity: 0;
+    left: -10px;
+    transition: 0.5s;
   }
 
-  &:hover span {
-    padding-left: 25px;
-
-    &:before {
-      opacity: 1;
-      left: 0;
-    }
+  &:hover:after {
+    opacity: 1;
+    left: 15px;
   }
 }
 
 .flextour-next-button {
-  span {
-    &:after {
-      content: ">";
-      position: absolute;
-      opacity: 0;
-      top: 0;
-      right: -20px;
-      -webkit-transition: 0.5s;
-      -moz-transition: 0.5s;
-      -ms-transition: 0.5s;
-      -o-transition: 0.5s;
-      transition: 0.5s;
-    }
+  margin-right: 10px;
+  position: relative;
+  border: 2px solid @ButtonColor;
+
+  &:after {
+    content: ">";
+    position: absolute;
+    opacity: 0;
+    right: -10px;
+    transition: 0.5s;
   }
 
-  &:hover span {
-    padding-right: 25px;
-
-    &:after {
-      opacity: 1;
-      right: 0;
-    }
+  &:hover:after {
+    opacity: 1;
+    right: 15px;
   }
 }
 
 .flextour-done-button {
-  span {
-    &:after {
-      content: "!";
-      position: absolute;
-      opacity: 0;
-      top: 0;
-      right: -20px;
-      -webkit-transition: 0.5s;
-      -moz-transition: 0.5s;
-      -ms-transition: 0.5s;
-      -o-transition: 0.5s;
-      transition: 0.5s;
-    }
+  margin-right: 10px;
+  position: relative;
+  border: 2px solid @ButtonColor;
+
+  &:after {
+    content: "!";
+    position: absolute;
+    opacity: 0;
+    right: -10px;
+    transition: 0.5s;
   }
 
-  &:hover span {
-    padding-right: 25px;
-
-    &:after {
-      opacity: 1;
-      right: 0;
-    }
+  &:hover:after {
+    opacity: 1;
+    right: 15px;
   }
 }
 
 a.flextour-close {
+  position: absolute;
   float: right;
-  margin-top: -10px;
-  margin-right: -10px;
+  top: 0;
+  right: 4px;
   cursor: pointer;
   color: @ContentColor;
-  border: 1px solid #AEAEAE;
-  border-radius: 15px;
-  background: #605F61;
-  font-size: 15px;
+  font-size: 18pt;
   font-weight: bold;
   display: inline-block;
   line-height: 0;
   padding: 11px 3px;
 
-  &:before {
-    content: "&times;";
+  &:hover {
+    color: @HoverColor;
   }
 }
 

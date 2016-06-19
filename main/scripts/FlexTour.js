@@ -55,12 +55,27 @@ function _initializeTour(tour) {
  * This is the head quarter of displaying steps, overlay, and other things.
  * Tags: CENTRAL, ORGANIZER, RUNNER
  * @param stepDesc          Description object of current step to be run
- * @param isLastStep        Indicator whether current step is the last step of tour
  */
-function _centralOrganizer(stepDesc, isLastStep) {
+function _centralOrganizer(stepDesc) {
     FlexTour.Component = new Components(stepDesc);
     if (Utils.isValid(FlexTour.Component) && Utils.isValid(FlexTour.Component.getRect())) {
-        FlexTour.Component.createComponents(isLastStep);
+        let showSkip = false,
+            showBack = false,
+            showNext = false;
+        let currentStep = FlexTour.currentStep;
+        let numberOfStep = FlexTour.currentTour[Constants.STEPS].length;
+        if (currentStep > 0) {
+            showBack = true;
+        }
+        if (currentStep < numberOfStep - 1) {
+            showNext = true;
+        }
+
+        if (currentStep < numberOfStep - 2) {
+            showSkip = true;
+        }
+
+        FlexTour.Component.createComponents(showSkip, showBack, showNext);
 
         _addClickEvents();
         _addResizeWindowListener();
@@ -139,9 +154,14 @@ function _removeEvents() {
     }
 }
 
-// TODO: skip a step but make sure the step ahead condition is met ... maybe display a message
+/**
+ * Skip the next step to the next next step.
+ * @private
+ */
 function _skipStep() {
-
+    _cleanUp();
+    FlexTour.currentStep += 2;
+    _centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStep]);
 }
 
 /**
@@ -150,9 +170,7 @@ function _skipStep() {
 function _previousStep() {
     _cleanUp();
     FlexTour.currentStep--;
-    if (FlexTour.currentStep >= 0 && FlexTour.currentTour[Constants.STEPS][FlexTour.currentStep]) {
-        _centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStep], false);
-    }
+    _centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStep]);
 }
 
 /**
@@ -161,14 +179,7 @@ function _previousStep() {
 function _nextStep() {
     _cleanUp();
     FlexTour.currentStep++;
-
-    let steps = FlexTour.currentTour[Constants.STEPS];
-
-    if (FlexTour.currentStep >= steps.length - 1) {
-        _centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStep], true);
-    } else {
-        _centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStep], false);
-    }
+    _centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStep]);
 }
 
 /**

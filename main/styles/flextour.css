@@ -4,243 +4,269 @@
  ******************************************************************************/
 
 /********************* STYLES FOR FLEX TOUR ********************/
+.arrow-style {
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  z-index: 20;
+}
 /********************* BUBBLES STYLE ***************************/
 .flextour-tour-bubble {
   position: absolute;
-  width: 450px;
+  width: 400px;
   height: auto;
   padding: 5px;
-  background: #2F4F4F;
+  background: #FFFFFF;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 10px;
-  border: #2F4F4F solid 3px;
+  border: 4px solid #666;
   text-align: left;
-  color: #FFFFFF;
+  color: #000;
   z-index: 20;
+  -webkit-box-shadow: 2px 2px 4px #888;
+  -moz-box-shadow: 2px 2px 4px #888;
+  box-shadow: 2px 2px 4px #888;
 }
-.flextour-tour-bubble .right:before {
-  content: '';
+
+.flextour-tour-bubble .flextour-content {
+  padding-left: 15px;
+}
+
+.arrow-location {
+  position: relative;
+}
+
+.arrow-location.top {
   position: absolute;
-  border-style: solid;
-  border-width: 15px 15px 15px 0;
-  border-color: transparent #2F4F4F;
   display: block;
   width: 0;
-  z-index: 1;
-  margin-top: -15px;
-  left: -15px;
-  top: 50%;
-}
-.flextour-tour-bubble .right:after {
-  content: '';
-  position: absolute;
-  border-style: solid;
-  border-width: 17px 17px 17px 0;
-  border-color: transparent #2F4F4F;
-  display: block;
-  width: 0;
-  z-index: 0;
-  margin-top: -17px;
-  left: -20px;
-  top: 50%;
-}
-.flextour-tour-bubble .left:before {
-  content: '';
-  position: absolute;
-  border-style: solid;
-  border-width: 17px 0 17px 17px;
-  border-color: transparent #2F4F4F;
-  display: block;
-  width: 0;
-  z-index: 0;
-  margin-top: -17px;
-  right: -20px;
-  top: 50%;
-}
-.flextour-tour-bubble .left:after {
-  content: '';
-  position: absolute;
-  border-style: solid;
-  border-width: 15px 0 15px 15px;
-  border-color: transparent #2F4F4F;
-  display: block;
-  width: 0;
-  z-index: 1;
-  margin-top: -15px;
-  right: -15px;
-  top: 50%;
-}
-.flextour-tour-bubble .bottom:before {
-  content: '';
-  position: absolute;
-  border-style: solid;
-  border-width: 0 17px 17px;
-  border-color: #2F4F4F transparent;
-  display: block;
-  width: 0;
-  z-index: 0;
-  margin-left: -17px;
-  top: -20px;
-  left: 50%;
-}
-.flextour-tour-bubble .bottom:after {
-  content: '';
-  position: absolute;
-  border-style: solid;
-  border-width: 0 15px 15px;
-  border-color: #2F4F4F transparent;
-  display: block;
-  width: 0;
-  z-index: 1;
-  margin-left: -15px;
-  top: -15px;
-  left: 50%;
-}
-.flextour-tour-bubble .top:before {
-  content: '';
-  position: absolute;
-  border-style: solid;
-  border-width: 17px 17px 0;
-  border-color: #2F4F4F transparent;
-  display: block;
-  width: 0;
-  z-index: 0;
-  margin-left: -17px;
+  height: 0;
+  z-index: 20;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 20px solid #666;
+  margin-left: -20px;
   bottom: -20px;
   left: 50%;
 }
-.flextour-tour-bubble .top:after {
-  content: '';
+
+.arrow-location.top .inner-arrow {
   position: absolute;
-  border-style: solid;
-  border-width: 15px 15px 0;
-  border-color: #2F4F4F transparent;
   display: block;
   width: 0;
-  z-index: 1;
-  margin-left: -15px;
-  bottom: -15px;
+  height: 0;
+  z-index: 20;
+  border-left: 14px solid transparent;
+  border-right: 14px solid transparent;
+  border-top: 14px solid #FFFFFF;
+  left: -14px;
+  bottom: 6px;
+}
+
+.arrow-location.bottom {
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  z-index: 20;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-bottom: 20px solid #666;
+  margin-left: -20px;
+  top: -20px;
   left: 50%;
 }
-.flextour-button-group {
-  display: inline-block;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
-  background-color: #F4511E;
-  border: none;
-  color: #FFFFFF;
-  font-size: 12pt;
-  padding: 10px;
-  width: 50px;
-  transition: all 0.5s;
-  cursor: pointer;
-  margin: 5px;
+
+.arrow-location.bottom .inner-arrow {
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  z-index: 20;
+  border-left: 14px solid transparent;
+  border-right: 14px solid transparent;
+  border-bottom: 14px solid #FFFFFF;
+  left: -14px;
+  top: 6px;
 }
-.flextour-button-group span {
+
+.arrow-location.left {
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  z-index: 20;
+  border-top: 20px solid transparent;
+  border-bottom: 20px solid transparent;
+  border-left: 20px solid #666;
+  margin-top: -20px;
+  right: -20px;
+  top: 50%;
+}
+
+.arrow-location.left .inner-arrow {
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  z-index: 20;
+  border-top: 14px solid transparent;
+  border-bottom: 14px solid transparent;
+  border-left: 14px solid #FFFFFF;
+  top: -14px;
+  left: -20px;
+}
+
+.arrow-location.right {
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  z-index: 20;
+  border-top: 20px solid transparent;
+  border-bottom: 20px solid transparent;
+  border-right: 20px solid #666;
+  margin-top: -20px;
+  left: -20px;
+  top: 50%;
+}
+
+.arrow-location.right .inner-arrow {
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  z-index: 20;
+  border-top: 14px solid transparent;
+  border-bottom: 14px solid transparent;
+  border-right: 14px solid #FFFFFF;
+  top: -14px;
+  left: 6px;
+}
+.flextour-button-group {
+  float: right;
+}
+
+.flextour-button-group > button {
+  padding: 5px 20px 5px 20px;
+  font-size: 10pt;
+  min-width: 100px;
+  text-decoration: none;
+  background-color: #FFFFFF;
+  color: #000;
   cursor: pointer;
   display: inline-block;
   position: relative;
-  -webkit-transition: 0.5s;
-  -moz-transition: 0.5s;
-  -ms-transition: 0.5s;
-  -o-transition: 0.5s;
-  transition: 0.5s;
 }
-.flextour-skip-button span:before {
-  content: "<<";
+
+.flextour-button-group > button:hover {
+  background-color: #206456;
+  color: #FFFFFF;
+}
+
+.flextour-button-group > button:focus {
+  outline: none;
+}
+
+.flextour-empty-button {
+  border: 2px solid transparent;
+  min-width: 100px;
+  display: inline-block;
+}
+
+.flextour-skip-button {
+  margin-right: 15px;
+  position: relative;
+  border: 2px solid #206456;
+}
+
+.flextour-skip-button:after {
+  content: ">>";
   position: absolute;
   opacity: 0;
-  top: 0;
-  left: -20px;
-  -webkit-transition: 0.5s;
-  -moz-transition: 0.5s;
-  -ms-transition: 0.5s;
-  -o-transition: 0.5s;
+  right: -10px;
   transition: 0.5s;
 }
-.flextour-skip-button:hover span {
-  padding-left: 25px;
-}
-.flextour-skip-button:hover span:before {
+
+.flextour-skip-button:hover:after {
   opacity: 1;
-  left: 0;
+  right: 15px;
 }
-.flextour-back-button span:before {
+
+.flextour-back-button {
+  margin-right: 5px;
+  position: relative;
+  border: 2px solid #206456;
+}
+
+.flextour-back-button:after {
   content: "<";
   position: absolute;
   opacity: 0;
-  top: 0;
-  left: -20px;
-  -webkit-transition: 0.5s;
-  -moz-transition: 0.5s;
-  -ms-transition: 0.5s;
-  -o-transition: 0.5s;
+  left: -10px;
   transition: 0.5s;
 }
-.flextour-back-button:hover span {
-  padding-left: 25px;
-}
-.flextour-back-button:hover span:before {
+
+.flextour-back-button:hover:after {
   opacity: 1;
-  left: 0;
+  left: 15px;
 }
-.flextour-next-button span:after {
+
+.flextour-next-button {
+  margin-right: 10px;
+  position: relative;
+  border: 2px solid #206456;
+}
+
+.flextour-next-button:after {
   content: ">";
   position: absolute;
   opacity: 0;
-  top: 0;
-  right: -20px;
-  -webkit-transition: 0.5s;
-  -moz-transition: 0.5s;
-  -ms-transition: 0.5s;
-  -o-transition: 0.5s;
+  right: -10px;
   transition: 0.5s;
 }
-.flextour-next-button:hover span {
-  padding-right: 25px;
-}
-.flextour-next-button:hover span:after {
+
+.flextour-next-button:hover:after {
   opacity: 1;
-  right: 0;
+  right: 15px;
 }
-.flextour-done-button span:after {
+
+.flextour-done-button {
+  margin-right: 10px;
+  position: relative;
+  border: 2px solid #206456;
+}
+
+.flextour-done-button:after {
   content: "!";
   position: absolute;
   opacity: 0;
-  top: 0;
-  right: -20px;
-  -webkit-transition: 0.5s;
-  -moz-transition: 0.5s;
-  -ms-transition: 0.5s;
-  -o-transition: 0.5s;
+  right: -10px;
   transition: 0.5s;
 }
-.flextour-done-button:hover span {
-  padding-right: 25px;
-}
-.flextour-done-button:hover span:after {
+
+.flextour-done-button:hover:after {
   opacity: 1;
-  right: 0;
+  right: 15px;
 }
 a.flextour-close {
+  position: absolute;
   float: right;
-  margin-top: -10px;
-  margin-right: -10px;
+  top: 0;
+  right: 4px;
   cursor: pointer;
-  color: #FFFFFF;
-  border: 1px solid #AEAEAE;
-  border-radius: 15px;
-  background: #605F61;
-  font-size: 15px;
+  color: #000;
+  font-size: 18pt;
   font-weight: bold;
   display: inline-block;
   line-height: 0;
   padding: 11px 3px;
 }
-a.flextour-close:before {
-  content: "&times;";
+
+a.flextour-close:hover {
+  color: #4F2F2F;
 }
 /*******************************OVERLAY STYLES***********************************/
 .flextour-overlay-styles {
@@ -254,7 +280,7 @@ a.flextour-close:before {
 }
 .flextour-target-border {
   background: none !important;
-  border: #FF0000 solid 3px;
+  border: #666 solid 3px;
   position: absolute;
 }
 .flextour-target-border .interactable {

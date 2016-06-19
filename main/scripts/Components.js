@@ -105,9 +105,11 @@ function _removeAllOverlay() {
 
 /**
  * Create content bubble next to target to display the content of the step
- * @param {boolean} isLastStep  True if it is the last step of the tour
+ * @param {boolean} showSkip  True to show skip button
+ * @param {boolean} showBack  True to show Back Button
+ * @param {boolean} showNext  True to show Next Button, False to show Done Button
  */
-function _createContentBubble(isLastStep) {
+function _createContentBubble(showSkip, showBack, showNext) {
     let bubble = document.createElement("div");
 
     let iconDiv = document.createElement("div");
@@ -117,44 +119,58 @@ function _createContentBubble(isLastStep) {
 
     let contentDiv = document.createElement("p");
     contentDiv.innerText = Components.stepDescription[Constants.CONTENT];
+    contentDiv.classList.add(Constants.BUBBLE_CONTENT);
 
     bubble.classList.add(Constants.TOUR_BUBBLE);
 
     bubble.appendChild(contentDiv);
 
-    if (!Utils.isValid(Components.stepDescription[Constants.NEXT_ON_TARGET]) && !Utils.isValid(Components.stepDescription[Constants.NO_BUTTONS])) {
+    if (!Components.stepDescription[Constants.NEXT_ON_TARGET] && !Components.stepDescription[Constants.NO_BUTTONS]) {
         let buttonGroup = document.createElement("div");
         buttonGroup.classList.add(Constants.BUTTON_GROUP);
 
-        if (!Utils.isValid(Components.stepDescription[Constants.NO_SKIP])) {
+        let emptyButton = document.createElement("span");
+        emptyButton.classList.add(Constants.EMPTY_BUTTON);
+        emptyButton.innerHTML = Constants.EMPTY;
+
+        if (!Components.stepDescription[Constants.NO_SKIP] && showSkip) {
             let skipButton = document.createElement("button");
             skipButton.classList.add(Constants.SKIP_BUTTON);
+            skipButton.innerHTML = Constants.SKIP_TEXT;
             buttonGroup.appendChild(skipButton);
+        } else {
+            buttonGroup.appendChild(emptyButton);
         }
 
-        if (!Utils.isValid(Components.stepDescription[Constants.NO_BACK])) {
+
+        if (!Components.stepDescription[Constants.NO_BACK] && showBack) {
             let backButton = document.createElement("button");
             backButton.classList.add(Constants.BACK_BUTTON);
+            backButton.innerHTML = Constants.BACK_TEXT;
             buttonGroup.appendChild(backButton);
+        } else {
+            buttonGroup.appendChild(emptyButton);
         }
 
-        if (!Utils.isValid(Components.stepDescription[Constants.NO_NEXT]) && !isLastStep) {
-            // Unlikely to be used
+        if (!Components.stepDescription[Constants.NO_NEXT] && showNext) {
             let nextButton = document.createElement("button");
             nextButton.classList.add(Constants.NEXT_BUTTON);
+            nextButton.innerHTML = Constants.NEXT_TEXT;
             buttonGroup.appendChild(nextButton);
         }
 
-        if (isLastStep) {
+        if (!showNext) {
             let doneButton = document.createElement("button");
             doneButton.classList.add(Constants.DONE_BUTTON);
+            doneButton.innerHTML = Constants.DONE_TEXT;
             buttonGroup.appendChild(doneButton);
         }
+
         bubble.appendChild(buttonGroup);
     }
 
     let closeButton = document.createElement("a");
-    closeButton.appendChild(document.createTextNode(Constants.EMPTY));
+    closeButton.innerHTML = Constants.TIMES;
     closeButton.classList.add(Constants.CLOSE_TOUR);
 
     bubble.appendChild(closeButton);
@@ -162,6 +178,10 @@ function _createContentBubble(isLastStep) {
     Components.ui.appendChild(bubble);
 }
 
+/**
+ * Find the current location of the bubble and modify it to point at correct target
+ * Also, create the arrow according to the position defined by user
+ */
 function _placeBubbleLocation() {
     let targetPosition = Components.rect;
     let top = targetPosition.top;
@@ -179,28 +199,37 @@ function _placeBubbleLocation() {
         let halfTargetHeight = Components.rect.height / 2;
         let halfTargetWidth = Components.rect.width / 2;
 
+        let arrow = document.createElement("span");
+        arrow.classList.add(Constants.ARROW_LOCATION);
+
         switch (Components.stepDescription[Constants.POSITION]) {
             case Constants.TOP:
-                bubble.classList.add(Constants.TOP);
-                bubble.style.top = Components.rect.top - bubble.style.height + Constants.PX;
+                arrow.classList.add(Constants.TOP);
+                bubble.style.top = Components.rect.top - bubbleRect.height - Constants.ARROW_SIZE + Constants.PX;
                 bubble.style.left = Components.rect.left + halfTargetWidth - halfBubbleWidth + Constants.PX;
                 break;
             case Constants.RIGHT:
-                bubble.classList.add(Constants.RIGHT);
+                arrow.classList.add(Constants.RIGHT);
                 bubble.style.top = Components.rect.top + halfTargetHeight - halfBubbleHeight + Constants.PX;
-                bubble.style.left = right + Constants.PX;
+                bubble.style.left = right + Constants.ARROW_SIZE + Constants.PX;
                 break;
             case Constants.LEFT:
-                bubble.classList.add(Constants.LEFT);
-                bubble.style.left = Components.rect.left - bubble.style.width + Constants.PX;
-                bubble.style.top = Components.rect.height + halfBubbleHeight - halfTargetHeight + Constants.PX;
+                arrow.classList.add(Constants.LEFT);
+                bubble.style.left = Components.rect.left - bubbleRect.width - Constants.ARROW_SIZE + Constants.PX;
+                bubble.style.top = Components.rect.top + halfTargetHeight - halfBubbleHeight + Constants.PX;
                 break;
             default: // This is either bottom or something that doesn't exist
-                bubble.classList.add(Constants.BOTTOM);
-                bubble.style.top = bottom + Constants.PX;
+                arrow.classList.add(Constants.BOTTOM);
+                bubble.style.top = bottom + Constants.ARROW_SIZE + Constants.PX;
                 bubble.style.left = Components.rect.left + halfTargetWidth - halfBubbleWidth + Constants.PX;
                 break;
         }
+
+        let innerHollowArrow = document.createElement("span");
+        innerHollowArrow.classList.add(Constants.HOLLOW_ARROW);
+        arrow.appendChild(innerHollowArrow);
+
+        bubble.appendChild(arrow);
     }
 }
 
@@ -243,12 +272,14 @@ function _clearBorderAroundTarget() {
 
 /**
  * Main function to create overlays, border around target and the content bubble next to target
- * @param isLastStep        True if current step is last step, false otherwise
+ * @param showSkip        True to show Skip button
+ * @param showBack        True to show Back Button
+ * @param showNext        True to show NExt Button, false will show Done button
  */
-Components.prototype.createComponents = function (isLastStep) {
+Components.prototype.createComponents = function (showSkip, showBack, showNext) {
     _addOverlays();
     _addBorderAroundTarget();
-    _createContentBubble(isLastStep);
+    _createContentBubble(showSkip, showBack, showNext);
     document.body.appendChild(Components.ui);
     _placeBubbleLocation();
 };

@@ -20,6 +20,11 @@ document.querySelector("#trigger").onclick = function () {
             target: "#title2",
             type: "info"
         }, {
+            content: "Header level 2 again",
+            position: "left",
+            target: "#title3",
+            type: "info"
+        }, {
             content: "Big box of nothing",
             position: "top",
             target: "#testbox"

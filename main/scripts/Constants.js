@@ -11,6 +11,9 @@ module.exports = {
     TARGET_BORDER: "flextour-target-border",
     TARGET_INTERACTABLE: "interactable",
     TOUR_BUBBLE: "flextour-tour-bubble",
+    ARROW_LOCATION: "arrow-location",
+    HOLLOW_ARROW: "inner-arrow",
+    BUBBLE_CONTENT: "flextour-content",
 
     ICON: "flextour-icon",
     CLOSE_TOUR: "flextour-close",
@@ -19,11 +22,12 @@ module.exports = {
     BACK_BUTTON: "flextour-back-button",
     NEXT_BUTTON: "flextour-next-button",
     DONE_BUTTON: "flextour-done-button",
+    EMPTY_BUTTON: "flextour-empty-button",
     BUTTON_GROUP: "flextour-button-group",
 
     // Event Block
-    FLEX_CLICK: "click.flextour",
-    FLEX_RESIZE: "resize.flextour",
+    FLEX_CLICK: "click",
+    FLEX_RESIZE: "resize",
 
     // Tour Attributes Block
     TOUR_DEFAULT_SETTINGS: {
@@ -60,12 +64,19 @@ module.exports = {
 
     TOUR: "tour",
 
-    EMPTY: "&nbsp,",
+    TIMES: "&times;",
+    EMPTY: "&nbsp;",
     BORDER_WIDTH: 3,
+    ARROW_SIZE: 20,
     PX: "px",
 
     TOP: "top",
     RIGHT: "right",
     LEFT: "left",
-    BOTTOM: "bottom"
+    BOTTOM: "bottom",
+
+    SKIP_TEXT: "Skip",
+    NEXT_TEXT: "Next",
+    BACK_TEXT: "Back",
+    DONE_TEXT: "Done"
 };
