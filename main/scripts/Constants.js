@@ -15,14 +15,14 @@ module.exports = {
     HOLLOW_ARROW: "inner-arrow",
     BUBBLE_CONTENT: "flextour-content",
 
-    ICON: "flextour-icon",
+    ACTION_ICON: "flextour-icon-action",
+    DEFAULT_ICON: "flextour-icon-info",
     CLOSE_TOUR: "flextour-close",
 
     SKIP_BUTTON: "flextour-skip-button",
     BACK_BUTTON: "flextour-back-button",
     NEXT_BUTTON: "flextour-next-button",
     DONE_BUTTON: "flextour-done-button",
-    EMPTY_BUTTON: "flextour-empty-button",
     BUTTON_GROUP: "flextour-button-group",
 
     // Event Block
@@ -34,9 +34,6 @@ module.exports = {
         transition: {},
         canInteract: true,
         noButtons: false,
-        noBack: false,
-        noSkip: false,
-        noNext: false,
         stepNumber: true,
         endOnOverlayClick: true,
         endOnEsc: true
@@ -44,9 +41,6 @@ module.exports = {
 
     ID: "id",
     STEPS: "steps",
-    NO_BACK: "noBack",
-    NO_SKIP: "noSkip",
-    NO_NEXT: "noNext",
     NO_BUTTONS: "noButtons",
     CAN_INTERACT: "canInteract",
     TYPE: "type",
@@ -65,7 +59,6 @@ module.exports = {
     TOUR: "tour",
 
     TIMES: "&times;",
-    EMPTY: "&nbsp;",
     BORDER_WIDTH: 3,
     ARROW_SIZE: 20,
     PX: "px",

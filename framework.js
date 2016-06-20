@@ -208,9 +208,9 @@ var FlexTour =
          */
         function _previousStep() {
             _cleanUp();
-            this.currentStep--;
-            if (this.currentStep >= 0 && this.currentTour[Constants.STEPS][this.currentStep]) {
-                _centralOrganizer(this.currentTour[Constants.STEPS][this.currentStep], false);
+            this.currentStepNumber--;
+            if (this.currentStepNumber >= 0 && this.currentTour[Constants.STEPS][this.currentStepNumber]) {
+                _centralOrganizer(this.currentTour[Constants.STEPS][this.currentStepNumber], false);
             }
         }
 
@@ -219,14 +219,14 @@ var FlexTour =
          */
         function _nextStep() {
             _cleanUp();
-            this.currentStep++;
+            this.currentStepNumber++;
 
             let steps = this.currentTour[Constants.STEPS];
 
-            if (this.currentStep >= steps.length - 1) {
-                _centralOrganizer(this.currentTour[Constants.STEPS][this.currentStep], true);
+            if (this.currentStepNumber >= steps.length - 1) {
+                _centralOrganizer(this.currentTour[Constants.STEPS][this.currentStepNumber], true);
             } else {
-                _centralOrganizer(this.currentTour[Constants.STEPS][this.currentStep], false);
+                _centralOrganizer(this.currentTour[Constants.STEPS][this.currentStepNumber], false);
             }
         }
 
@@ -262,7 +262,7 @@ var FlexTour =
         function FlexTour(tourDesc) {
             this.toursMap = [];
             this.currentTourIndex = -1;
-            this.currentStep = 0;
+            this.currentStepNumber = 0;
             this.currentTour = {};
 
             _preprocessingTours(tourDesc);
@@ -278,11 +278,11 @@ var FlexTour =
             }
 
             this.currentTour = Utils.clone({}, this.toursMap[this.currentTourIndex]);
-            this.currentStep = 0;
+            this.currentStepNumber = 0;
 
             let steps = this.currentTour[Constants.STEPS];
             if (Utils.isValid(steps)) {
-                let firstStep = steps[this.currentStep];
+                let firstStep = steps[this.currentStepNumber];
                 _centralOrganizer(firstStep);
             }
             console.log("Tour does NOT contain any step to display.");

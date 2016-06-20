@@ -11,6 +11,14 @@
   height: 0;
   z-index: 20;
 }
+
+.icon-style {
+  width: 40px;
+  height: 40px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 10px;
+}
 /********************* BUBBLES STYLE ***************************/
 .flextour-tour-bubble {
   position: absolute;
@@ -29,15 +37,12 @@
   -moz-box-shadow: 2px 2px 4px #888;
   box-shadow: 2px 2px 4px #888;
 }
-
 .flextour-tour-bubble .flextour-content {
-  padding-left: 15px;
+  padding-left: 10px;
 }
-
 .arrow-location {
   position: relative;
 }
-
 .arrow-location.top {
   position: absolute;
   display: block;
@@ -51,7 +56,6 @@
   bottom: -20px;
   left: 50%;
 }
-
 .arrow-location.top .inner-arrow {
   position: absolute;
   display: block;
@@ -64,7 +68,6 @@
   left: -14px;
   bottom: 6px;
 }
-
 .arrow-location.bottom {
   position: absolute;
   display: block;
@@ -78,7 +81,6 @@
   top: -20px;
   left: 50%;
 }
-
 .arrow-location.bottom .inner-arrow {
   position: absolute;
   display: block;
@@ -91,7 +93,6 @@
   left: -14px;
   top: 6px;
 }
-
 .arrow-location.left {
   position: absolute;
   display: block;
@@ -105,7 +106,6 @@
   right: -20px;
   top: 50%;
 }
-
 .arrow-location.left .inner-arrow {
   position: absolute;
   display: block;
@@ -118,7 +118,6 @@
   top: -14px;
   left: -20px;
 }
-
 .arrow-location.right {
   position: absolute;
   display: block;
@@ -132,7 +131,6 @@
   left: -20px;
   top: 50%;
 }
-
 .arrow-location.right .inner-arrow {
   position: absolute;
   display: block;
@@ -145,10 +143,27 @@
   top: -14px;
   left: 6px;
 }
+
+.flextour-icon-info {
+  background: url("icons/eye.png") no-repeat left;
+  width: 40px;
+  height: 40px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 10px;
+}
+
+.flextour-icon-action {
+  background: url("icons/pencil.png") no-repeat left;
+  width: 40px;
+  height: 40px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 10px;
+}
 .flextour-button-group {
   float: right;
 }
-
 .flextour-button-group > button {
   padding: 5px 20px 5px 20px;
   font-size: 10pt;
@@ -160,28 +175,38 @@
   display: inline-block;
   position: relative;
 }
-
 .flextour-button-group > button:hover {
   background-color: #206456;
   color: #FFFFFF;
 }
-
 .flextour-button-group > button:focus {
   outline: none;
 }
 
+.flextour-button-group > button[disabled] {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  cursor: not-allowed;
+  background-color: #FFFFFF;
+  color: #333333;
+  border-color: #CCC;
+}
 .flextour-empty-button {
   border: 2px solid transparent;
   min-width: 100px;
   display: inline-block;
 }
-
 .flextour-skip-button {
   margin-right: 15px;
   position: relative;
   border: 2px solid #206456;
 }
-
 .flextour-skip-button:after {
   content: ">>";
   position: absolute;
@@ -189,18 +214,15 @@
   right: -10px;
   transition: 0.5s;
 }
-
 .flextour-skip-button:hover:after {
   opacity: 1;
   right: 15px;
 }
-
 .flextour-back-button {
   margin-right: 5px;
   position: relative;
   border: 2px solid #206456;
 }
-
 .flextour-back-button:after {
   content: "<";
   position: absolute;
@@ -208,18 +230,15 @@
   left: -10px;
   transition: 0.5s;
 }
-
 .flextour-back-button:hover:after {
   opacity: 1;
   left: 15px;
 }
-
 .flextour-next-button {
   margin-right: 10px;
   position: relative;
   border: 2px solid #206456;
 }
-
 .flextour-next-button:after {
   content: ">";
   position: absolute;
@@ -227,18 +246,15 @@
   right: -10px;
   transition: 0.5s;
 }
-
 .flextour-next-button:hover:after {
   opacity: 1;
   right: 15px;
 }
-
 .flextour-done-button {
   margin-right: 10px;
   position: relative;
   border: 2px solid #206456;
 }
-
 .flextour-done-button:after {
   content: "!";
   position: absolute;
@@ -246,7 +262,6 @@
   right: -10px;
   transition: 0.5s;
 }
-
 .flextour-done-button:hover:after {
   opacity: 1;
   right: 15px;
@@ -264,7 +279,6 @@ a.flextour-close {
   line-height: 0;
   padding: 11px 3px;
 }
-
 a.flextour-close:hover {
   color: #4F2F2F;
 }
@@ -283,6 +297,7 @@ a.flextour-close:hover {
   border: #666 solid 3px;
   position: absolute;
 }
-.flextour-target-border .interactable {
+
+.flextour-target-border.interactable {
   pointer-events: none;
 }

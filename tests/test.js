@@ -18,7 +18,8 @@ document.querySelector("#trigger").onclick = function () {
             content: "Header level 2",
             position: "bottom",
             target: "#title2",
-            type: "info"
+            type: "action",
+            nextOnTargetClick: true
         }, {
             content: "Header level 2 again",
             position: "left",

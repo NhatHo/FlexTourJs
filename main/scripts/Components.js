@@ -108,66 +108,71 @@ function _removeAllOverlay() {
  * @param {boolean} showSkip  True to show skip button
  * @param {boolean} showBack  True to show Back Button
  * @param {boolean} showNext  True to show Next Button, False to show Done Button
+ * @param {boolean} disableNext  True to disable either Next or Done button
  */
-function _createContentBubble(showSkip, showBack, showNext) {
+function _createContentBubble(showSkip, showBack, showNext, disableNext) {
     let bubble = document.createElement("div");
 
-    let iconDiv = document.createElement("div");
-    iconDiv.classList.add(Constants.ICON);
-
+    let iconDiv = document.createElement("span");
+    let currentStepType = Components.stepDescription[Constants.TYPE];
+    if (currentStepType === Constants.ACTION_TYPE) {
+        iconDiv.classList.add(Constants.ACTION_ICON);
+    } else if (currentStepType === Constants.DEFAULT_TYPE) {
+        iconDiv.classList.add(Constants.DEFAULT_ICON);
+    }
     bubble.appendChild(iconDiv);
 
-    let contentDiv = document.createElement("p");
-    contentDiv.innerText = Components.stepDescription[Constants.CONTENT];
-    contentDiv.classList.add(Constants.BUBBLE_CONTENT);
+    let contentSpan = document.createElement("span");
+    contentSpan.innerText = Components.stepDescription[Constants.CONTENT];
+    contentSpan.classList.add(Constants.BUBBLE_CONTENT);
 
     bubble.classList.add(Constants.TOUR_BUBBLE);
 
-    bubble.appendChild(contentDiv);
+    bubble.appendChild(contentSpan);
 
-    if (!Components.stepDescription[Constants.NEXT_ON_TARGET] && !Components.stepDescription[Constants.NO_BUTTONS]) {
-        let buttonGroup = document.createElement("div");
-        buttonGroup.classList.add(Constants.BUTTON_GROUP);
+    let buttonGroup = document.createElement("div");
+    buttonGroup.classList.add(Constants.BUTTON_GROUP);
 
-        let emptyButton = document.createElement("span");
-        emptyButton.classList.add(Constants.EMPTY_BUTTON);
-        emptyButton.innerHTML = Constants.EMPTY;
-
-        if (!Components.stepDescription[Constants.NO_SKIP] && showSkip) {
-            let skipButton = document.createElement("button");
-            skipButton.classList.add(Constants.SKIP_BUTTON);
-            skipButton.innerHTML = Constants.SKIP_TEXT;
-            buttonGroup.appendChild(skipButton);
-        } else {
-            buttonGroup.appendChild(emptyButton);
-        }
-
-
-        if (!Components.stepDescription[Constants.NO_BACK] && showBack) {
-            let backButton = document.createElement("button");
-            backButton.classList.add(Constants.BACK_BUTTON);
-            backButton.innerHTML = Constants.BACK_TEXT;
-            buttonGroup.appendChild(backButton);
-        } else {
-            buttonGroup.appendChild(emptyButton);
-        }
-
-        if (!Components.stepDescription[Constants.NO_NEXT] && showNext) {
-            let nextButton = document.createElement("button");
-            nextButton.classList.add(Constants.NEXT_BUTTON);
-            nextButton.innerHTML = Constants.NEXT_TEXT;
-            buttonGroup.appendChild(nextButton);
-        }
-
-        if (!showNext) {
-            let doneButton = document.createElement("button");
-            doneButton.classList.add(Constants.DONE_BUTTON);
-            doneButton.innerHTML = Constants.DONE_TEXT;
-            buttonGroup.appendChild(doneButton);
-        }
-
-        bubble.appendChild(buttonGroup);
+    let skipButton = document.createElement("button");
+    skipButton.classList.add(Constants.SKIP_BUTTON);
+    skipButton.innerHTML = Constants.SKIP_TEXT;
+    if (!showSkip) {
+        skipButton.disabled = true;
     }
+    buttonGroup.appendChild(skipButton);
+
+    let backButton = document.createElement("button");
+    backButton.classList.add(Constants.BACK_BUTTON);
+    backButton.innerHTML = Constants.BACK_TEXT;
+    if (!showBack) {
+        backButton.disabled = true;
+    }
+    buttonGroup.appendChild(backButton);
+
+
+    if (showNext) {
+        let nextButton = document.createElement("button");
+        nextButton.classList.add(Constants.NEXT_BUTTON);
+        nextButton.innerHTML = Constants.NEXT_TEXT;
+
+        if (disableNext) {
+            nextButton.disabled = true;
+        }
+
+        buttonGroup.appendChild(nextButton);
+    } else {
+        let doneButton = document.createElement("button");
+        doneButton.classList.add(Constants.DONE_BUTTON);
+        doneButton.innerHTML = Constants.DONE_TEXT;
+
+        if (disableNext) {
+            doneButton.disabled = true;
+        }
+
+        buttonGroup.appendChild(doneButton);
+    }
+
+    bubble.appendChild(buttonGroup);
 
     let closeButton = document.createElement("a");
     closeButton.innerHTML = Constants.TIMES;
@@ -274,12 +279,13 @@ function _clearBorderAroundTarget() {
  * Main function to create overlays, border around target and the content bubble next to target
  * @param showSkip        True to show Skip button
  * @param showBack        True to show Back Button
- * @param showNext        True to show NExt Button, false will show Done button
+ * @param showNext        True to show Next Button, False to show Done Button
+ * @param disableNext     True to disable Next and Done button
  */
-Components.prototype.createComponents = function (showSkip, showBack, showNext) {
+Components.prototype.createComponents = function (showSkip, showBack, showNext, disableNext) {
     _addOverlays();
     _addBorderAroundTarget();
-    _createContentBubble(showSkip, showBack, showNext);
+    _createContentBubble(showSkip, showBack, showNext, disableNext);
     document.body.appendChild(Components.ui);
     _placeBubbleLocation();
 };

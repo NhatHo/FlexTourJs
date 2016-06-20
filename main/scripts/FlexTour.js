@@ -61,21 +61,35 @@ function _centralOrganizer(stepDesc) {
     if (Utils.isValid(FlexTour.Component) && Utils.isValid(FlexTour.Component.getRect())) {
         let showSkip = false,
             showBack = false,
-            showNext = false;
-        let currentStep = FlexTour.currentStep;
-        let numberOfStep = FlexTour.currentTour[Constants.STEPS].length;
-        if (currentStep > 0) {
-            showBack = true;
-        }
-        if (currentStep < numberOfStep - 1) {
-            showNext = true;
+            showNext = false,
+            disableNext = false;
+
+
+        let currentStepNumber = FlexTour.currentStepNumber;
+        let currentStep = FlexTour.currentTour[Constants.STEPS][currentStepNumber];
+        // When the current step has NextOnTarget flag set, assuming that this step setup prerequisite for next step
+        // Which means that user cannot click Next, or Skip.
+
+        if (!currentStep[Constants.NO_BUTTONS]) {
+            let numberOfStep = FlexTour.currentTour[Constants.STEPS].length;
+
+            if (currentStepNumber < numberOfStep - 1) {
+                showNext = true;
+            }
+
+            if (currentStepNumber < numberOfStep - 2 && !currentStep[Constants.NEXT_ON_TARGET]) {
+                showSkip = true;
+            }
+            if (currentStep[Constants.NEXT_ON_TARGET]) {
+                disableNext = true;
+            }
+
+            if (currentStepNumber > 0) {
+                showBack = true;
+            }
         }
 
-        if (currentStep < numberOfStep - 2) {
-            showSkip = true;
-        }
-
-        FlexTour.Component.createComponents(showSkip, showBack, showNext);
+        FlexTour.Component.createComponents(showSkip, showBack, showNext, disableNext);
 
         _addClickEvents();
         _addResizeWindowListener();
@@ -117,6 +131,15 @@ function _addClickEvents() {
     if (Utils.isValid(closeButton)) {
         Utils.addEvent(closeButton, Constants.FLEX_CLICK, _cleanUp);
     }
+
+    let currentStep = FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber];
+    if (currentStep[Constants.NEXT_ON_TARGET]) {
+        let currentTarget = document.querySelector(currentStep[Constants.TARGET]);
+        if (Utils.isValid(currentTarget)) {
+            Utils.addEvent(currentTarget, Constants.FLEX_CLICK, _nextStep);
+        }
+
+    }
 }
 
 /**
@@ -152,6 +175,14 @@ function _removeEvents() {
     if (Utils.isValid(closeButton)) {
         Utils.removeEvent(closeButton, Constants.FLEX_CLICK, _cleanUp);
     }
+
+    let currentStep = FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber];
+    if (currentStep[Constants.NEXT_ON_TARGET]) {
+        let currentTarget = document.querySelector(currentStep[Constants.TARGET]);
+        if (Utils.isValid(currentTarget)) {
+            Utils.removeEvent(currentTarget, Constants.FLEX_CLICK, _nextStep);
+        }
+    }
 }
 
 /**
@@ -160,8 +191,8 @@ function _removeEvents() {
  */
 function _skipStep() {
     _cleanUp();
-    FlexTour.currentStep += 2;
-    _centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStep]);
+    FlexTour.currentStepNumber += 2;
+    _centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber]);
 }
 
 /**
@@ -169,8 +200,8 @@ function _skipStep() {
  */
 function _previousStep() {
     _cleanUp();
-    FlexTour.currentStep--;
-    _centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStep]);
+    FlexTour.currentStepNumber--;
+    _centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber]);
 }
 
 /**
@@ -178,8 +209,8 @@ function _previousStep() {
  */
 function _nextStep() {
     _cleanUp();
-    FlexTour.currentStep++;
-    _centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStep]);
+    FlexTour.currentStepNumber++;
+    _centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber]);
 }
 
 /**
@@ -212,7 +243,7 @@ function _cleanUp() {
 function FlexTour(tourDesc) {
     FlexTour.toursMap = [];
     FlexTour.currentTourIndex = 0;
-    FlexTour.currentStep = 0;
+    FlexTour.currentStepNumber = 0;
     FlexTour.currentTour = {};
     _preprocessingTours(tourDesc);
 }
@@ -227,11 +258,11 @@ FlexTour.prototype.run = function () {
     }
 
     FlexTour.currentTour = Utils.clone({}, FlexTour.toursMap[FlexTour.currentTourIndex]);
-    FlexTour.currentStep = 0;
+    FlexTour.currentStepNumber = 0;
 
     let steps = FlexTour.currentTour[Constants.STEPS];
     if (Utils.isValid(steps)) {
-        let firstStep = steps[FlexTour.currentStep];
+        let firstStep = steps[FlexTour.currentStepNumber];
         _centralOrganizer(firstStep);
     }
 };
