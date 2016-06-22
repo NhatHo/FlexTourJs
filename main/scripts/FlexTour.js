@@ -6,6 +6,7 @@
 let Components = require("./Components");
 let Constants = require("./Constants");
 let Utils = require("./Utilities");
+var $ = require("./../../node_modules/jquery/dist/jquery.min.js");
 
 /**
  * Pre-process all information for all tours make sure each step and each tour contains necessary
@@ -13,7 +14,7 @@ let Utils = require("./Utilities");
  * @param tourDesc      JSON description file that has all information needed
  */
 function _preprocessingTours(tourDesc) {
-    if (Array.isArray(tourDesc)) {
+    if ($.isArray(tourDesc)) {
         for (let i = 0; i < tourDesc.length; i++) {
             _initializeTour(tourDesc[i]);
         }
@@ -27,10 +28,10 @@ function _preprocessingTours(tourDesc) {
  * @param tour      The tour object ---> Must be an object
  */
 function _initializeTour(tour) {
-    let rawTour = Utils.clone({}, tour);
+    let rawTour = $.extend({}, tour);
     // Fill in information for each tour in case any important information is missing
     rawTour[Constants.ID] = rawTour[Constants.ID] || Constants.TOUR + i;
-    rawTour = Utils.clone({}, Constants.TOUR_DEFAULT_SETTINGS, rawTour);
+    rawTour = $.extend({}, Constants.TOUR_DEFAULT_SETTINGS, rawTour);
 
     // Fill in information for each step in case anything important is missing
     let numOfSteps = rawTour[Constants.STEPS].length;
@@ -102,43 +103,24 @@ function _centralOrganizer(stepDesc) {
  * Attached all necessary handlers to the elements
  */
 function _addClickEvents() {
-    let overlays = Utils.getElesFromClassName(Constants.OVERLAY_STYLE);
-    for (let i = 0; i < overlays.length; i++) {
-        Utils.addEvent(overlays[i], Constants.FLEX_CLICK, _cleanUp);
-    }
+    Utils.getElementsAndAttachEvent(Constants.OVERLAY_STYLE, Constants.FLEX_CLICK, _cleanUp);
 
-    let skipButton = Utils.getEleFromClassName(Constants.SKIP_BUTTON);
-    if (Utils.isValid(skipButton)) {
-        Utils.addEvent(skipButton, Constants.FLEX_CLICK, _skipStep);
-    }
+    Utils.getElementsAndAttachEvent(Constants.SKIP_BUTTON, Constants.FLEX_CLICK, _skipStep);
 
-    let backButton = Utils.getEleFromClassName(Constants.BACK_BUTTON);
-    if (Utils.isValid(backButton)) {
-        Utils.addEvent(backButton, Constants.FLEX_CLICK, _previousStep);
-    }
+    Utils.getElementsAndAttachEvent(Constants.BACK_BUTTON, Constants.FLEX_CLICK, _previousStep);
 
-    let nextButton = Utils.getEleFromClassName(Constants.NEXT_BUTTON);
-    if (Utils.isValid(nextButton)) {
-        Utils.addEvent(nextButton, Constants.FLEX_CLICK, _nextStep);
-    }
+    Utils.getElementsAndAttachEvent(Constants.NEXT_BUTTON, Constants.FLEX_CLICK, _nextStep);
 
-    let doneButton = Utils.getEleFromClassName(Constants.DONE_BUTTON);
-    if (Utils.isValid(doneButton)) {
-        Utils.addEvent(doneButton, Constants.FLEX_CLICK, _cleanUp);
-    }
+    Utils.getElementsAndAttachEvent(Constants.DONE_BUTTON, Constants.FLEX_CLICK, _cleanUp);
 
-    let closeButton = Utils.getEleFromClassName(Constants.CLOSE_TOUR);
-    if (Utils.isValid(closeButton)) {
-        Utils.addEvent(closeButton, Constants.FLEX_CLICK, _cleanUp);
-    }
+    Utils.getElementsAndAttachEvent(Constants.CLOSE_TOUR, Constants.FLEX_CLICK, _cleanUp);
 
     let currentStep = FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber];
     if (currentStep[Constants.NEXT_ON_TARGET]) {
-        let currentTarget = document.querySelector(currentStep[Constants.TARGET]);
+        let currentTarget = $(currentStep[Constants.TARGET]);
         if (Utils.isValid(currentTarget)) {
             Utils.addEvent(currentTarget, Constants.FLEX_CLICK, _nextStep);
         }
-
     }
 }
 
@@ -146,39 +128,21 @@ function _addClickEvents() {
  * Remove all attached event to avoid leaking memories
  */
 function _removeEvents() {
-    let overlays = Utils.getElesFromClassName(Constants.OVERLAY_STYLE);
-    for (let i = 0; i < overlays.length; i++) {
-        Utils.removeEvent(overlays[i], Constants.FLEX_CLICK, _cleanUp);
-    }
+    Utils.removeELementsAndAttachedEvent(Constants.OVERLAY_STYLE, Constants.FLEX_CLICK, _cleanUp);
 
-    let skipButton = Utils.getEleFromClassName(Constants.SKIP_BUTTON);
-    if (Utils.isValid(skipButton)) {
-        Utils.removeEvent(skipButton, Constants.FLEX_CLICK, _skipStep);
-    }
+    Utils.removeELementsAndAttachedEvent(Constants.SKIP_BUTTON, Constants.FLEX_CLICK, _skipStep);
 
-    let backButton = Utils.getEleFromClassName(Constants.BACK_BUTTON);
-    if (Utils.isValid(backButton)) {
-        Utils.removeEvent(backButton, Constants.FLEX_CLICK, _previousStep);
-    }
+    Utils.removeELementsAndAttachedEvent(Constants.BACK_BUTTON, Constants.FLEX_CLICK, _previousStep);
 
-    let nextButton = Utils.getEleFromClassName(Constants.NEXT_BUTTON);
-    if (Utils.isValid(nextButton)) {
-        Utils.removeEvent(nextButton, Constants.FLEX_CLICK, _nextStep);
-    }
+    Utils.removeELementsAndAttachedEvent(Constants.NEXT_BUTTON, Constants.FLEX_CLICK, _nextStep);
 
-    let doneButton = Utils.getEleFromClassName(Constants.DONE_BUTTON);
-    if (Utils.isValid(doneButton)) {
-        Utils.removeEvent(doneButton, Constants.FLEX_CLICK, _cleanUp);
-    }
+    Utils.removeELementsAndAttachedEvent(Constants.DONE_BUTTON, Constants.FLEX_CLICK, _cleanUp);
 
-    let closeButton = Utils.getEleFromClassName(Constants.CLOSE_TOUR);
-    if (Utils.isValid(closeButton)) {
-        Utils.removeEvent(closeButton, Constants.FLEX_CLICK, _cleanUp);
-    }
+    Utils.removeELementsAndAttachedEvent(Constants.CLOSE_TOUR, Constants.FLEX_CLICK, _cleanUp);
 
     let currentStep = FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber];
     if (currentStep[Constants.NEXT_ON_TARGET]) {
-        let currentTarget = document.querySelector(currentStep[Constants.TARGET]);
+        let currentTarget = $(currentStep[Constants.TARGET]);
         if (Utils.isValid(currentTarget)) {
             Utils.removeEvent(currentTarget, Constants.FLEX_CLICK, _nextStep);
         }
@@ -257,7 +221,7 @@ FlexTour.prototype.run = function () {
         return;
     }
 
-    FlexTour.currentTour = Utils.clone({}, FlexTour.toursMap[FlexTour.currentTourIndex]);
+    FlexTour.currentTour = $.extend({}, FlexTour.toursMap[FlexTour.currentTourIndex]);
     FlexTour.currentStepNumber = 0;
 
     let steps = FlexTour.currentTour[Constants.STEPS];

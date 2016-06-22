@@ -4,59 +4,9 @@
  ******************************************************************************/
 
 var Constants = require("./Constants");
+var $ = require("./../../node_modules/jquery/dist/jquery.min.js");
 
 module.exports = {
-
-    /**
-     * Shallow clone an object and return the first object in list
-     * Similar to extend in jquery. clone(output, obj1, obj2)
-     * The right most will override the left objects
-     * @param out        Object to be override, usually the result object
-     * @returns {*|{}}      Return back the object in 1st location
-     */
-    clone: function (out) {
-        out = out || {};
-
-        for (let i = 1; i < arguments.length; i++) {
-            if (!arguments[i])
-                continue;
-
-            for (let key in arguments[i]) {
-                if (arguments[i].hasOwnProperty(key))
-                    out[key] = arguments[i][key];
-            }
-        }
-
-        return out;
-    },
-
-    /**
-     * Deep clone an object and merge it with all objects on the right
-     * @param out       Given object for merging and cloning
-     * @returns {*|{}}  Original object after merging and cloning
-     */
-    deepClone: function (out) {
-        out = out || {};
-
-        for (let i = 1; i < arguments.length; i++) {
-            let obj = arguments[i];
-
-            if (!obj)
-                continue;
-
-            for (let key in obj) {
-                if (obj.hasOwnProperty(key)) {
-                    if (typeof obj[key] === 'object')
-                        out[key] = this.deepClone(out[key], obj[key]);
-                    else
-                        out[key] = obj[key];
-                }
-            }
-        }
-
-        return out;
-    },
-
     /**
      * Check if the target is visible or not. This has a draw back that the target might not have render completely
      * If that is the case the bubble and highlight box will not render properly.
@@ -64,7 +14,7 @@ module.exports = {
      * @return {boolean}    True if target takes up a rectangle in the DOM, false otherwise
      */
     isVisible: function (target) {
-        let element = document.querySelector(target);
+        let element = $(target);
         if (this.isValid(element)) {
             return element.offsetHeight > 0 && element.offsetWidth > 0;
         }
@@ -77,7 +27,7 @@ module.exports = {
      * @returns {boolean}       True if target exists in DOM, false otherwise
      */
     doesExist: function (target) {
-        let element = document.querySelector(target);
+        let element = $(target);
         return this.isValid(element);
     },
 
@@ -149,7 +99,7 @@ module.exports = {
      * @param className     Given classname of element we want to get the element
      */
     getEleFromClassName: function (className) {
-        return document.querySelector(this.getClassName(className));
+        return $(this.getClassName(className));
     },
 
     /**
@@ -157,7 +107,7 @@ module.exports = {
      * @param className     Similar classname of group of elements
      */
     getElesFromClassName: function (className) {
-        return document.querySelectorAll(this.getClassName(className));
+        return $(this.getClassName(className));
     },
 
     /**
@@ -168,5 +118,33 @@ module.exports = {
      */
     isValidStep: function (stepDesc) {
         return (this.isValid(stepDesc[Constants.TARGET]) && this.isValid(stepDesc[Constants.CONTENT]));
+    },
+
+    /**
+     * Get the element list from the given classname.
+     * Run through each element and attach event and callback function to it
+     * @param className     The className of element (without the DOT)
+     * @param event         The event that will trigger
+     * @param callback      The callback function that will be triggered when event is triggered
+     */
+    getElementsAndAttachEvent: function (className, event, callback) {
+        let els = this.getElesFromClassName(className);
+        for (let i = 0; i < els.length; i++) {
+            this.addEvent(els[i], event, callback);
+        }
+    },
+
+    /**
+     * Get the element list from the given classname.
+     * Run through each element and UNATTACH event and trigger callback function
+     * @param className     The className of element (without the DOT)
+     * @param event         The event that will trigger
+     * @param callback      The callback function that will be triggered when event is triggered
+     */
+    removeELementsAndAttachedEvent: function (className, event, callback) {
+        let els = this.getElesFromClassName(className);
+        for (let i = 0; i < els.length; i++) {
+            this.removeEvent(els[i], event, callback);
+        }
     }
 };
