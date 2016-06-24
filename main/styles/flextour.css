@@ -11,13 +11,14 @@
   height: 0;
   z-index: 20;
 }
-
 .icon-style {
   width: 40px;
   height: 40px;
   display: inline-block;
   vertical-align: middle;
-  margin-left: 10px;
+  position: absolute;
+  top: 10px;
+  left: 15px;
 }
 /********************* BUBBLES STYLE ***************************/
 .flextour-tour-bubble {
@@ -38,7 +39,9 @@
   box-shadow: 2px 2px 4px #888;
 }
 .flextour-tour-bubble .flextour-content {
-  padding-left: 10px;
+  display: inline-block;
+  margin-left: 53px;
+  padding: 10px 10px 10px 0;
 }
 .arrow-location {
   position: relative;
@@ -143,23 +146,25 @@
   top: -14px;
   left: 6px;
 }
-
 .flextour-icon-info {
   background: url("icons/eye.png") no-repeat left;
   width: 40px;
   height: 40px;
   display: inline-block;
   vertical-align: middle;
-  margin-left: 10px;
+  position: absolute;
+  top: 10px;
+  left: 15px;
 }
-
 .flextour-icon-action {
   background: url("icons/pencil.png") no-repeat left;
   width: 40px;
   height: 40px;
   display: inline-block;
   vertical-align: middle;
-  margin-left: 10px;
+  position: absolute;
+  top: 10px;
+  left: 15px;
 }
 .flextour-button-group {
   float: right;
@@ -182,7 +187,6 @@
 .flextour-button-group > button:focus {
   outline: none;
 }
-
 .flextour-button-group > button[disabled] {
   -webkit-touch-callout: none;
   /* iOS Safari */
@@ -297,7 +301,6 @@ a.flextour-close:hover {
   border: #666 solid 3px;
   position: absolute;
 }
-
 .flextour-target-border.interactable {
   pointer-events: none;
 }

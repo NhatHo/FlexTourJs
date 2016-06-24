@@ -4,9 +4,31 @@
  ******************************************************************************/
 
 var Constants = require("./Constants");
-var $ = require("./../../node_modules/jquery/dist/jquery.min.js");
 
 module.exports = {
+
+    /**
+     * Clone given objects into another object. Doesn't work with array.
+     * This is not deep clone so only 1 level will be cloned, the rest will keep its references
+     * @param out           The output object
+     * @returns {*|{}}      Cloned object of all other objects in the list
+     */
+    clone: function (out) {
+        out = out || {};
+
+        for (var i = 1; i < arguments.length; i++) {
+            if (!arguments[i])
+                continue;
+
+            for (var key in arguments[i]) {
+                if (arguments[i].hasOwnProperty(key))
+                    out[key] = arguments[i][key];
+            }
+        }
+        return out;
+    },
+
+
     /**
      * Check if the target is visible or not. This has a draw back that the target might not have render completely
      * If that is the case the bubble and highlight box will not render properly.
@@ -14,7 +36,7 @@ module.exports = {
      * @return {boolean}    True if target takes up a rectangle in the DOM, false otherwise
      */
     isVisible: function (target) {
-        let element = $(target);
+        let element = document.querySelector(target);
         if (this.isValid(element)) {
             return element.offsetHeight > 0 && element.offsetWidth > 0;
         }
@@ -27,7 +49,7 @@ module.exports = {
      * @returns {boolean}       True if target exists in DOM, false otherwise
      */
     doesExist: function (target) {
-        let element = $(target);
+        let element = document.querySelector(target);
         return this.isValid(element);
     },
 
@@ -99,7 +121,7 @@ module.exports = {
      * @param className     Given classname of element we want to get the element
      */
     getEleFromClassName: function (className) {
-        return $(this.getClassName(className));
+        return document.querySelector(this.getClassName(className));
     },
 
     /**
@@ -107,7 +129,7 @@ module.exports = {
      * @param className     Similar classname of group of elements
      */
     getElesFromClassName: function (className) {
-        return $(this.getClassName(className));
+        return document.querySelectorAll(this.getClassName(className));
     },
 
     /**

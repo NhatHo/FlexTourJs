@@ -5,12 +5,11 @@
 
 var Constants = require("./Constants");
 var Utils = require("./Utilities");
-var $ = require("./../../node_modules/jquery/dist/jquery.min.js");
 
 function Components(stepDescription) {
     if (Utils.isValidStep(stepDescription)) {
-        Components.stepDescription = $.extend({}, stepDescription);
-        Components.rect = $(stepDescription[Constants.TARGET]).getBoundingClientRect();
+        Components.stepDescription = Utils.clone({}, stepDescription);
+        Components.rect = document.querySelector(stepDescription[Constants.TARGET]).getBoundingClientRect();
         Components.ui = document.createElement("div");
     }
 }
@@ -195,7 +194,7 @@ function _placeBubbleLocation() {
     let bottom = top + targetPosition.height;
     let right = left + targetPosition.width;
 
-    let bubble = $(Utils.getClassName(Constants.TOUR_BUBBLE));
+    let bubble = document.querySelector(Utils.getClassName(Constants.TOUR_BUBBLE));
 
     if (Utils.isValid(bubble)) {
         let bubbleRect = bubble.getBoundingClientRect();

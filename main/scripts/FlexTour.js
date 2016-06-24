@@ -6,7 +6,6 @@
 let Components = require("./Components");
 let Constants = require("./Constants");
 let Utils = require("./Utilities");
-var $ = require("./../../node_modules/jquery/dist/jquery.min.js");
 
 /**
  * Pre-process all information for all tours make sure each step and each tour contains necessary
@@ -14,7 +13,7 @@ var $ = require("./../../node_modules/jquery/dist/jquery.min.js");
  * @param tourDesc      JSON description file that has all information needed
  */
 function _preprocessingTours(tourDesc) {
-    if ($.isArray(tourDesc)) {
+    if (Array.isArray(tourDesc)) {
         for (let i = 0; i < tourDesc.length; i++) {
             _initializeTour(tourDesc[i]);
         }
@@ -28,10 +27,10 @@ function _preprocessingTours(tourDesc) {
  * @param tour      The tour object ---> Must be an object
  */
 function _initializeTour(tour) {
-    let rawTour = $.extend({}, tour);
+    let rawTour = Utils.clone({}, tour);
     // Fill in information for each tour in case any important information is missing
     rawTour[Constants.ID] = rawTour[Constants.ID] || Constants.TOUR + i;
-    rawTour = $.extend({}, Constants.TOUR_DEFAULT_SETTINGS, rawTour);
+    rawTour = Utils.clone({}, Constants.TOUR_DEFAULT_SETTINGS, rawTour);
 
     // Fill in information for each step in case anything important is missing
     let numOfSteps = rawTour[Constants.STEPS].length;
@@ -117,7 +116,7 @@ function _addClickEvents() {
 
     let currentStep = FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber];
     if (currentStep[Constants.NEXT_ON_TARGET]) {
-        let currentTarget = $(currentStep[Constants.TARGET]);
+        let currentTarget = document.querySelector(currentStep[Constants.TARGET]);
         if (Utils.isValid(currentTarget)) {
             Utils.addEvent(currentTarget, Constants.FLEX_CLICK, _nextStep);
         }
@@ -142,7 +141,7 @@ function _removeEvents() {
 
     let currentStep = FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber];
     if (currentStep[Constants.NEXT_ON_TARGET]) {
-        let currentTarget = $(currentStep[Constants.TARGET]);
+        let currentTarget = document.querySelector(currentStep[Constants.TARGET]);
         if (Utils.isValid(currentTarget)) {
             Utils.removeEvent(currentTarget, Constants.FLEX_CLICK, _nextStep);
         }
@@ -204,11 +203,12 @@ function _cleanUp() {
     FlexTour.Component.removeComponents();
 }
 
-function FlexTour(tourDesc) {
+function FlexTour(tourDesc, actionsList) {
     FlexTour.toursMap = [];
     FlexTour.currentTourIndex = 0;
     FlexTour.currentStepNumber = 0;
     FlexTour.currentTour = {};
+    FlexTour.actionsList = actionsList;
     _preprocessingTours(tourDesc);
 }
 
@@ -221,7 +221,7 @@ FlexTour.prototype.run = function () {
         return;
     }
 
-    FlexTour.currentTour = $.extend({}, FlexTour.toursMap[FlexTour.currentTourIndex]);
+    FlexTour.currentTour = Utils.clone({}, FlexTour.toursMap[FlexTour.currentTourIndex]);
     FlexTour.currentStepNumber = 0;
 
     let steps = FlexTour.currentTour[Constants.STEPS];
