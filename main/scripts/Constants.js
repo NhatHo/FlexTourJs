@@ -5,6 +5,13 @@
 
 module.exports = {
     CLASS: ".",
+    COLON: ":",
+    COMMA: ",",
+    WAIT: "?",
+    SKIP: "!",
+    CURRENT_TARGET: "@target@",
+    IS_VISIBLE: "isVisible",
+    DOES_EXIST: "doesExist",
     OVERLAY_STYLE: "flextour-overlay-styles",
 
     // Bubble Block
@@ -34,6 +41,8 @@ module.exports = {
         transition: {},
         canInteract: true,
         noButtons: false,
+        noBack: false,
+        noSkip: false,
         stepNumber: true,
         endOnOverlayClick: true,
         endOnEsc: true
@@ -42,13 +51,16 @@ module.exports = {
     ID: "id",
     STEPS: "steps",
     NO_BUTTONS: "noButtons",
+    NO_BACK: "noBack",
+    NO_SKIP: "noSkip",
     CAN_INTERACT: "canInteract",
     TYPE: "type",
     CONTENT: "content",
+    PREREQUISITES: "prerequisites",
     TARGET: "target",
     POSITION: "position",
     NEXT_ON_TARGET: "nextOnTargetClick",
-    TIME_INTERVAL: "timeIntervals",
+    TIME_INTERVAL: "waitIntervals",
     RETRIES: "retries",
     END_ON_ESC: "endOnEsc",
 

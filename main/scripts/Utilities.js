@@ -32,33 +32,43 @@ module.exports = {
     /**
      * Check if the target is visible or not. This has a draw back that the target might not have render completely
      * If that is the case the bubble and highlight box will not render properly.
-     * @param target    Target of current step
+     * @param targets    Array of targets of current step
      * @return {boolean}    True if target takes up a rectangle in the DOM, false otherwise
      */
-    isVisible: function (target) {
-        let element = document.querySelector(target);
-        if (this.isValid(element)) {
-            return element.offsetHeight > 0 && element.offsetWidth > 0;
+    isVisible: function (targets) {
+        let result = true;
+        for (let i = 0; i < targets.length; i++) {
+            let element = document.querySelector(targets[i]);
+            if (this.isValid(element)) {
+                result = result && element.offsetHeight > 0 && element.offsetWidth > 0;
+            }
         }
-        return false;
+        return result;
     },
 
     /**
      * Check if the target exists in the DOM or not. This operator costs less than _isTargetVisible function.
-     * @param target    Target of current step
+     * @param targets    Target of current step
      * @returns {boolean}       True if target exists in DOM, false otherwise
      */
-    doesExist: function (target) {
-        let element = document.querySelector(target);
-        return this.isValid(element);
+    doesExist: function (targets) {
+        let result = true;
+        for (let i = 0; i < targets.length; i++) {
+            result = result && this.isValid(document.querySelector(targets[i]));
+        }
+        return result;
     },
 
     /**
-     * Check if a given object a valid object with content
+     * Check if a given object a valid object with content.
+     * If given an array, the array must have element
      * @param object        Any object, array, letiable
      * @returns {boolean}   True if valid, false otherwise
      */
     isValid: function (object) {
+        if (Array.isArray(object)) {
+            return object.length > 0;
+        }
         return (object != null && typeof object != 'undefined');
     },
 
@@ -168,5 +178,19 @@ module.exports = {
         for (let i = 0; i < els.length; i++) {
             this.removeEvent(els[i], event, callback);
         }
+    },
+
+    /**
+     * Execute the function with given name in a given lists of function.
+     * Make sure that the function exists in the list before executing it.
+     * @param functionName      The name of the given function
+     * @param functionsList      The list that SHOULD contain the given function
+     */
+    executeFunctionWithName: function (functionName, functionsList) {
+        if (typeof functionsList[functionName] === "function") {
+            return functionsList[functionName].call();
+        }
+        // If the given function name exist in the list, return false to halt the process. Because this could cause the flow to break.
+        return false;
     }
 };

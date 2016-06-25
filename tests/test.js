@@ -6,8 +6,9 @@
 let actionsList = {};
 actionsList.action1 = function () {
     return true;
-}.action2 = function () {
-    return false;
+};
+actionsList.action2 = function () {
+    return true;
 };
 
 let tourDesc = [{
@@ -15,24 +16,26 @@ let tourDesc = [{
     endOnOverlayClick: true,
     endOnEsc: true,
     canInteract: false,
+    waitIntervals: 100,
+    retries: 20,
     steps: [{
         content: "Header level 1\nTesting level again\n\nLine 3",
         position: "right",
         target: "#title",
-        type: "info",
-        prerequisite: ["action1"]
+        type: "info"
     }, {
         content: "Header level 2",
         position: "bottom",
         target: "#title2",
         type: "action",
         nextOnTargetClick: true,
-        prerequisite: ["action2"]
+        prerequisites: ["action2"]
     }, {
         content: "Header level 2 again",
         position: "left",
         target: "#title3",
-        type: "info"
+        type: "info",
+        prerequisites: ["action1"]
     }, {
         content: "Big box of nothing",
         position: "top",
