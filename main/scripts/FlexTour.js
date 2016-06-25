@@ -44,7 +44,7 @@ function _initializeTour(tour) {
         currentStep[Constants.NO_BACK] = currentStep[Constants.NO_BACK] || rawTour[Constants.NO_BACK];
         currentStep[Constants.NO_SKIP] = currentStep[Constants.NO_SKIP] || rawTour[Constants.NO_SKIP];
         currentStep[Constants.CAN_INTERACT] = currentStep[Constants.CAN_INTERACT] || currentStep[Constants.NEXT_ON_TARGET] || rawTour[Constants.CAN_INTERACT]; // This mean that if target can trigger next step on click, it must be clickable
-        currentStep[Constants.TIME_INTERVAL] = currentStep[Constants.TIME_INTERVAL] || rawTour[Constants.TIME_INTERVAL];
+        currentStep[Constants.WAIT_INTERVALS] = currentStep[Constants.WAIT_INTERVALS] || rawTour[Constants.WAIT_INTERVALS];
         currentStep[Constants.RETRIES] = currentStep[Constants.RETRIES] || rawTour[Constants.RETRIES];
     }
     FlexTour.toursMap.push(rawTour);
@@ -209,7 +209,7 @@ function _isAllowToMove(possibleStepNumber, currPrerequisite) {
                     // Retry the the waitFor after certain time invertal
                     setTimeout(
                         _isAllowToMove(possibleStepNumber, currPrerequisite),
-                        possibleStep[Constants.TIME_INTERVAL]
+                        possibleStep[Constants.WAIT_INTERVALS]
                     );
                 }
             } else {
@@ -243,7 +243,6 @@ function _isAllowToMove(possibleStepNumber, currPrerequisite) {
 
 /**
  * Skip the next step to the next next step.
- * @private
  */
 function _skipStep() {
     if (_isAllowToMove(FlexTour.currentStepNumber + 2, 0)) {

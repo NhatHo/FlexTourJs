@@ -101,7 +101,7 @@ var FlexTour =
                     currentStep[Constants.NO_BACK] = currentStep[Constants.NO_BACK] || rawTour[Constants.NO_BACK];
                     currentStep[Constants.NO_SKIP] = currentStep[Constants.NO_SKIP] || rawTour[Constants.NO_SKIP];
                     currentStep[Constants.CAN_INTERACT] = currentStep[Constants.CAN_INTERACT] || currentStep[Constants.NEXT_ON_TARGET] || rawTour[Constants.CAN_INTERACT]; // This mean that if target can trigger next step on click, it must be clickable
-                    currentStep[Constants.TIME_INTERVAL] = currentStep[Constants.TIME_INTERVAL] || rawTour[Constants.TIME_INTERVAL];
+                    currentStep[Constants.WAIT_INTERVALS] = currentStep[Constants.WAIT_INTERVALS] || rawTour[Constants.WAIT_INTERVALS];
                     currentStep[Constants.RETRIES] = currentStep[Constants.RETRIES] || rawTour[Constants.RETRIES];
                 }
                 this.toursMap.push(rawTour);
@@ -573,7 +573,7 @@ var FlexTour =
             TARGET: "target",
             POSITION: "position",
             NEXT_ON_TARGET: "nextOnTargetClick",
-            TIME_INTERVAL: "timeIntervals",
+            WAIT_INTERVALS: "timeIntervals",
             RETRIES: "retries",
             END_ON_ESC: "endOnEsc",
 

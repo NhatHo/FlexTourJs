@@ -24,3 +24,7 @@
 ### *Installations:*
 
 ### *Testing:*
+
+### KEEPING TRACKS:
+Link to Trello Board: https://trello.com/b/EPsXtJYx/flextourjs
+Use this keep track of what needs to be done, and which features will be supported.

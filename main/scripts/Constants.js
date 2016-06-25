@@ -60,7 +60,7 @@ module.exports = {
     TARGET: "target",
     POSITION: "position",
     NEXT_ON_TARGET: "nextOnTargetClick",
-    TIME_INTERVAL: "waitIntervals",
+    WAIT_INTERVALS: "waitIntervals",
     RETRIES: "retries",
     END_ON_ESC: "endOnEsc",
 
