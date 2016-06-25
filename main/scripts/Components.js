@@ -113,7 +113,7 @@ function _removeAllOverlay() {
 function _createContentBubble(showSkip, showBack, showNext, disableNext) {
     let bubble = document.createElement("div");
 
-    let iconDiv = document.createElement("span");
+    let iconDiv = document.createElement("div");
     let currentStepType = Components.stepDescription[Constants.TYPE];
     if (currentStepType === Constants.ACTION_TYPE) {
         iconDiv.classList.add(Constants.ACTION_ICON);
@@ -122,7 +122,7 @@ function _createContentBubble(showSkip, showBack, showNext, disableNext) {
     }
     bubble.appendChild(iconDiv);
 
-    let contentSpan = document.createElement("span");
+    let contentSpan = document.createElement("div");
     contentSpan.innerText = Components.stepDescription[Constants.CONTENT];
     contentSpan.classList.add(Constants.BUBBLE_CONTENT);
 

@@ -4,11 +4,11 @@
  ******************************************************************************/
 
 let actionsList = {};
-actionsList.action("action1", function () {
+actionsList.action1 = function () {
     return true;
-}).action("action2", function () {
+}.action2 = function () {
     return false;
-});
+};
 
 let tourDesc = [{
     id: "test",

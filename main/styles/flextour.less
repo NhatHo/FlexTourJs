@@ -20,11 +20,9 @@
 .icon-style {
   width: 40px;
   height: 40px;
-  display: inline-block;
-  vertical-align: middle;
-  position: absolute;
-  top: 10px;
-  left: 15px;
+  float: left;
+  margin-top: 5px;
+  margin-left: 15px;
 }
 
 /********************* BUBBLES STYLE ***************************/
@@ -47,8 +45,8 @@
   box-shadow: 2px 2px 4px @ShadowColor;
 
   .flextour-content {
-    display: inline-block;
-    margin-left: 53px;
+    margin-left: 15px;
+    float: left;
     padding: 10px 10px 10px 0;
   }
 }
@@ -134,12 +132,14 @@
 }
 
 .flextour-icon-info {
-  background: url("./icons/eye.png") no-repeat left;
+  background: url("icons/info.png") no-repeat;
+  background-size: contain;
   .icon-style;
 }
 
 .flextour-icon-action {
-  background: url("./icons/pencil.png") no-repeat left;
+  background: url("icons/action.png") no-repeat;
+  background-size: contain;
   .icon-style;
 }
 
