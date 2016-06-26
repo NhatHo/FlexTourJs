@@ -22,6 +22,7 @@ module.exports = {
     HOLLOW_ARROW: "inner-arrow",
     BUBBLE_CONTENT: "flextour-content",
     FLOAT_STYLE: "flextour-float-bubble",
+    BUBBLE_TITLE: "flextour-bubble-title",
 
     ACTION_ICON: "flextour-icon-action",
     DEFAULT_ICON: "flextour-icon-info",
@@ -52,6 +53,7 @@ module.exports = {
     },
 
     ID: "id",
+    TITLE: "title",
     STEPS: "steps",
     NO_BUTTONS: "noButtons",
     NO_BACK: "noBack",

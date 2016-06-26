@@ -12,8 +12,9 @@
   z-index: 20;
 }
 .icon-style {
-  width: 40px;
-  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  width: 8%;
   float: left;
   margin-top: 5px;
   margin-bottom: 5px;
@@ -22,7 +23,7 @@
 /********************* BUBBLES STYLE ***************************/
 .flextour-tour-bubble {
   position: absolute;
-  width: 400px;
+  width: 450px;
   max-width: 1000px;
   height: auto;
   padding: 5px;
@@ -40,8 +41,17 @@
 }
 .flextour-tour-bubble .flextour-content {
   margin-left: 15px;
+  width: 82%;
   float: left;
-  padding: 10px 10px 10px 0;
+  padding: 10px 0 10px 0;
+}
+
+.flextour-tour-bubble .flextour-content .flextour-bubble-title {
+  border-bottom: 2px solid #F00000;
+  color: #A80000;
+  font-size: 14pt;
+  padding-bottom: 3px;
+  margin-bottom: 3px;
 }
 .flextour-float-bubble {
   left: 50%;
@@ -154,8 +164,9 @@
 .flextour-icon-info {
   background: url("icons/info.png") no-repeat;
   background-size: contain;
-  width: 40px;
-  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  width: 8%;
   float: left;
   margin-top: 5px;
   margin-bottom: 5px;
@@ -164,19 +175,20 @@
 .flextour-icon-action {
   background: url("icons/action.png") no-repeat;
   background-size: contain;
-  width: 40px;
-  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  width: 8%;
   float: left;
   margin-top: 5px;
   margin-bottom: 5px;
   margin-left: 15px;
 }
-
 .flextour-icon-loading {
   background: url("icons/loading.gif") no-repeat;
   background-size: contain;
-  width: 40px;
-  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  width: 8%;
   float: left;
   margin-top: 5px;
   margin-bottom: 5px;

@@ -111,13 +111,23 @@ function _createContentBubble(noButtons, showSkip, showBack, showNext, disableNe
     }
     bubble.appendChild(iconDiv);
 
-    let contentSpan = document.createElement("div");
-    contentSpan.innerText = Components.stepDescription[Constants.CONTENT];
-    contentSpan.classList.add(Constants.BUBBLE_CONTENT);
+    let contentBlock = document.createElement("div");
+    contentBlock.classList.add(Constants.BUBBLE_CONTENT);
+
+    if (Utils.isValid(Components.stepDescription[Constants.TITLE])) {
+        let contentTitle = document.createElement("div");
+        contentTitle.innerText = Components.stepDescription[Constants.TITLE];
+        contentTitle.classList.add(Constants.BUBBLE_TITLE);
+        contentBlock.appendChild(contentTitle);
+    }
+
+    let contentBody = document.createElement("div");
+    contentBody.innerText = Components.stepDescription[Constants.CONTENT];
+    contentBlock.appendChild(contentBody);
 
     bubble.classList.add(Constants.TOUR_BUBBLE);
 
-    bubble.appendChild(contentSpan);
+    bubble.appendChild(contentBlock);
 
     if (!noButtons) {
         let buttonGroup = document.createElement("div");

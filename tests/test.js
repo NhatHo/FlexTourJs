@@ -23,11 +23,13 @@ let tourDesc = [{
     waitIntervals: 1000,
     retries: 20,
     steps: [{
+        title: "First Step of the thing",
         content: "Header level 1\nTesting level again\n\nLine 3",
         position: "right",
         target: "#title",
         type: "info"
     }, {
+        title: "Second Step of the thing",
         content: "Header level 2",
         position: "bottom",
         target: "#title2",
