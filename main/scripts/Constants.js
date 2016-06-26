@@ -25,6 +25,8 @@ module.exports = {
 
     ACTION_ICON: "flextour-icon-action",
     DEFAULT_ICON: "flextour-icon-info",
+    LOADING_ICON: "flextour-icon-loading",
+
     CLOSE_TOUR: "flextour-close",
 
     SKIP_BUTTON: "flextour-skip-button",

@@ -102,7 +102,9 @@ function _createContentBubble(noButtons, showSkip, showBack, showNext, disableNe
 
     let iconDiv = document.createElement("div");
     let currentStepType = Components.stepDescription[Constants.TYPE];
-    if (currentStepType === Constants.ACTION_TYPE) {
+    if (Components.stepDescription[Constants.TRANSITION]) {
+        iconDiv.classList.add(Constants.LOADING_ICON);
+    } else if (currentStepType === Constants.ACTION_TYPE) {
         iconDiv.classList.add(Constants.ACTION_ICON);
     } else if (currentStepType === Constants.DEFAULT_TYPE) {
         iconDiv.classList.add(Constants.DEFAULT_ICON);
