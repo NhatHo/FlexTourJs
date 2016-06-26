@@ -336,11 +336,14 @@ function _transitionToNextStep(stepNumber) {
 /**
  * Add window resize event to recalculate location of tour step.
  * The event is namespaced to avoid conflict with program's handler and easier to unbind later on.
+ * This event is only trigger once every 1/2 second. So that it won't go crazy and trigger too many event on resizing
  */
 function _addResizeWindowListener() {
-    Utils.addEvent(window, Constants.FLEX_RESIZE, function (event) {
-        console.log("Doing resizing window event");
-    });
+    Utils.addEvent(window, Constants.FLEX_RESIZE, Utils.debounce(function () {
+        console.log("I'm re-rendering");
+        _cleanUp();
+        _centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber]);
+    }, 500, false));
 }
 
 /**

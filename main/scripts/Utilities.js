@@ -3,7 +3,7 @@
  * NhatHo-nhatminhhoca@gmail.com
  ******************************************************************************/
 
-var Constants = require("./Constants");
+let Constants = require("./Constants");
 
 module.exports = {
 
@@ -16,11 +16,11 @@ module.exports = {
     clone: function (out) {
         out = out || {};
 
-        for (var i = 1; i < arguments.length; i++) {
+        for (let i = 1; i < arguments.length; i++) {
             if (!arguments[i])
                 continue;
 
-            for (var key in arguments[i]) {
+            for (let key in arguments[i]) {
                 if (arguments[i].hasOwnProperty(key))
                     out[key] = arguments[i][key];
             }
@@ -221,5 +221,27 @@ module.exports = {
      */
     getFullWindowHeight: function () {
         return window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight; // For IE8 or earlier
+    },
+
+    /**
+     * Returns a function, that, as long as it continues to be invoked, will not
+     * be triggered. The function will be called after it stops being called for
+     * N milliseconds. If `immediate` is passed, trigger the function on the
+     * leading edge, instead of the trailing.
+     * Taken from Underscore.js
+     */
+    debounce: function (func, wait, immediate) {
+        let timeout;
+        return function () {
+            let context = this, args = arguments;
+            let later = function () {
+                timeout = null;
+                if (!immediate) func.apply(context, args);
+            };
+            let callNow = immediate && !timeout;
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+            if (callNow) func.apply(context, args);
+        };
     }
 };
