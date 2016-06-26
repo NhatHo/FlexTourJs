@@ -10,7 +10,7 @@ actionsList.action1 = function () {
 actionsList.action2 = function () {
     return true;
 };
-actionsList.exist = function () {
+actionsList.skipWhenElementIsNotShowed = function () {
     let isShowed = document.querySelector("#randomEle");
     return isShowed.style.display === "block";
 };
@@ -39,7 +39,7 @@ let tourDesc = [{
         position: "bottom",
         target: "#randomEle",
         type: "info",
-        prerequisites: ["!exist"]
+        prerequisites: ["!skipWhenElementIsNotShowed"]
     }, {
         content: "Header level 2 again",
         position: "left",

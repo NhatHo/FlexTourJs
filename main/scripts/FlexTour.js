@@ -181,38 +181,13 @@ function _removeEvents() {
  */
 function _isAllowToMove(possibleStepNumber, currPrerequisite) {
     let prerequisites = FlexTour.currentTour[Constants.STEPS][possibleStepNumber][Constants.PREREQUISITES];
-
+    let possibleStep = FlexTour.currentTour[Constants.STEPS][possibleStepNumber];
     if (Utils.isValid(prerequisites) && currPrerequisite < prerequisites.length) {
         let prerequisite = prerequisites[currPrerequisite].trim();
         if (prerequisite.indexOf(Constants.WAIT) > -1) {
-            let possibleStep = FlexTour.currentTour[Constants.STEPS][possibleStepNumber];
+            let prerequisiteBlock = prerequisite.split(Constants.WAIT)[1].trim();
 
-            // This is the most complex one in all. There are 3 parts to waitFor: "?condName:el1,el2,el3"
-            // First split the COLON Separator.
-            let tokens = prerequisite.split(Constants.COLON);
-
-            // Split "?condName" and get "condName"
-            let condName = tokens[0].split(Constants.WAIT)[1];
-
-            // Split the DOM elements list if exist "el1,el2,el3".
-            let elementsList = tokens[1].split(Constants.COMMA);
-
-            let indexOfCurrentTarget = elementsList.indexOf(Constants.CURRENT_TARGET);
-            if (indexOfCurrentTarget !== -1) {
-                elementsList[indexOfCurrentTarget] = possibleStep[Constants.TARGET];
-            }
-
-            let temporaryResult = true;
-            if (condName === Constants.IS_VISIBLE) {
-                temporaryResult = temporaryResult && Utils.isVisible(elementsList);
-            } else if (condName === Constants.DOES_EXIST) {
-                temporaryResult = temporaryResult && Utils.doesExist(elementsList);
-            } else {
-                // When the condition name is not built-in, pass the array of element into the customized functions.
-                if (typeof FlexTour.actionsList[condName] === "function") {
-                    temporaryResult = temporaryResult && FlexTour.actionsList[condName].apply(this, elementsList);
-                }
-            }
+            let temporaryResult = _executePrerequisiteCondition(possibleStep, prerequisiteBlock);
 
             if (!temporaryResult) {
                 if (possibleStep[Constants.RETRIES] === 0) {
@@ -222,7 +197,7 @@ function _isAllowToMove(possibleStepNumber, currPrerequisite) {
                     }
                     return temporaryResult; // Return false when retries reaches 0;
                 } else {
-                    --possibleStep[Constants.RETRIES];
+                    possibleStep[Constants.RETRIES]--;
                     // Retry the the waitFor after certain time invertal
                     setTimeout(function () {
                         if (_isAllowToMove(possibleStepNumber, currPrerequisite)) {
@@ -241,14 +216,17 @@ function _isAllowToMove(possibleStepNumber, currPrerequisite) {
             }
         } else if (prerequisite.indexOf(Constants.SKIP) > -1) {
             /**
-             * The syntax is: "!funcName". For sure the 2nd element after split is funcName
+             * The syntax is: "!funcName:params". For sure the 2nd element after split is funcName
              * IMPORTANT: as mentioned before, this should be the last on the list. When this is true it will autmatically increment the FlexTour.currentStepNumber to 2 steps ahead which effectively skip the current possible step.
-             * This might be hard to wrap your head around. Skip function has to return true for the step to be skip, if it return false, the proceed to that step.
+             * This might be hard to wrap your head around. Skip function has to return false for the step to be skipped, if it return true, the proceed to that next step. So in order for you to skip the step, your custom function must return false.
+             * REASONING: Treat this as a prerequisite, the condition must be met (true) for the tour to flow normally, if the condition is NOT met (false), the tour will skipped the step as indicated. Works well with isVisible, and doesExist. These will check the condition, if condition is true then stay. If condition is false then skip.
              */
 
-            let funcName = prerequisite.split(Constants.SKIP)[1].trim();
-            if (Utils.executeFunctionWithName(funcName, FlexTour.actionsList)) {
+            let prerequisiteBlock = prerequisite.split(Constants.SKIP)[1].trim();
+
+            if (!_executePrerequisiteCondition(possibleStep, prerequisiteBlock)) {
                 _transitionToNextStep(possibleStepNumber + 1);
+                // At this point the step will be skipped. Return false so the potential step will not be rendered.
                 return false;
             }
             return true;
@@ -265,6 +243,48 @@ function _isAllowToMove(possibleStepNumber, currPrerequisite) {
         // Base case, this is when it get to the last condition without failure
         return true;
     }
+}
+
+/**
+ * Execute block where wait condition and skip condition. Split things up to condition name and parameters.
+ * Execute them accordingly. Either isVisible, doesExist (built-in) functions or custom functions
+ * @param stepDesc      Description of the step
+ * @param prerequisite  The prerequisite block after removing ! and ? from it.
+ */
+function _executePrerequisiteCondition(stepDesc, prerequisite) {
+    // This is the most complex one in all. There are 3 parts to waitFor: "?condName:el1,el2,el3"
+    // First split the COLON Separator.
+    let tokens = prerequisite.split(Constants.COLON);
+
+    // Split "condName" must be in the 1st slot after splitting at colon
+    let condName = tokens[0];
+
+    let temporaryResult = true;
+
+    if (tokens.length > 1) {
+        // Split the DOM elements list if exist "el1,el2,el3".
+        let elementsList = tokens[1].split(Constants.COMMA);
+
+        let indexOfCurrentTarget = elementsList.indexOf(Constants.CURRENT_TARGET);
+        if (indexOfCurrentTarget !== -1) {
+            elementsList[indexOfCurrentTarget] = stepDesc[Constants.TARGET];
+        }
+
+        if (condName === Constants.IS_VISIBLE) {
+            temporaryResult = temporaryResult && Utils.isVisible(elementsList);
+        } else if (condName === Constants.DOES_EXIST) {
+            temporaryResult = temporaryResult && Utils.doesExist(elementsList);
+        } else {
+            // When the condition name is not built-in, pass the array of element into the customized functions.
+            if (typeof FlexTour.actionsList[condName] === "function") {
+                temporaryResult = temporaryResult && FlexTour.actionsList[condName].apply(this, elementsList);
+            }
+        }
+    } else {
+        return Utils.executeFunctionWithName(condName, FlexTour.actionsList);
+    }
+
+    return temporaryResult;
 }
 
 
