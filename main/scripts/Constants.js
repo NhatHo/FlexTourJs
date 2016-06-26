@@ -63,6 +63,7 @@ module.exports = {
     WAIT_INTERVALS: "waitIntervals",
     RETRIES: "retries",
     END_ON_ESC: "endOnEsc",
+    DELAY: "delay",
 
     DEFAULT_TYPE: "info",
     ACTION_TYPE: "action",

@@ -41,6 +41,7 @@ function _initializeTour(tour) {
         currentStep[Constants.TYPE] = currentStep[Constants.TYPE] || Constants.DEFAULT_TYPE;
         currentStep[Constants.POSITION] = currentStep[Constants.POSITION] || Constants.DEFAULT_POSITION;
         currentStep[Constants.NO_BUTTONS] = currentStep[Constants.NO_BUTTONS] || rawTour[Constants.NO_BUTTONS];
+        currentStep[Constants.DELAY] = currentStep[Constants.DELAY] || rawTour[Constants.DELAY];
         currentStep[Constants.NO_BACK] = currentStep[Constants.NO_BACK] || rawTour[Constants.NO_BACK];
         currentStep[Constants.NO_SKIP] = currentStep[Constants.NO_SKIP] || rawTour[Constants.NO_SKIP];
         currentStep[Constants.CAN_INTERACT] = currentStep[Constants.CAN_INTERACT] || currentStep[Constants.NEXT_ON_TARGET] || rawTour[Constants.CAN_INTERACT]; // This mean that if target can trigger next step on click, it must be clickable
@@ -175,6 +176,8 @@ function _isAllowToMove(possibleStepNumber, currPrerequisite) {
     if (Utils.isValid(prerequisites) && currPrerequisite < prerequisites.length) {
         let prerequisite = prerequisites[currPrerequisite].trim();
         if (prerequisite.indexOf(Constants.WAIT) > -1) {
+            let possibleStep = FlexTour.currentTour[Constants.STEPS][possibleStepNumber];
+
             // This is the most complex one in all. There are 3 parts to waitFor: "?condName:el1,el2,el3"
             // First split the COLON Separator.
             let tokens = prerequisite.split(Constants.COLON);
@@ -185,18 +188,25 @@ function _isAllowToMove(possibleStepNumber, currPrerequisite) {
             // Split the DOM elements list if exist "el1,el2,el3".
             let elementsList = tokens[1].split(Constants.COMMA);
 
+            let indexOfCurrentTarget = elementsList.indexOf(Constants.CURRENT_TARGET);
+            if (indexOfCurrentTarget !== -1) {
+                elementsList[indexOfCurrentTarget] = possibleStep[Constants.TARGET];
+            }
+
             let temporaryResult = true;
             if (condName === Constants.IS_VISIBLE) {
                 temporaryResult = temporaryResult && Utils.isVisible(elementsList);
             } else if (condName === Constants.DOES_EXIST) {
                 temporaryResult = temporaryResult && Utils.doesExist(elementsList);
+                console.log("Does exist condition, return " + temporaryResult);
             } else {
                 // When the condition name is not built-in, pass the array of element into the customized functions.
                 if (typeof FlexTour.actionsList[condName] === "function") {
                     temporaryResult = temporaryResult && FlexTour.actionsList[condName].apply(this, elementsList);
+                    console.log("Custom function: " + condName + " return: " + temporaryResult);
                 }
             }
-            let possibleStep = FlexTour.currentTour[Constants.STEPS][possibleStepNumber];
+
             if (!temporaryResult) {
                 if (possibleStep[Constants.RETRIES] === 0) {
                     // Reset the retries entry for current step, only works if Retries is set on Tour Description
@@ -205,12 +215,14 @@ function _isAllowToMove(possibleStepNumber, currPrerequisite) {
                     }
                     return temporaryResult; // Return false when retries reaches 0;
                 } else {
-                    possibleStep[Constants.RETRIES]--;
+                    --possibleStep[Constants.RETRIES];
                     // Retry the the waitFor after certain time invertal
-                    setTimeout(
-                        _isAllowToMove(possibleStepNumber, currPrerequisite),
-                        possibleStep[Constants.WAIT_INTERVALS]
-                    );
+                    setTimeout(function () {
+                        if (_isAllowToMove(possibleStepNumber, currPrerequisite)) {
+                            // Proceed to next one when this is waitFor is met. Of course this will require the next conditions are also successful
+                            _transitionToNextStep(possibleStepNumber);
+                        }
+                    }, possibleStep[Constants.WAIT_INTERVALS]);
                 }
             } else {
                 // Reset the retries entry for current step, only works if Retries is set on Tour Description
@@ -222,9 +234,14 @@ function _isAllowToMove(possibleStepNumber, currPrerequisite) {
             }
         } else if (prerequisite.indexOf(Constants.SKIP) > -1) {
             // The syntax is: "!funcName". For sure the 2nd element after split is funcName
-            // IMPORTANT: as mentioned before, this should be the last on the list. Whatever this one results should be return immediately.
+            // IMPORTANT: as mentioned before, this should be the last on the list. When this is true it will autmatically increment the FlexTour.currentStepNumber to 2 steps ahead which effectively skip the current possible step.
             let funcName = prerequisite.split(Constants.SKIP)[1].trim();
-            return Utils.executeFunctionWithName(funcName, FlexTour.actionsList);
+            console.log("Skip function: " + funcName + " returned: " + Utils.executeFunctionWithName(funcName, FlexTour.actionsList));
+            if (Utils.executeFunctionWithName(funcName, FlexTour.actionsList)) {
+                _transitionToNextStep(possibleStepNumber + 1);
+                return true;
+            }
+            return false;
         } else {
             // This is the regular prerequisite function
             if (Utils.executeFunctionWithName(prerequisite, FlexTour.actionsList)) {
@@ -246,9 +263,7 @@ function _isAllowToMove(possibleStepNumber, currPrerequisite) {
  */
 function _skipStep() {
     if (_isAllowToMove(FlexTour.currentStepNumber + 2, 0)) {
-        _cleanUp();
-        FlexTour.currentStepNumber += 2;
-        _centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber]);
+        _transitionToNextStep(FlexTour.currentStepNumber + 2);
     }
 }
 
@@ -256,9 +271,7 @@ function _skipStep() {
  * Decrement current step counter and go back to previous step ... Obviously it will not be the last step
  */
 function _previousStep() {
-    _cleanUp();
-    FlexTour.currentStepNumber--;
-    _centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber]);
+    _transitionToNextStep(FlexTour.currentStepNumber - 1, 0);
 }
 
 /**
@@ -266,9 +279,27 @@ function _previousStep() {
  */
 function _nextStep() {
     if (_isAllowToMove(FlexTour.currentStepNumber + 1, 0)) {
+        _transitionToNextStep(FlexTour.currentStepNumber + 1);
+    }
+}
+
+/**
+ * Common factor for transition step, either skip, previous or next.
+ * @param stepNumber
+ */
+function _transitionToNextStep(stepNumber) {
+    let stepDelay = FlexTour.currentTour[Constants.STEPS][stepNumber][Constants.DELAY];
+
+    function __transitionFunction(stepNumber) {
         _cleanUp();
-        FlexTour.currentStepNumber++;
-        _centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber]);
+        FlexTour.currentStepNumber = stepNumber;
+        _centralOrganizer(FlexTour.currentTour[Constants.STEPS][stepNumber]);
+    }
+
+    if (Utils.isValid(stepDelay)) {
+        setTimeout(__transitionFunction.bind(this, stepNumber), stepDelay);
+    } else {
+        __transitionFunction(stepNumber);
     }
 }
 
