@@ -198,12 +198,10 @@ function _isAllowToMove(possibleStepNumber, currPrerequisite) {
                 temporaryResult = temporaryResult && Utils.isVisible(elementsList);
             } else if (condName === Constants.DOES_EXIST) {
                 temporaryResult = temporaryResult && Utils.doesExist(elementsList);
-                console.log("Does exist condition, return " + temporaryResult);
             } else {
                 // When the condition name is not built-in, pass the array of element into the customized functions.
                 if (typeof FlexTour.actionsList[condName] === "function") {
                     temporaryResult = temporaryResult && FlexTour.actionsList[condName].apply(this, elementsList);
-                    console.log("Custom function: " + condName + " return: " + temporaryResult);
                 }
             }
 
@@ -233,15 +231,19 @@ function _isAllowToMove(possibleStepNumber, currPrerequisite) {
                 return _isAllowToMove(possibleStepNumber, ++currPrerequisite);
             }
         } else if (prerequisite.indexOf(Constants.SKIP) > -1) {
-            // The syntax is: "!funcName". For sure the 2nd element after split is funcName
-            // IMPORTANT: as mentioned before, this should be the last on the list. When this is true it will autmatically increment the FlexTour.currentStepNumber to 2 steps ahead which effectively skip the current possible step.
+            /**
+             * The syntax is: "!funcName". For sure the 2nd element after split is funcName
+             * IMPORTANT: as mentioned before, this should be the last on the list. When this is true it will autmatically increment the FlexTour.currentStepNumber to 2 steps ahead which effectively skip the current possible step.
+             * This might be hard to wrap your head around. Skip function has to return true for the step to be skip, if it return false, the proceed to that step.
+             */
+
             let funcName = prerequisite.split(Constants.SKIP)[1].trim();
             console.log("Skip function: " + funcName + " returned: " + Utils.executeFunctionWithName(funcName, FlexTour.actionsList));
             if (Utils.executeFunctionWithName(funcName, FlexTour.actionsList)) {
                 _transitionToNextStep(possibleStepNumber + 1);
-                return true;
+                return false;
             }
-            return false;
+            return true;
         } else {
             // This is the regular prerequisite function
             if (Utils.executeFunctionWithName(prerequisite, FlexTour.actionsList)) {

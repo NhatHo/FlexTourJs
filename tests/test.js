@@ -10,6 +10,14 @@ actionsList.action1 = function () {
 actionsList.action2 = function () {
     return true;
 };
+actionsList.exist = function () {
+    let isShowed = document.querySelector("#randomEle");
+    if (isShowed.style.display === "block") {
+        return false;
+    } else {
+        return true;
+    }
+};
 
 let tourDesc = [{
     id: "test",
@@ -30,6 +38,12 @@ let tourDesc = [{
         type: "action",
         nextOnTargetClick: true,
         prerequisites: ["action2"]
+    }, {
+        content: "Random Header",
+        position: "bottom",
+        target: "#randomEle",
+        type: "info",
+        prerequisites: ["!exist"]
     }, {
         content: "Header level 2 again",
         position: "left",
@@ -56,13 +70,13 @@ let tourDesc = [{
 }];
 
 // Get the modal
-var modal = document.getElementById('myModal');
+let modal = document.getElementById('myModal');
 
 // Get the button that opens the modal
-var btn = document.getElementById("myBtn");
+let btn = document.getElementById("myBtn");
 
 // Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0];
+let span = document.getElementsByClassName("close")[0];
 
 // When the user clicks the button, open the modal
 btn.onclick = function () {
@@ -87,3 +101,13 @@ document.querySelector("#trigger").onclick = function () {
     let flexTour = new FlexTour(tourDesc, actionsList);
     flexTour.run();
 };
+
+let random = document.getElementById("randomEle");
+
+let randomNum = Math.round(Math.random() * 1000);
+if (randomNum % 2 === 0) {
+    random.style.display = "block";
+} else {
+    random.style.display = "none";
+}
+
