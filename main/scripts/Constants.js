@@ -21,6 +21,7 @@ module.exports = {
     ARROW_LOCATION: "arrow-location",
     HOLLOW_ARROW: "inner-arrow",
     BUBBLE_CONTENT: "flextour-content",
+    FLOAT_STYLE: "flextour-float-bubble",
 
     ACTION_ICON: "flextour-icon-action",
     DEFAULT_ICON: "flextour-icon-info",
@@ -64,6 +65,7 @@ module.exports = {
     RETRIES: "retries",
     END_ON_ESC: "endOnEsc",
     DELAY: "delay",
+    TRANSITION: "transition",
 
     DEFAULT_TYPE: "info",
     ACTION_TYPE: "action",
@@ -80,6 +82,7 @@ module.exports = {
     RIGHT: "right",
     LEFT: "left",
     BOTTOM: "bottom",
+    FLOAT: "float",
 
     SKIP_TEXT: "Skip",
     NEXT_TEXT: "Next",

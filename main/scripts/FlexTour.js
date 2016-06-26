@@ -58,39 +58,48 @@ function _initializeTour(tour) {
  */
 function _centralOrganizer(stepDesc) {
     FlexTour.Component = new Components(stepDesc);
-    if (Utils.isValid(FlexTour.Component) && Utils.isValid(FlexTour.Component.getRect())) {
+    let currentStepNumber = FlexTour.currentStepNumber;
+
+    if (Utils.isValid(FlexTour.Component)) {
         let showSkip = false,
             showBack = false,
             showNext = false,
-            disableNext = false;
+            disableNext = false,
+            noButtons = false;
 
-        let currentStepNumber = FlexTour.currentStepNumber;
         // When the current step has NextOnTarget flag set, assuming that this step setup prerequisite for next step
         // Which means that user cannot click Next, or Skip.
 
-        if (!stepDesc[Constants.NO_BUTTONS]) {
-            let numberOfStep = FlexTour.currentTour[Constants.STEPS].length;
-
-            if (currentStepNumber < numberOfStep - 1) {
-                showNext = true;
-            }
-
-            if (currentStepNumber < numberOfStep - 2 && !stepDesc[Constants.NEXT_ON_TARGET] && !stepDesc[Constants.NO_SKIP]) {
-                showSkip = true;
-            }
-            if (stepDesc[Constants.NEXT_ON_TARGET]) {
-                disableNext = true;
-            }
-
-            if (currentStepNumber > 0 && !stepDesc[Constants.NO_BACK]) {
-                showBack = true;
-            }
+        if (stepDesc[Constants.NO_BUTTONS] || Utils.isFloatStep(stepDesc)) {
+            noButtons = true;
         }
 
-        FlexTour.Component.createComponents(showSkip, showBack, showNext, disableNext);
+        let numberOfStep = FlexTour.currentTour[Constants.STEPS].length;
+
+        if (currentStepNumber < numberOfStep - 1) {
+            showNext = true;
+        }
+
+        if (currentStepNumber < numberOfStep - 2 && !stepDesc[Constants.NEXT_ON_TARGET] && !stepDesc[Constants.NO_SKIP]) {
+            showSkip = true;
+        }
+        if (stepDesc[Constants.NEXT_ON_TARGET]) {
+            disableNext = true;
+        }
+
+        if (currentStepNumber > 0 && !stepDesc[Constants.NO_BACK]) {
+            showBack = true;
+        }
+
+        FlexTour.Component.createComponents(noButtons, showSkip, showBack, showNext, disableNext);
 
         _addClickEvents();
         _addResizeWindowListener();
+
+        if (stepDesc[Constants.TRANSITION] && _isAllowToMove(currentStepNumber + 1, 0)) {
+            console.log("Inside transition step.");
+            _transitionToNextStep(currentStepNumber + 1);
+        }
     } else {
         console.log("Target of step: " + JSON.stringify(stepDesc) + " is not found.");
     }
@@ -238,7 +247,6 @@ function _isAllowToMove(possibleStepNumber, currPrerequisite) {
              */
 
             let funcName = prerequisite.split(Constants.SKIP)[1].trim();
-            console.log("Skip function: " + funcName + " returned: " + Utils.executeFunctionWithName(funcName, FlexTour.actionsList));
             if (Utils.executeFunctionWithName(funcName, FlexTour.actionsList)) {
                 _transitionToNextStep(possibleStepNumber + 1);
                 return false;
@@ -332,6 +340,12 @@ function _cleanUp() {
     FlexTour.Component.removeComponents();
 }
 
+/**
+ * Constructor of the whole thing.
+ * @param tourDesc      The JSON file that describe what the tours should be like
+ * @param actionsList   The object contains all functions that control the flow of the tours
+ * @constructor
+ */
 function FlexTour(tourDesc, actionsList) {
     FlexTour.toursMap = [];
     FlexTour.currentTourIndex = 0;

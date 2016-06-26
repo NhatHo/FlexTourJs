@@ -148,8 +148,17 @@ module.exports = {
      * @param stepDesc      The description of the step
      * @returns {*|boolean} True if it has target AND content, false otherwise
      */
-    isValidStep: function (stepDesc) {
+    isStepWithTarget: function (stepDesc) {
         return (this.isValid(stepDesc[Constants.TARGET]) && this.isValid(stepDesc[Constants.CONTENT]));
+    },
+
+    /**
+     * Check if the current step is a floating step. Meaning there isn't a target.
+     * @param stepDesc      Description of the step
+     * @returns {boolean|*} True when step has content and position is set to float
+     */
+    isFloatStep: function (stepDesc) {
+        return (stepDesc[Constants.POSITION] === Constants.FLOAT && this.isValid(stepDesc[Constants.CONTENT]));
     },
 
     /**
@@ -192,5 +201,25 @@ module.exports = {
         }
         // If the given function name exist in the list, return false to halt the process. Because this could cause the flow to break.
         return false;
+    },
+
+    /**
+     * Get the innerwidth of window first
+     * If it doesn't exist then get clientWidth through documentElement which is needed for IE8 or earlier
+     * Lastly, if those 2 methods failed, get clientWidth through document.body
+     * @returns {Number|number}     window width through 1 of 3 methods
+     */
+    getFullWindowWidth: function () {
+        return window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth; // For IE8 or earlier
+    },
+
+    /**
+     * Get the innerHeight of window first
+     * If it doesn't exist then get clientHeight through documentElement which is needed for IE8 or earlier
+     * Lastly, if those 2 methods failed, get clientHeight through document.body
+     * @returns {Number|number}     window height through 1 of 3 methods
+     */
+    getFullWindowHeight: function () {
+        return window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight; // For IE8 or earlier
     }
 };

@@ -22,6 +22,7 @@
 .flextour-tour-bubble {
   position: absolute;
   width: 400px;
+  max-width: 1000px;
   height: auto;
   padding: 5px;
   background: #FFFFFF;
@@ -40,6 +41,12 @@
   margin-left: 15px;
   float: left;
   padding: 10px 10px 10px 0;
+}
+
+.flextour-float-bubble {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 .arrow-location {
   position: relative;

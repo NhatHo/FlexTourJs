@@ -12,11 +12,7 @@ actionsList.action2 = function () {
 };
 actionsList.exist = function () {
     let isShowed = document.querySelector("#randomEle");
-    if (isShowed.style.display === "block") {
-        return false;
-    } else {
-        return true;
-    }
+    return isShowed.style.display === "block";
 };
 
 let tourDesc = [{
@@ -60,6 +56,11 @@ let tourDesc = [{
         target: "#myBtn",
         nextOnTargetClick: true,
         type: "action"
+    }, {
+        content: "Please wait for Modal",
+        position: "float",
+        type: "info",
+        transition: true
     }, {
         content: "Show Modal here",
         position: "bottom",

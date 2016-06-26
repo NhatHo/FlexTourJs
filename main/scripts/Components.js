@@ -7,62 +7,51 @@ var Constants = require("./Constants");
 var Utils = require("./Utilities");
 
 function Components(stepDescription) {
-    if (Utils.isValidStep(stepDescription)) {
+    if (Utils.isStepWithTarget(stepDescription)) {
         Components.stepDescription = Utils.clone({}, stepDescription);
         Components.rect = document.querySelector(stepDescription[Constants.TARGET]).getBoundingClientRect();
+        Components.ui = document.createElement("div");
+    }
+    else if (Utils.isFloatStep(stepDescription)) {
+        Components.stepDescription = Utils.clone({}, stepDescription);
         Components.ui = document.createElement("div");
     }
 }
 
 /**
- * Get rect variable
- */
-Components.prototype.getRect = function () {
-    return Components.rect;
-};
-
-/**
  * Add top overlay into document body
  */
 function _createTopOverlay() {
-    let height = Components.rect.top;
-    let width = document.body.getBoundingClientRect().width;
-
     // Put overlay on top left of the screen
-    _createOverlayNode(width + Constants.PX, height + Constants.PX, 0 + Constants.PX, 0 + Constants.PX);
+    _createOverlayNode(Utils.getFullWindowWidth() + Constants.PX, Components.rect.top + Constants.PX, 0 + Constants.PX, 0 + Constants.PX);
 }
 
 /**
  * Generate Bottom overlay rect
  */
 function _createBottomOverlay() {
-    let height = "100vh";
-    let width = document.body.getBoundingClientRect().width;
-
+    let height = Utils.getFullWindowHeight() - Components.rect.height - Components.rect.top;
+    
     // Put over on the bottom of target rect
-    _createOverlayNode(width + Constants.PX, height, Components.rect.top + Components.rect.height + Constants.PX, 0 + Constants.PX);
+    _createOverlayNode(Utils.getFullWindowWidth() + Constants.PX, height + Constants.PX, Components.rect.top + Components.rect.height + Constants.PX, 0 + Constants.PX);
 }
 
 /**
  * Generate Left overlay rect
  */
 function _createLeftOverlay() {
-    let height = Components.rect.height;
-    let width = Components.rect.left;
-
     // Put overlay over space on the left of target
-    _createOverlayNode(width + Constants.PX, height + Constants.PX, Components.rect.top + Constants.PX, 0 + Constants.PX);
+    _createOverlayNode(Components.rect.left + Constants.PX, Components.rect.height + Constants.PX, Components.rect.top + Constants.PX, 0 + Constants.PX);
 }
 
 /**
  * Add Right overlay next to target rect
  */
 function _createRightOverlay() {
-    let height = Components.rect.height;
-    let width = document.body.getBoundingClientRect().width - Components.rect.left - Components.rect.width;
+    let width = Utils.getFullWindowWidth() - Components.rect.left - Components.rect.width;
 
     // Put overlay on the top right of the target rect
-    _createOverlayNode(width + Constants.PX, height + Constants.PX, Components.rect.top + Constants.PX, Components.rect.left + Components.rect.width + Constants.PX);
+    _createOverlayNode(width + Constants.PX, Components.rect.height + Constants.PX, Components.rect.top + Constants.PX, Components.rect.left + Components.rect.width + Constants.PX);
 }
 
 /**
@@ -94,23 +83,21 @@ function _addOverlays() {
 }
 
 /**
- * Remove all overlays from document body for cleaning up
+ * This function is used for floating step which doesn't have a target and the bubble float in the middle of the screen.
  */
-function _removeAllOverlay() {
-    let overlays = Utils.getElesFromClassName(Constants.OVERLAY_STYLE);
-    for (let i = 0; i < overlays.length; i++) {
-        Components.ui.removeChild(overlays[i]);
-    }
+function _addOverlay() {
+    _createOverlayNode("100%", "100%", 0, 0);
 }
 
 /**
  * Create content bubble next to target to display the content of the step
+ * @param {boolean} noButtons  True will hide all buttons
  * @param {boolean} showSkip  True to show skip button
  * @param {boolean} showBack  True to show Back Button
  * @param {boolean} showNext  True to show Next Button, False to show Done Button
  * @param {boolean} disableNext  True to disable either Next or Done button
  */
-function _createContentBubble(showSkip, showBack, showNext, disableNext) {
+function _createContentBubble(noButtons, showSkip, showBack, showNext, disableNext) {
     let bubble = document.createElement("div");
 
     let iconDiv = document.createElement("div");
@@ -130,49 +117,51 @@ function _createContentBubble(showSkip, showBack, showNext, disableNext) {
 
     bubble.appendChild(contentSpan);
 
-    let buttonGroup = document.createElement("div");
-    buttonGroup.classList.add(Constants.BUTTON_GROUP);
+    if (!noButtons) {
+        let buttonGroup = document.createElement("div");
+        buttonGroup.classList.add(Constants.BUTTON_GROUP);
 
-    let skipButton = document.createElement("button");
-    skipButton.classList.add(Constants.SKIP_BUTTON);
-    skipButton.innerHTML = Constants.SKIP_TEXT;
-    if (!showSkip) {
-        skipButton.disabled = true;
-    }
-    buttonGroup.appendChild(skipButton);
+        let skipButton = document.createElement("button");
+        skipButton.classList.add(Constants.SKIP_BUTTON);
+        skipButton.innerHTML = Constants.SKIP_TEXT;
+        if (!showSkip) {
+            skipButton.disabled = true;
+        }
+        buttonGroup.appendChild(skipButton);
 
-    let backButton = document.createElement("button");
-    backButton.classList.add(Constants.BACK_BUTTON);
-    backButton.innerHTML = Constants.BACK_TEXT;
-    if (!showBack) {
-        backButton.disabled = true;
-    }
-    buttonGroup.appendChild(backButton);
+        let backButton = document.createElement("button");
+        backButton.classList.add(Constants.BACK_BUTTON);
+        backButton.innerHTML = Constants.BACK_TEXT;
+        if (!showBack) {
+            backButton.disabled = true;
+        }
+        buttonGroup.appendChild(backButton);
 
 
-    if (showNext) {
-        let nextButton = document.createElement("button");
-        nextButton.classList.add(Constants.NEXT_BUTTON);
-        nextButton.innerHTML = Constants.NEXT_TEXT;
+        if (showNext) {
+            let nextButton = document.createElement("button");
+            nextButton.classList.add(Constants.NEXT_BUTTON);
+            nextButton.innerHTML = Constants.NEXT_TEXT;
 
-        if (disableNext) {
-            nextButton.disabled = true;
+            if (disableNext) {
+                nextButton.disabled = true;
+            }
+
+            buttonGroup.appendChild(nextButton);
+        } else {
+            let doneButton = document.createElement("button");
+            doneButton.classList.add(Constants.DONE_BUTTON);
+            doneButton.innerHTML = Constants.DONE_TEXT;
+
+            if (disableNext) {
+                doneButton.disabled = true;
+            }
+
+            buttonGroup.appendChild(doneButton);
         }
 
-        buttonGroup.appendChild(nextButton);
-    } else {
-        let doneButton = document.createElement("button");
-        doneButton.classList.add(Constants.DONE_BUTTON);
-        doneButton.innerHTML = Constants.DONE_TEXT;
-
-        if (disableNext) {
-            doneButton.disabled = true;
-        }
-
-        buttonGroup.appendChild(doneButton);
+        bubble.appendChild(buttonGroup);
     }
-
-    bubble.appendChild(buttonGroup);
 
     let closeButton = document.createElement("a");
     closeButton.innerHTML = Constants.TIMES;
@@ -239,11 +228,11 @@ function _placeBubbleLocation() {
 }
 
 /**
- * Remove content bubble from document body for cleaning up
+ * Find the location of the bubble and put it in the middle of the screen.
  */
-function _clearContentBubble() {
-    let contentBubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE);
-    Components.ui.removeChild(contentBubble);
+function _placeFloatBubble() {
+    let bubble = document.querySelector(Utils.getClassName(Constants.TOUR_BUBBLE));
+    bubble.classList.add(Constants.FLOAT_STYLE);
 }
 
 /**
@@ -268,35 +257,33 @@ function _addBorderAroundTarget() {
 }
 
 /**
- * Clear the border around target for cleaning up
- */
-function _clearBorderAroundTarget() {
-    let borderOverlay = Utils.getEleFromClassName(Constants.TARGET_BORDER);
-    Components.ui.removeChild(borderOverlay);
-}
-
-/**
  * Main function to create overlays, border around target and the content bubble next to target
+ * @param noButtons        True to hide all buttons
  * @param showSkip        True to show Skip button
  * @param showBack        True to show Back Button
  * @param showNext        True to show Next Button, False to show Done Button
  * @param disableNext     True to disable Next and Done button
  */
-Components.prototype.createComponents = function (showSkip, showBack, showNext, disableNext) {
-    _addOverlays();
-    _addBorderAroundTarget();
-    _createContentBubble(showSkip, showBack, showNext, disableNext);
-    document.body.appendChild(Components.ui);
-    _placeBubbleLocation();
+Components.prototype.createComponents = function (noButtons, showSkip, showBack, showNext, disableNext) {
+    if (!Components.stepDescription[Constants.TRANSITION]) {
+        _addOverlays();
+        _addBorderAroundTarget();
+        _createContentBubble(noButtons, showSkip, showBack, showNext, disableNext);
+        document.body.appendChild(Components.ui);
+        _placeBubbleLocation();
+    } else {
+        // The target element cannot be found which mean this is a floating step
+        _addOverlay();
+        _createContentBubble(noButtons, showSkip, showBack, showNext, disableNext);
+        document.body.appendChild(Components.ui);
+        _placeFloatBubble();
+    }
 };
 
 /**
  * Main function to clean up the components that were added into the DOM.
  */
 Components.prototype.removeComponents = function () {
-    _removeAllOverlay();
-    _clearBorderAroundTarget();
-    _clearContentBubble();
     document.body.removeChild(Components.ui);
 };
 
