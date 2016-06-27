@@ -70,7 +70,7 @@ function _centralOrganizer(stepDesc) {
         // When the current step has NextOnTarget flag set, assuming that this step setup prerequisite for next step
         // Which means that user cannot click Next, or Skip.
 
-        if (stepDesc[Constants.NO_BUTTONS] || Utils.isFloatStep(stepDesc)) {
+        if (stepDesc[Constants.NO_BUTTONS] || stepDesc[Constants.TRANSITION]) {
             noButtons = true;
         }
 
