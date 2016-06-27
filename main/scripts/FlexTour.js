@@ -117,7 +117,10 @@ function _centralOrganizer(stepDesc) {
  * Attached all necessary handlers to the elements
  */
 function _addClickEvents() {
-    Utils.getElementsAndAttachEvent(Constants.OVERLAY_STYLE, Constants.FLEX_CLICK, _exit);
+    if (FlexTour.currentTour[Constants.END_ON_OVERLAY_CLICK]) {
+        debugger;
+        Utils.getElementsAndAttachEvent(Constants.OVERLAY_STYLE, Constants.FLEX_CLICK, _exit);
+    }
 
     Utils.getElementsAndAttachEvent(Constants.SKIP_BUTTON, Constants.FLEX_CLICK, _skipStep);
 

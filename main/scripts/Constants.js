@@ -73,6 +73,7 @@ module.exports = {
     WAIT_INTERVALS: "waitIntervals",
     RETRIES: "retries",
     END_ON_ESC: "endOnEsc",
+    END_ON_OVERLAY_CLICK: "endOnOverlayClick",
     DELAY: "delay",
     TRANSITION: "transition",
 

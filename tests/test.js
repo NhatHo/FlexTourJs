@@ -17,8 +17,8 @@ actionsList.skipWhenElementIsNotShowed = function () {
 
 let tourDesc = [{
     id: "test",
-    endOnOverlayClick: true,
     endOnEsc: true,
+    endOnOverlayClick: false,
     canInteract: false,
     waitIntervals: 1000,
     retries: 20,

@@ -183,7 +183,10 @@ var FlexTour =
          * Attached all necessary handlers to the elements
          */
         function _addClickEvents() {
-            Utils.getElementsAndAttachEvent(Constants.OVERLAY_STYLE, Constants.FLEX_CLICK, _exit);
+            if (Utils.isValid(FlexTour.currentTour[Constants.END_ON_OVERLAY_CLICK])) {
+                debugger;
+                Utils.getElementsAndAttachEvent(Constants.OVERLAY_STYLE, Constants.FLEX_CLICK, _exit);
+            }
 
             Utils.getElementsAndAttachEvent(Constants.SKIP_BUTTON, Constants.FLEX_CLICK, _skipStep);
 
@@ -1113,6 +1116,7 @@ var FlexTour =
             WAIT_INTERVALS: "waitIntervals",
             RETRIES: "retries",
             END_ON_ESC: "endOnEsc",
+            END_ON_OVERLAY_CLICK: "endOnOverlayClick",
             DELAY: "delay",
             TRANSITION: "transition",
 
