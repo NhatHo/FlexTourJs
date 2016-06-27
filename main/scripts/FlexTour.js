@@ -91,7 +91,15 @@ function _centralOrganizer(stepDesc) {
             showBack = true;
         }
 
-        FlexTour.Component.createComponents(noButtons, showSkip, showBack, showNext, disableNext);
+        /**
+         * Create components can be only called once when the tour start for the first time.
+         */
+        if (!FlexTour.running) {
+            FlexTour.Component.createComponents(noButtons, showSkip, showBack, showNext, disableNext);
+            FlexTour.running = true;
+        } else {
+            FlexTour.Component.modifyComponents(noButtons, showSkip, showBack, showNext, disableNext);
+        }
 
         _addClickEvents();
         _addResizeWindowListener();
@@ -109,7 +117,7 @@ function _centralOrganizer(stepDesc) {
  * Attached all necessary handlers to the elements
  */
 function _addClickEvents() {
-    Utils.getElementsAndAttachEvent(Constants.OVERLAY_STYLE, Constants.FLEX_CLICK, _cleanUp);
+    Utils.getElementsAndAttachEvent(Constants.OVERLAY_STYLE, Constants.FLEX_CLICK, _exit);
 
     Utils.getElementsAndAttachEvent(Constants.SKIP_BUTTON, Constants.FLEX_CLICK, _skipStep);
 
@@ -117,9 +125,9 @@ function _addClickEvents() {
 
     Utils.getElementsAndAttachEvent(Constants.NEXT_BUTTON, Constants.FLEX_CLICK, _nextStep);
 
-    Utils.getElementsAndAttachEvent(Constants.DONE_BUTTON, Constants.FLEX_CLICK, _cleanUp);
+    Utils.getElementsAndAttachEvent(Constants.DONE_BUTTON, Constants.FLEX_CLICK, _exit);
 
-    Utils.getElementsAndAttachEvent(Constants.CLOSE_TOUR, Constants.FLEX_CLICK, _cleanUp);
+    Utils.getElementsAndAttachEvent(Constants.CLOSE_TOUR, Constants.FLEX_CLICK, _exit);
 
     let currentStep = FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber];
     if (currentStep[Constants.NEXT_ON_TARGET]) {
@@ -134,7 +142,7 @@ function _addClickEvents() {
  * Remove all attached event to avoid leaking memories
  */
 function _removeEvents() {
-    Utils.removeELementsAndAttachedEvent(Constants.OVERLAY_STYLE, Constants.FLEX_CLICK, _cleanUp);
+    Utils.removeELementsAndAttachedEvent(Constants.OVERLAY_STYLE, Constants.FLEX_CLICK, _exit);
 
     Utils.removeELementsAndAttachedEvent(Constants.SKIP_BUTTON, Constants.FLEX_CLICK, _skipStep);
 
@@ -142,9 +150,9 @@ function _removeEvents() {
 
     Utils.removeELementsAndAttachedEvent(Constants.NEXT_BUTTON, Constants.FLEX_CLICK, _nextStep);
 
-    Utils.removeELementsAndAttachedEvent(Constants.DONE_BUTTON, Constants.FLEX_CLICK, _cleanUp);
+    Utils.removeELementsAndAttachedEvent(Constants.DONE_BUTTON, Constants.FLEX_CLICK, _exit);
 
-    Utils.removeELementsAndAttachedEvent(Constants.CLOSE_TOUR, Constants.FLEX_CLICK, _cleanUp);
+    Utils.removeELementsAndAttachedEvent(Constants.CLOSE_TOUR, Constants.FLEX_CLICK, _exit);
 
     let currentStep = FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber];
     if (currentStep[Constants.NEXT_ON_TARGET]) {
@@ -159,7 +167,7 @@ function _removeEvents() {
  * THIS PART RIGHT HERE IS WHAT MAKE FLEXTOUR DIFFERENT FROM OTHER ENGINES.
  *
  *
- * IMPORTANT: This is only used for Next and Skip, it's the developer job to know if the previous step can be reached. If the previous step should not be REACHED, set "noBack: true" in step description.
+ * IMPORTANT: It's the developer job to know if the previous step can be reached. If the previous step should not be REACHED, set "noBack: true" in step description. Samething for SKIP Button.
  * Check if the next, previous or skip step is allowed to be executed.
  * The prerequisites array can contain up to 3 types:
  *  -- Prerequisite functions: regular function name. I.e: "getInputString", etc.
@@ -225,7 +233,13 @@ function _isAllowToMove(possibleStepNumber, currPrerequisite) {
             let prerequisiteBlock = prerequisite.split(Constants.SKIP)[1].trim();
 
             if (!_executePrerequisiteCondition(possibleStep, prerequisiteBlock)) {
-                _transitionToNextStep(possibleStepNumber + 1);
+                if (possibleStepNumber > FlexTour.currentStepNumber) {
+                    // If the tour is going forward then skip it forward
+                    _transitionToNextStep(possibleStepNumber + 1);
+                } else {
+                    // If the tour is going backward then skip it backward
+                    _transitionToNextStep(possibleStepNumber - 1);
+                }
                 // At this point the step will be skipped. Return false so the potential step will not be rendered.
                 return false;
             }
@@ -287,7 +301,6 @@ function _executePrerequisiteCondition(stepDesc, prerequisite) {
     return temporaryResult;
 }
 
-
 /**
  * Skip the next step to the next next step.
  */
@@ -301,7 +314,9 @@ function _skipStep() {
  * Decrement current step counter and go back to previous step ... Obviously it will not be the last step
  */
 function _previousStep() {
-    _transitionToNextStep(FlexTour.currentStepNumber - 1, 0);
+    if (_isAllowToMove(FlexTour.currentStepNumber - 1, 0)) {
+        _transitionToNextStep(FlexTour.currentStepNumber - 1);
+    }
 }
 
 /**
@@ -321,12 +336,12 @@ function _transitionToNextStep(stepNumber) {
     let stepDelay = FlexTour.currentTour[Constants.STEPS][stepNumber][Constants.DELAY];
 
     function __transitionFunction(stepNumber) {
-        _cleanUp();
         FlexTour.currentStepNumber = stepNumber;
         _centralOrganizer(FlexTour.currentTour[Constants.STEPS][stepNumber]);
     }
 
     if (Utils.isValid(stepDelay)) {
+        console.log("Trigger after delay.");
         setTimeout(__transitionFunction.bind(this, stepNumber), stepDelay);
     } else {
         __transitionFunction(stepNumber);
@@ -340,8 +355,6 @@ function _transitionToNextStep(stepNumber) {
  */
 function _addResizeWindowListener() {
     Utils.addEvent(window, Constants.FLEX_RESIZE, Utils.debounce(function () {
-        console.log("I'm re-rendering");
-        _cleanUp();
         _centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber]);
     }, 500, false));
 }
@@ -353,14 +366,12 @@ function _unbindResizeWindowListener() {
     Utils.removeEvent(window, Constants.FLEX_RESIZE);
 }
 
-/**
- * Clean up everything in the DOM from running the tour
- */
-function _cleanUp() {
+function _exit() {
     _removeEvents();
     _unbindResizeWindowListener();
 
     FlexTour.Component.removeComponents();
+    FlexTour.running = false; // Reset this flag when users quit the tour
 }
 
 /**
@@ -375,6 +386,7 @@ function FlexTour(tourDesc, actionsList) {
     FlexTour.currentStepNumber = 0;
     FlexTour.currentTour = {};
     FlexTour.actionsList = actionsList;
+    FlexTour.running = false; // A flag that let the system know that a tour is being run
     _preprocessingTours(tourDesc);
 }
 
@@ -398,7 +410,7 @@ FlexTour.prototype.run = function () {
 };
 
 FlexTour.prototype.exit = function () {
-    _cleanUp();
+    _exit();
 };
 
 module.exports = FlexTour;

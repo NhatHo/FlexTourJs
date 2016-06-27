@@ -33,7 +33,7 @@
 
 .flextour-tour-bubble {
   position: absolute;
-  width: 450px;
+  width: 400px;
   max-width: 1000px;
   height: auto;
   padding: 5px;
@@ -48,6 +48,10 @@
   -webkit-box-shadow: 2px 2px 4px @ShadowColor;
   -moz-box-shadow: 2px 2px 4px @ShadowColor;
   box-shadow: 2px 2px 4px @ShadowColor;
+  -webkit-transition: all 0.5s;
+  -moz-transition: all 0.5s;
+  -o-transition: all 0.5s;
+  transition: all 0.5s;
 
   .flextour-content {
     margin-left: 15px;
@@ -63,6 +67,10 @@
       margin-bottom: 3px;
     }
   }
+}
+
+.flextour-content-body {
+  font-size: 12pt;
 }
 
 .flextour-float-bubble {
@@ -154,19 +162,16 @@
 .flextour-icon-info {
   background: url("icons/info.png") no-repeat;
   background-size: contain;
-  .icon-style;
 }
 
 .flextour-icon-action {
   background: url("icons/action.png") no-repeat;
   background-size: contain;
-  .icon-style;
 }
 
 .flextour-icon-loading {
   background: url("icons/loading.gif") no-repeat;
   background-size: contain;
-  .icon-style;
 }
 
 .flextour-button-group {
@@ -312,6 +317,10 @@ a.flextour-close {
   position: absolute;
   z-index: 10;
   background-color: @OverlayBackground; /*Enough to dim the back ground*/
+  -webkit-transition: all 0.5s;
+  -moz-transition: all 0.5s;
+  -o-transition: all 0.5s;
+  transition: all 0.5s;
 }
 
 .flextour-fixed-overlay {
@@ -322,6 +331,10 @@ a.flextour-close {
   background: none !important;
   border: @BorderColor solid 3px;
   position: absolute;
+  -webkit-transition: all 0.5s;
+  -moz-transition: all 0.5s;
+  -o-transition: all 0.5s;
+  transition: all 0.5s;
 
   &.interactable {
     pointer-events: none;

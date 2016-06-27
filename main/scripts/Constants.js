@@ -14,6 +14,8 @@ module.exports = {
     DOES_EXIST: "doesExist",
     OVERLAY_STYLE: "flextour-overlay-styles",
 
+    FLEXTOUR: "flextour",
+
     // Bubble Block
     TARGET_BORDER: "flextour-target-border",
     TARGET_INTERACTABLE: "interactable",
@@ -21,9 +23,12 @@ module.exports = {
     ARROW_LOCATION: "arrow-location",
     HOLLOW_ARROW: "inner-arrow",
     BUBBLE_CONTENT: "flextour-content",
+    BUBBLE_CONTENT_BODY: "flextour-content-body",
     FLOAT_STYLE: "flextour-float-bubble",
     BUBBLE_TITLE: "flextour-bubble-title",
+    ICON_STYLE: "icon-style",
 
+    ICON_REGEXP: "flextour-icon",
     ACTION_ICON: "flextour-icon-action",
     DEFAULT_ICON: "flextour-icon-info",
     LOADING_ICON: "flextour-icon-loading",

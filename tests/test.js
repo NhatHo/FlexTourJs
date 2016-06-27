@@ -68,6 +68,7 @@ let tourDesc = [{
         position: "bottom",
         target: ".modal-content",
         delay: 500,
+        noBack: true,
         prerequisites: ["action1", "?isVisible:@target@"]
     }]
 }];

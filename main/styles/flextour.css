@@ -23,7 +23,7 @@
 /********************* BUBBLES STYLE ***************************/
 .flextour-tour-bubble {
   position: absolute;
-  width: 450px;
+  width: 400px;
   max-width: 1000px;
   height: auto;
   padding: 5px;
@@ -38,6 +38,10 @@
   -webkit-box-shadow: 2px 2px 4px #888;
   -moz-box-shadow: 2px 2px 4px #888;
   box-shadow: 2px 2px 4px #888;
+  -webkit-transition: all 0.5s;
+  -moz-transition: all 0.5s;
+  -o-transition: all 0.5s;
+  transition: all 0.5s;
 }
 .flextour-tour-bubble .flextour-content {
   margin-left: 15px;
@@ -45,13 +49,16 @@
   float: left;
   padding: 10px 0 10px 0;
 }
-
 .flextour-tour-bubble .flextour-content .flextour-bubble-title {
   border-bottom: 2px solid #F00000;
   color: #A80000;
   font-size: 14pt;
   padding-bottom: 3px;
   margin-bottom: 3px;
+}
+
+.flextour-content-body {
+  font-size: 12pt;
 }
 .flextour-float-bubble {
   left: 50%;
@@ -164,35 +171,14 @@
 .flextour-icon-info {
   background: url("icons/info.png") no-repeat;
   background-size: contain;
-  min-width: 40px;
-  min-height: 40px;
-  width: 8%;
-  float: left;
-  margin-top: 5px;
-  margin-bottom: 5px;
-  margin-left: 15px;
 }
 .flextour-icon-action {
   background: url("icons/action.png") no-repeat;
   background-size: contain;
-  min-width: 40px;
-  min-height: 40px;
-  width: 8%;
-  float: left;
-  margin-top: 5px;
-  margin-bottom: 5px;
-  margin-left: 15px;
 }
 .flextour-icon-loading {
   background: url("icons/loading.gif") no-repeat;
   background-size: contain;
-  min-width: 40px;
-  min-height: 40px;
-  width: 8%;
-  float: left;
-  margin-top: 5px;
-  margin-bottom: 5px;
-  margin-left: 15px;
 }
 .flextour-button-group {
   float: right;
@@ -320,6 +306,10 @@ a.flextour-close:hover {
   z-index: 10;
   background-color: rgba(0, 0, 0, 0.5);
   /*Enough to dim the back ground*/
+  -webkit-transition: all 0.5s;
+  -moz-transition: all 0.5s;
+  -o-transition: all 0.5s;
+  transition: all 0.5s;
 }
 .flextour-fixed-overlay {
   position: fixed;
@@ -328,6 +318,10 @@ a.flextour-close:hover {
   background: none !important;
   border: #666 solid 3px;
   position: absolute;
+  -webkit-transition: all 0.5s;
+  -moz-transition: all 0.5s;
+  -o-transition: all 0.5s;
+  transition: all 0.5s;
 }
 .flextour-target-border.interactable {
   pointer-events: none;

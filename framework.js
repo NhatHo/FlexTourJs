@@ -64,14 +64,14 @@ var FlexTour =
     /* 0 */
     /***/ function (module, exports, __webpack_require__) {
 
-        /**
-         * Created by NhatHo on 2016-06-01.
-         */
+        /*******************************************************************************
+         * Copyright (c) 2016. MIT License.
+         * NhatHo-nhatminhhoca@gmail.com
+         ******************************************************************************/
 
-        var Components = __webpack_require__(1);
-        var Constants = __webpack_require__(2);
-        var Utils = __webpack_require__(3);
-        var Tether = __webpack_require__(4);
+        let Components = __webpack_require__(1);
+        let Constants = __webpack_require__(2);
+        let Utils = __webpack_require__(3);
 
         /**
          * Pre-process all information for all tours make sure each step and each tour contains necessary
@@ -79,50 +79,101 @@ var FlexTour =
          * @param tourDesc      JSON description file that has all information needed
          */
         function _preprocessingTours(tourDesc) {
-            let _tourDesc = Utils.deepClone({}, tourDesc);
-
-            for (let i = 0; i < _tourDesc.length; i++) {
-                let rawTour = _tourDesc[i];
-
-                // Fill in information for each tour in case any important information is missing
-                rawTour[Constants.ID] = rawTour[Constants.ID] || Constants.TOUR + i;
-                rawTour = Utils.deepClone({}, Constants.TOUR_DEFAULT_SETTINGS, rawTour);
-
-                // Fill in information for each step in case anything important is missing
-                let numOfSteps = rawTour[Constants.STEPS].length;
-
-                for (let i = 0; i < numOfSteps; i++) {
-                    let currentStep = rawTour[Constants.STEPS][i];
-
-                    currentStep[Constants.TYPE] = currentStep[Constants.TYPE] || Constants.DEFAULT_TYPE;
-                    currentStep[Constants.POSITION] = currentStep[Constants.POSITION] || Constants.DEFAULT_POSITION;
-                    currentStep[Constants.NO_BUTTONS] = currentStep[Constants.NO_BUTTONS] || rawTour[Constants.NO_BUTTONS];
-                    currentStep[Constants.NO_NEXT] = currentStep[Constants.NO_NEXT] || rawTour[Constants.NO_NEXT];
-                    currentStep[Constants.NO_BACK] = currentStep[Constants.NO_BACK] || rawTour[Constants.NO_BACK];
-                    currentStep[Constants.NO_SKIP] = currentStep[Constants.NO_SKIP] || rawTour[Constants.NO_SKIP];
-                    currentStep[Constants.CAN_INTERACT] = currentStep[Constants.CAN_INTERACT] || currentStep[Constants.NEXT_ON_TARGET] || rawTour[Constants.CAN_INTERACT]; // This mean that if target can trigger next step on click, it must be clickable
-                    currentStep[Constants.WAIT_INTERVALS] = currentStep[Constants.WAIT_INTERVALS] || rawTour[Constants.WAIT_INTERVALS];
-                    currentStep[Constants.RETRIES] = currentStep[Constants.RETRIES] || rawTour[Constants.RETRIES];
+            if (Array.isArray(tourDesc)) {
+                for (let i = 0; i < tourDesc.length; i++) {
+                    _initializeTour(tourDesc[i]);
                 }
-                this.toursMap.push(rawTour);
+            } else {
+                _initializeTour(tourDesc);
             }
+        }
+
+        /**
+         * Initialize raw tour object to make it legal for the framework
+         * @param tour      The tour object ---> Must be an object
+         */
+        function _initializeTour(tour) {
+            let rawTour = Utils.clone({}, tour);
+            // Fill in information for each tour in case any important information is missing
+            rawTour[Constants.ID] = rawTour[Constants.ID] || Constants.TOUR + i;
+            rawTour = Utils.clone({}, Constants.TOUR_DEFAULT_SETTINGS, rawTour);
+
+            // Fill in information for each step in case anything important is missing
+            let numOfSteps = rawTour[Constants.STEPS].length;
+
+            for (let i = 0; i < numOfSteps; i++) {
+                let currentStep = rawTour[Constants.STEPS][i];
+
+                currentStep[Constants.TYPE] = currentStep[Constants.TYPE] || Constants.DEFAULT_TYPE;
+                currentStep[Constants.POSITION] = currentStep[Constants.POSITION] || Constants.DEFAULT_POSITION;
+                currentStep[Constants.NO_BUTTONS] = currentStep[Constants.NO_BUTTONS] || rawTour[Constants.NO_BUTTONS];
+                currentStep[Constants.DELAY] = currentStep[Constants.DELAY] || rawTour[Constants.DELAY];
+                currentStep[Constants.NO_BACK] = currentStep[Constants.NO_BACK] || rawTour[Constants.NO_BACK];
+                currentStep[Constants.NO_SKIP] = currentStep[Constants.NO_SKIP] || rawTour[Constants.NO_SKIP];
+                currentStep[Constants.CAN_INTERACT] = currentStep[Constants.CAN_INTERACT] || currentStep[Constants.NEXT_ON_TARGET] || rawTour[Constants.CAN_INTERACT]; // This mean that if target can trigger next step on click, it must be clickable
+                currentStep[Constants.WAIT_INTERVALS] = currentStep[Constants.WAIT_INTERVALS] || rawTour[Constants.WAIT_INTERVALS];
+                currentStep[Constants.RETRIES] = currentStep[Constants.RETRIES] || rawTour[Constants.RETRIES];
+            }
+            FlexTour.toursMap.push(rawTour);
         }
 
         /**
          * This is the head quarter of displaying steps, overlay, and other things.
          * Tags: CENTRAL, ORGANIZER, RUNNER
          * @param stepDesc          Description object of current step to be run
-         * @param isLastStep        Indicator whether current step is the last step of tour
          */
-        function _centralOrganizer(stepDesc, isLastStep) {
-            let component = new Components(stepDesc);
-            if (Utils.isValid(component.rect)) {
-                component.addOverlays();
-                component.addBorderAroundTarget(stepDesc[Constants.CAN_INTERACT]);
-                component.createContentBubble(isLastStep);
+        function _centralOrganizer(stepDesc) {
+            FlexTour.Component = new Components(stepDesc);
+            let currentStepNumber = FlexTour.currentStepNumber;
+
+            if (Utils.isValid(FlexTour.Component)) {
+                let showSkip = false,
+                    showBack = false,
+                    showNext = false,
+                    disableNext = false,
+                    noButtons = false;
+
+                // When the current step has NextOnTarget flag set, assuming that this step setup prerequisite for next step
+                // Which means that user cannot click Next, or Skip.
+
+                if (stepDesc[Constants.NO_BUTTONS] || Utils.isFloatStep(stepDesc)) {
+                    noButtons = true;
+                }
+
+                let numberOfStep = FlexTour.currentTour[Constants.STEPS].length;
+
+                if (currentStepNumber < numberOfStep - 1) {
+                    showNext = true;
+                }
+
+                if (currentStepNumber < numberOfStep - 2 && !stepDesc[Constants.NEXT_ON_TARGET] && !stepDesc[Constants.NO_SKIP]) {
+                    showSkip = true;
+                }
+                if (stepDesc[Constants.NEXT_ON_TARGET]) {
+                    disableNext = true;
+                }
+
+                if (currentStepNumber > 0 && !stepDesc[Constants.NO_BACK]) {
+                    showBack = true;
+                }
+
+                /**
+                 * Create components can be only called once when the tour start for the first time.
+                 */
+                if (!FlexTour.running) {
+                    FlexTour.Component.createComponents(noButtons, showSkip, showBack, showNext, disableNext);
+                    FlexTour.running = true;
+                } else {
+                    FlexTour.Component.modifyComponents(noButtons, showSkip, showBack, showNext, disableNext);
+                }
 
                 _addClickEvents();
                 _addResizeWindowListener();
+
+                if (stepDesc[Constants.TRANSITION] && _isAllowToMove(currentStepNumber + 1, 0)) {
+                    console.log("Inside transition step.");
+                    _transitionToNextStep(currentStepNumber + 1);
+                }
             } else {
                 console.log("Target of step: " + JSON.stringify(stepDesc) + " is not found.");
             }
@@ -131,35 +182,25 @@ var FlexTour =
         /**
          * Attached all necessary handlers to the elements
          */
-        function _addClickEvents(isLastStep) {
-            let overlays = Utils.getElesFromClassName(Constants.OVERLAY_STYLE);
-            for (let overlay in overlays) {
-                Utils.addEvent(overlay, Constants.FLEX_CLICK, _cleanUp);
-            }
+        function _addClickEvents() {
+            Utils.getElementsAndAttachEvent(Constants.OVERLAY_STYLE, Constants.FLEX_CLICK, _exit);
 
-            let skipButton = Utils.getEleFromClassName(Constants.SKIP_BUTTON);
-            if (Utils.isValid(skipButton)) {
-                Utils.addEvent(skipButton, Constants.FLEX_CLICK, _skipStep);
-            }
+            Utils.getElementsAndAttachEvent(Constants.SKIP_BUTTON, Constants.FLEX_CLICK, _skipStep);
 
-            let backButton = Utils.getEleFromClassName(Constants.BACK_BUTTON);
-            if (Utils.isValid(backButton)) {
-                Utils.addEvent(backButton, Constants.FLEX_CLICK, _previousStep);
-            }
+            Utils.getElementsAndAttachEvent(Constants.BACK_BUTTON, Constants.FLEX_CLICK, _previousStep);
 
-            let nextButton = Utils.getEleFromClassName(Constants.NEXT_BUTTON);
-            if (Utils.isValid(nextButton)) {
-                Utils.addEvent(nextButton, Constants.FLEX_CLICK, _nextStep);
-            }
+            Utils.getElementsAndAttachEvent(Constants.NEXT_BUTTON, Constants.FLEX_CLICK, _nextStep);
 
-            let doneButton = Utils.getEleFromClassName(Constants.DONE_BUTTON);
-            if (Utils.isValid(doneButton)) {
-                Utils.addEvent(doneButton, Constants.FLEX_CLICK, _cleanUp);
-            }
+            Utils.getElementsAndAttachEvent(Constants.DONE_BUTTON, Constants.FLEX_CLICK, _exit);
 
-            let closeButton = Utils.getEleFromClassName(Constants.CLOSE_TOUR);
-            if (Utils.isValid(closeButton)) {
-                Utils.addEvent(closeButton, Constants.FLEX_CLICK, _cleanUp);
+            Utils.getElementsAndAttachEvent(Constants.CLOSE_TOUR, Constants.FLEX_CLICK, _exit);
+
+            let currentStep = FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber];
+            if (currentStep[Constants.NEXT_ON_TARGET]) {
+                let currentTarget = document.querySelector(currentStep[Constants.TARGET]);
+                if (Utils.isValid(currentTarget)) {
+                    Utils.addEvent(currentTarget, Constants.FLEX_CLICK, _nextStep);
+                }
             }
         }
 
@@ -167,50 +208,180 @@ var FlexTour =
          * Remove all attached event to avoid leaking memories
          */
         function _removeEvents() {
-            let overlays = Utils.getElesFromClassName(Constants.OVERLAY_STYLE);
-            for (let overlay in overlays) {
-                Utils.removeEvent(overlay, Constants.FLEX_CLICK, _cleanUp);
-            }
+            Utils.removeELementsAndAttachedEvent(Constants.OVERLAY_STYLE, Constants.FLEX_CLICK, _exit);
 
-            let skipButton = Utils.getEleFromClassName(Constants.SKIP_BUTTON);
-            if (Utils.isValid(skipButton)) {
-                Utils.removeEvent(skipButton, Constants.FLEX_CLICK, _skipStep);
-            }
+            Utils.removeELementsAndAttachedEvent(Constants.SKIP_BUTTON, Constants.FLEX_CLICK, _skipStep);
 
-            let backButton = Utils.getEleFromClassName(Constants.BACK_BUTTON);
-            if (Utils.isValid(backButton)) {
-                Utils.removeEvent(backButton, Constants.FLEX_CLICK, _previousStep);
-            }
+            Utils.removeELementsAndAttachedEvent(Constants.BACK_BUTTON, Constants.FLEX_CLICK, _previousStep);
 
-            let nextButton = Utils.getEleFromClassName(Constants.NEXT_BUTTON);
-            if (Utils.isValid(nextButton)) {
-                Utils.removeEvent(nextButton, Constants.FLEX_CLICK, _nextStep);
-            }
+            Utils.removeELementsAndAttachedEvent(Constants.NEXT_BUTTON, Constants.FLEX_CLICK, _nextStep);
 
-            let doneButton = Utils.getEleFromClassName(Constants.DONE_BUTTON);
-            if (Utils.isValid(doneButton)) {
-                Utils.removeEvent(doneButton, Constants.FLEX_CLICK, _cleanUp);
-            }
+            Utils.removeELementsAndAttachedEvent(Constants.DONE_BUTTON, Constants.FLEX_CLICK, _exit);
 
-            let closeButton = Utils.getEleFromClassName(Constants.CLOSE_TOUR);
-            if (Utils.isValid(closeButton)) {
-                Utils.removeEvent(closeButton, Constants.FLEX_CLICK, _cleanUp);
+            Utils.removeELementsAndAttachedEvent(Constants.CLOSE_TOUR, Constants.FLEX_CLICK, _exit);
+
+            let currentStep = FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber];
+            if (currentStep[Constants.NEXT_ON_TARGET]) {
+                let currentTarget = document.querySelector(currentStep[Constants.TARGET]);
+                if (Utils.isValid(currentTarget)) {
+                    Utils.removeEvent(currentTarget, Constants.FLEX_CLICK, _nextStep);
+                }
             }
         }
 
-        // TODO: skip a step but make sure the step ahead condition is met ... maybe display a message
-        function _skipStep() {
+        /**
+         * THIS PART RIGHT HERE IS WHAT MAKE FLEXTOUR DIFFERENT FROM OTHER ENGINES.
+         *
+         *
+         * IMPORTANT: It's the developer job to know if the previous step can be reached. If the previous step should not be REACHED, set "noBack: true" in step description. Samething for SKIP Button.
+         * Check if the next, previous or skip step is allowed to be executed.
+         * The prerequisites array can contain up to 3 types:
+         *  -- Prerequisite functions: regular function name. I.e: "getInputString", etc.
+         *  -- Wait Conditions: Start with "?" and use ":" to separate DOM element from function nanme. i.e: ?isVisible:#target1", etc.
+         *  -- Skip Condition: Start with "!" and follow with function name. i.e: "!checkWhateverYouWant", etc.
+         * In order for the transition to happen, all functions in prerequisites must return true. The result of each one will be ANDed together.
+         *
+         * Whenever a prerequisite function return false, the whole thing will return false.
+         *
+         * When a Wait Condition return false, it will schedule and execute the function again after a waitInterval. If you want to make sure several DOM elements should be waited for, use Comma separator to indicate. When number of retries = 0 it will go to the next prerequsite. If the next prerequisite doesn't exist then it will return false. Ideally there should be only 1 Wait Condition in the list. So you should check everything in this 1 function. If you want to use isVisible, doesExist condition and your own condition, set Retries entry in the tour so it will be reset to that.
+         *
+         * When a skip condition should be the last one in the list, this is a fail safe measurement for small branching method. In this function you should check if the next step or 2 step from now should be skipped. However, it's developer job to make sure that the step after skipped should be available, otherwise the engine will stop.
+         *
+         * NOTE: Each prerequisite will be executed in turn. Except for in waitCondition, which will stay until retries reaches 0 then proceeds to the next prerequisite.
+         *
+         * @param possibleStepNumber    Step number to be checked for conditions. This is the future step, could be next 2 steps ahead.
+         * @param currPrerequisite      Counter to signal which condition where are checking right now.
+         * @returns {boolean}   True will let the transition happens, false will make it stay at the current step until the conditions are met
+         */
+        function _isAllowToMove(possibleStepNumber, currPrerequisite) {
+            let prerequisites = FlexTour.currentTour[Constants.STEPS][possibleStepNumber][Constants.PREREQUISITES];
+            let possibleStep = FlexTour.currentTour[Constants.STEPS][possibleStepNumber];
+            if (Utils.isValid(prerequisites) && currPrerequisite < prerequisites.length) {
+                let prerequisite = prerequisites[currPrerequisite].trim();
+                if (prerequisite.indexOf(Constants.WAIT) > -1) {
+                    let prerequisiteBlock = prerequisite.split(Constants.WAIT)[1].trim();
 
+                    let temporaryResult = _executePrerequisiteCondition(possibleStep, prerequisiteBlock);
+
+                    if (!temporaryResult) {
+                        if (possibleStep[Constants.RETRIES] === 0) {
+                            // Reset the retries entry for current step, only works if Retries is set on Tour Description
+                            if (FlexTour.currentTour.hasOwnProperty(Constants.RETRIES)) {
+                                possibleStep[Constants.RETRIES] = FlexTour.currentTour[Constants.RETRIES];
+                            }
+                            return temporaryResult; // Return false when retries reaches 0;
+                        } else {
+                            possibleStep[Constants.RETRIES]--;
+                            // Retry the the waitFor after certain time invertal
+                            setTimeout(function () {
+                                if (_isAllowToMove(possibleStepNumber, currPrerequisite)) {
+                                    // Proceed to next one when this is waitFor is met. Of course this will require the next conditions are also successful
+                                    _transitionToNextStep(possibleStepNumber);
+                                }
+                            }, possibleStep[Constants.WAIT_INTERVALS]);
+                        }
+                    } else {
+                        // Reset the retries entry for current step, only works if Retries is set on Tour Description
+                        if (FlexTour.currentTour.hasOwnProperty(Constants.RETRIES)) {
+                            possibleStep[Constants.RETRIES] = FlexTour.currentTour[Constants.RETRIES];
+                        }
+                        // Move to the next prerequisite when the Wait for condition is met.
+                        return _isAllowToMove(possibleStepNumber, ++currPrerequisite);
+                    }
+                } else if (prerequisite.indexOf(Constants.SKIP) > -1) {
+                    /**
+                     * The syntax is: "!funcName:params". For sure the 2nd element after split is funcName
+                     * IMPORTANT: as mentioned before, this should be the last on the list. When this is true it will autmatically increment the FlexTour.currentStepNumber to 2 steps ahead which effectively skip the current possible step.
+                     * This might be hard to wrap your head around. Skip function has to return false for the step to be skipped, if it return true, the proceed to that next step. So in order for you to skip the step, your custom function must return false.
+                     * REASONING: Treat this as a prerequisite, the condition must be met (true) for the tour to flow normally, if the condition is NOT met (false), the tour will skipped the step as indicated. Works well with isVisible, and doesExist. These will check the condition, if condition is true then stay. If condition is false then skip.
+                     */
+
+                    let prerequisiteBlock = prerequisite.split(Constants.SKIP)[1].trim();
+
+                    if (!_executePrerequisiteCondition(possibleStep, prerequisiteBlock)) {
+                        if (possibleStepNumber > FlexTour.currentStepNumber) {
+                            // If the tour is going forward then skip it forward
+                            _transitionToNextStep(possibleStepNumber + 1);
+                        } else {
+                            // If the tour is going backward then skip it backward
+                            _transitionToNextStep(possibleStepNumber - 1);
+                        }
+                        // At this point the step will be skipped. Return false so the potential step will not be rendered.
+                        return false;
+                    }
+                    return true;
+                } else {
+                    // This is the regular prerequisite function
+                    if (Utils.executeFunctionWithName(prerequisite, FlexTour.actionsList)) {
+                        return _isAllowToMove(possibleStepNumber, ++currPrerequisite);
+                    }
+                    // Return false immediately if the result is false. The prerequisite condition is not met
+                    return false;
+                }
+            } else {
+                // Return true if nobody sets prerequisite
+                // Base case, this is when it get to the last condition without failure
+                return true;
+            }
+        }
+
+        /**
+         * Execute block where wait condition and skip condition. Split things up to condition name and parameters.
+         * Execute them accordingly. Either isVisible, doesExist (built-in) functions or custom functions
+         * @param stepDesc      Description of the step
+         * @param prerequisite  The prerequisite block after removing ! and ? from it.
+         */
+        function _executePrerequisiteCondition(stepDesc, prerequisite) {
+            // This is the most complex one in all. There are 3 parts to waitFor: "?condName:el1,el2,el3"
+            // First split the COLON Separator.
+            let tokens = prerequisite.split(Constants.COLON);
+
+            // Split "condName" must be in the 1st slot after splitting at colon
+            let condName = tokens[0];
+
+            let temporaryResult = true;
+
+            if (tokens.length > 1) {
+                // Split the DOM elements list if exist "el1,el2,el3".
+                let elementsList = tokens[1].split(Constants.COMMA);
+
+                let indexOfCurrentTarget = elementsList.indexOf(Constants.CURRENT_TARGET);
+                if (indexOfCurrentTarget !== -1) {
+                    elementsList[indexOfCurrentTarget] = stepDesc[Constants.TARGET];
+                }
+
+                if (condName === Constants.IS_VISIBLE) {
+                    temporaryResult = temporaryResult && Utils.isVisible(elementsList);
+                } else if (condName === Constants.DOES_EXIST) {
+                    temporaryResult = temporaryResult && Utils.doesExist(elementsList);
+                } else {
+                    // When the condition name is not built-in, pass the array of element into the customized functions.
+                    if (typeof FlexTour.actionsList[condName] === "function") {
+                        temporaryResult = temporaryResult && FlexTour.actionsList[condName].apply(this, elementsList);
+                    }
+                }
+            } else {
+                return Utils.executeFunctionWithName(condName, FlexTour.actionsList);
+            }
+
+            return temporaryResult;
+        }
+
+        /**
+         * Skip the next step to the next next step.
+         */
+        function _skipStep() {
+            if (_isAllowToMove(FlexTour.currentStepNumber + 2, 0)) {
+                _transitionToNextStep(FlexTour.currentStepNumber + 2);
+            }
         }
 
         /**
          * Decrement current step counter and go back to previous step ... Obviously it will not be the last step
          */
         function _previousStep() {
-            _cleanUp();
-            this.currentStepNumber--;
-            if (this.currentStepNumber >= 0 && this.currentTour[Constants.STEPS][this.currentStepNumber]) {
-                _centralOrganizer(this.currentTour[Constants.STEPS][this.currentStepNumber], false);
+            if (_isAllowToMove(FlexTour.currentStepNumber - 1, 0)) {
+                _transitionToNextStep(FlexTour.currentStepNumber - 1);
             }
         }
 
@@ -218,53 +389,70 @@ var FlexTour =
          * Trigger next step of the tour. If the next step is the last step, trigger the isLastStep flag
          */
         function _nextStep() {
-            _cleanUp();
-            this.currentStepNumber++;
+            if (_isAllowToMove(FlexTour.currentStepNumber + 1, 0)) {
+                _transitionToNextStep(FlexTour.currentStepNumber + 1);
+            }
+        }
 
-            let steps = this.currentTour[Constants.STEPS];
+        /**
+         * Common factor for transition step, either skip, previous or next.
+         * @param stepNumber
+         */
+        function _transitionToNextStep(stepNumber) {
+            let stepDelay = FlexTour.currentTour[Constants.STEPS][stepNumber][Constants.DELAY];
 
-            if (this.currentStepNumber >= steps.length - 1) {
-                _centralOrganizer(this.currentTour[Constants.STEPS][this.currentStepNumber], true);
+            function __transitionFunction(stepNumber) {
+                FlexTour.currentStepNumber = stepNumber;
+                _centralOrganizer(FlexTour.currentTour[Constants.STEPS][stepNumber]);
+            }
+
+            if (Utils.isValid(stepDelay)) {
+                console.log("Trigger after delay.");
+                setTimeout(__transitionFunction.bind(this, stepNumber), stepDelay);
             } else {
-                _centralOrganizer(this.currentTour[Constants.STEPS][this.currentStepNumber], false);
+                __transitionFunction(stepNumber);
             }
         }
 
         /**
          * Add window resize event to recalculate location of tour step.
          * The event is namespaced to avoid conflict with program's handler and easier to unbind later on.
+         * This event is only trigger once every 1/2 second. So that it won't go crazy and trigger too many event on resizing
          */
         function _addResizeWindowListener() {
-            this.addEvent(window, Constants.FLEX_RESIZE, function (event) {
-                console.log("Doing resizing window event");
-            });
+            Utils.addEvent(window, Constants.FLEX_RESIZE, Utils.debounce(function () {
+                _centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber]);
+            }, 500, false));
         }
 
         /**
          * Remove resize listener from window without detaching other handlers from main program
          */
         function _unbindResizeWindowListener() {
-            this.removeEvent(window, Constants.FLEX_RESIZE);
+            Utils.removeEvent(window, Constants.FLEX_RESIZE);
         }
 
-        /**
-         * Clean up everything in the DOM from running the tour
-         */
-        function _cleanUp() {
+        function _exit() {
             _removeEvents();
             _unbindResizeWindowListener();
 
-            Components.removeAllOverlay();
-            Components.clearContentBubble();
-            Components.clearBorderAroundTarget();
+            FlexTour.Component.removeComponents();
+            FlexTour.running = false; // Reset this flag when users quit the tour
         }
 
-        function FlexTour(tourDesc) {
-            this.toursMap = [];
-            this.currentTourIndex = -1;
-            this.currentStepNumber = 0;
-            this.currentTour = {};
-
+        /**
+         * Constructor of the whole thing.
+         * @param tourDesc      The JSON file that describe what the tours should be like
+         * @param actionsList   The object contains all functions that control the flow of the tours
+         * @constructor
+         */
+        function FlexTour(tourDesc, actionsList) {
+            FlexTour.toursMap = [];
+            FlexTour.currentTourIndex = 0;
+            FlexTour.currentStepNumber = 0;
+            FlexTour.currentTour = {};
+            FlexTour.actionsList = actionsList;
+            FlexTour.running = false; // A flag that let the system know that a tour is being run
             _preprocessingTours(tourDesc);
         }
 
@@ -272,270 +460,619 @@ var FlexTour =
          * Run the first step of the tour
          */
         FlexTour.prototype.run = function () {
-            if (this.currentTourIndex < 0) {
+            if (FlexTour.toursMap.length === 0) {
                 console.log("There is NOT any available tour to run.");
                 return;
             }
 
-            this.currentTour = Utils.clone({}, this.toursMap[this.currentTourIndex]);
-            this.currentStepNumber = 0;
+            FlexTour.currentTour = Utils.clone({}, FlexTour.toursMap[FlexTour.currentTourIndex]);
+            FlexTour.currentStepNumber = 0;
 
-            let steps = this.currentTour[Constants.STEPS];
+            let steps = FlexTour.currentTour[Constants.STEPS];
             if (Utils.isValid(steps)) {
-                let firstStep = steps[this.currentStepNumber];
+                let firstStep = steps[FlexTour.currentStepNumber];
                 _centralOrganizer(firstStep);
             }
-            console.log("Tour does NOT contain any step to display.");
         };
 
-        /**
-         * Exit the current tour engine
-         */
         FlexTour.prototype.exit = function () {
-            _cleanUp();
+            _exit();
         };
 
         module.exports = FlexTour;
-
 
         /***/
     },
     /* 1 */
     /***/ function (module, exports, __webpack_require__) {
 
-        /**
-         * Created by NhatHo on 2016-06-01.
-         */
+        /*******************************************************************************
+         * Copyright (c) 2016. MIT License.
+         * NhatHo-nhatminhhoca@gmail.com
+         ******************************************************************************/
 
         var Constants = __webpack_require__(2);
         var Utils = __webpack_require__(3);
 
-        module.exports = {
-            Component: function (stepDescription) {
-                this.stepDescription = Utils.clone({}, stepDescription);
-                this.rect = document.querySelector(stepDescription[Constants.TARGET]).getBoundingClientRect();
-            },
+        function Components(stepDescription) {
+            Components.stepDescription = Utils.clone({}, stepDescription);
+            Components.ui = document.createElement("div");
+            Components.ui.classList.add(Constants.FLEXTOUR);
+            if (Utils.isStepWithTarget(stepDescription)) {
+                Components.rect = document.querySelector(stepDescription[Constants.TARGET]).getBoundingClientRect();
+            }
+        }
 
-            /**
-             * Add top overlay into document body
-             */
-            _createTopOverlay: function () {
-                let height = this.rect.top;
-                let width = document.body.getBoundingClientRect().width;
+        /**
+         * Add top overlay into document body
+         */
+        function _getTopOverlay() {
+            return {
+                width: Utils.getFullWindowWidth() + Constants.PX,
+                height: Components.rect.top + Constants.PX,
+                top: 0,
+                left: 0
+            };
+        }
 
-                // Put overlay on top left of the screen
-                this._createOverlayNode(width, height, 0, 0);
-            },
+        /**
+         * Generate Bottom overlay rect
+         */
+        function _getBottomOverlay() {
+            return {
+                width: Utils.getFullWindowWidth() + Constants.PX,
+                height: Utils.getFullWindowHeight() - Components.rect.bottom + Constants.PX,
+                top: Components.rect.bottom + Constants.PX,
+                left: 0
+            };
+        }
 
-            /**
-             * Generate Bottom overlay rect
-             */
-            _createBottomOverlay: function () {
-                let height = document.body.getBoundingClientRect().height - this.rect.top - this.rect.height;
-                let width = document.body.getBoundingClientRect().width;
+        /**
+         * Generate Left overlay rect
+         */
+        function _getLeftOverlay() {
+            // Put overlay over space on the left of target
+            return {
+                width: Components.rect.left + Constants.PX,
+                height: Components.rect.height + Constants.PX,
+                top: Components.rect.top + Constants.PX,
+                left: 0
+            };
+        }
 
-                // Put over on the bottom of target rect
-                this._createOverlayNode(width, height, this.rect.top + this.rect.height, 0);
-            },
+        /**
+         * Add Right overlay next to target rect
+         */
+        function _getRightOverlay() {
+            return {
+                width: Utils.getFullWindowWidth() - Components.rect.right + Constants.PX,
+                height: Components.rect.height + Constants.PX,
+                top: Components.rect.top + Constants.PX,
+                left: Components.rect.right + Constants.PX
+            };
+        }
 
-            /**
-             * Generate Left overlay rect
-             */
-            _createLeftOverlay: function () {
-                let height = this.rect.height;
-                let width = this.rect.left;
+        /**
+         * Generate generic overlay from given width, height, top and left
+         * @param locationObj     Object that contains width, height, top and left attributes for overlay
+         */
+        function _createOverlayNode(locationObj) {
+            let overlay = document.createElement("div");
+            overlay.classList.add(Constants.OVERLAY_STYLE);
+            overlay.style.width = locationObj.width;
+            overlay.style.height = locationObj.height;
+            overlay.style.top = locationObj.top;
+            overlay.style.left = locationObj.left;
 
-                // Put overlay over space on the left of target
-                this._createOverlayNode(width, height, this.rect.top, 0);
-            },
+            Components.ui.appendChild(overlay);
+        }
 
-            /**
-             * Add Right overlay next to target rect
-             */
-            _createRightOverlay: function () {
-                let height = this.rect.height;
-                let width = document.body.getBoundingClientRect().width - this.rect.left - this.rect.width;
+        /**
+         * Add all overlays around target for better visual
+         * Keep the same pattern as the padding. Top->Right->Bottom->Left
+         */
+        function _addOverlays() {
+            _createOverlayNode(_getTopOverlay());
+            _createOverlayNode(_getRightOverlay());
+            _createOverlayNode(_getBottomOverlay());
+            _createOverlayNode(_getLeftOverlay());
+        }
 
-                // Put overlay on the top right of the target rect
-                this._createOverlayNode(width, height, this.rect.top, this.rect.left + this.rect.width);
-            },
+        /**
+         * Modify the current DOM Node to the new location, this will help with transition animation
+         * @param domNode       The DOM Node of current lement
+         * @param locationObj   The object contains the width, height, top and left of the destination
+         */
+        function _modifyOverlayNode(domNode, locationObj) {
+            domNode.style.width = locationObj.width;
+            domNode.style.height = locationObj.height;
+            domNode.style.top = locationObj.top;
+            domNode.style.left = locationObj.left;
+        }
 
-            /**
-             * Generate generic overlay from given width, height, top and left
-             * @param width     The width of current overlay
-             * @param height    The height of current overlay
-             * @param top       Top location of current overlay
-             * @param left      Left location of current overlay
-             */
-            _createOverlayNode: function (width, height, top, left) {
-                let overlay = document.createElement("div");
-                overlay.classList.add(Constants.OVERLAY_STYLE);
-                overlay.width = width;
-                overlay.height = height;
-                overlay.top = top;
-                overlay.left = left;
-
-                document.body.appendChild(overlay);
-            },
-
-            /**
-             * Add all overlays around target for better visual
-             */
-            addOverlays: function () {
-                this._createTopOverlay();
-                this._createBottomOverlay();
-                this._createLeftOverlay();
-                this._createRightOverlay();
-            },
-
-            /**
-             * Remove all overlays from document body for cleaning up
-             */
-            removeAllOverlay: function () {
-                let overlays = Utils.getElesFromClassName(Constants.OVERLAY_STYLE);
-                for (let overlay in overlays) {
-                    document.body.removeChild(overlay);
+        /**
+         * This function assumes that there are 4 different overlays around the target to modify for the transition.
+         */
+        function _modifyOverlays() {
+            let overlays = Utils.getElesFromClassName(Constants.OVERLAY_STYLE);
+            if (Utils.isValid(overlays) && overlays.length === 4) {
+                _modifyOverlayNode(overlays[0], _getTopOverlay());
+                _modifyOverlayNode(overlays[1], _getRightOverlay());
+                _modifyOverlayNode(overlays[2], _getBottomOverlay());
+                _modifyOverlayNode(overlays[3], _getLeftOverlay());
+            } else {
+                for (let i = 0; i < overlays.length; i++) {
+                    Components.ui.removeChild(overlays[i]);
+                    _addOverlays();
                 }
-            },
+            }
+        }
+
+        /**
+         * This function is used for floating step which doesn't have a target and the bubble float in the middle of the screen.
+         * Check if already there is a UNIQUE Overlay in the DOM, if yes don't do anyway, if not create 1 and add to the DOM
+         */
+        function _addOverlay() {
+            let overlays = Utils.getElesFromClassName(Constants.OVERLAY_STYLE);
+            if (Utils.isValid(overlays)) {
+                if (overlays.length !== 1) {
+                    for (let i = 0; i < overlays.length; i++) {
+                        Components.ui.removeChild(overlays[i]);
+                    }
+                    _createOverlayNode({
+                        width: "100%",
+                        height: "100%",
+                        top: 0,
+                        left: 0
+                    });
+                }
+            }
+
+        }
+
+        /**
+         * Create content bubble next to target to display the content of the step
+         * @param {boolean} noButtons  True will hide all buttons
+         * @param {boolean} showSkip  True to show skip button
+         * @param {boolean} showBack  True to show Back Button
+         * @param {boolean} showNext  True to show Next Button, False to show Done Button
+         * @param {boolean} disableNext  True to disable either Next or Done button
+         */
+        function _createContentBubble(noButtons, showSkip, showBack, showNext, disableNext) {
+            let bubble = document.createElement("div");
+            bubble.classList.add(Constants.TOUR_BUBBLE);
+
+            let iconDiv = document.createElement("div");
+            iconDiv.classList.add(Constants.ICON_STYLE, _getIconType());
+            bubble.appendChild(iconDiv);
+
+            let contentBlock = document.createElement("div");
+            contentBlock.classList.add(Constants.BUBBLE_CONTENT);
+
+            if (Utils.isValid(Components.stepDescription[Constants.TITLE])) {
+                let contentTitle = document.createElement("div");
+                contentTitle.innerText = Components.stepDescription[Constants.TITLE];
+                contentTitle.classList.add(Constants.BUBBLE_TITLE);
+                contentBlock.appendChild(contentTitle);
+            }
+
+            let contentBody = document.createElement("div");
+            contentBody.innerText = Components.stepDescription[Constants.CONTENT];
+            contentBody.classList.add(Constants.BUBBLE_CONTENT_BODY);
+            contentBlock.appendChild(contentBody);
+
+            bubble.appendChild(contentBlock);
+
+            if (!noButtons) {
+                let buttonGroup = document.createElement("div");
+                buttonGroup.classList.add(Constants.BUTTON_GROUP);
+
+                let skipButton = document.createElement("button");
+                skipButton.classList.add(Constants.SKIP_BUTTON);
+                skipButton.innerHTML = Constants.SKIP_TEXT;
+                skipButton.disabled = !showSkip;
+
+                buttonGroup.appendChild(skipButton);
+
+                let backButton = document.createElement("button");
+                backButton.classList.add(Constants.BACK_BUTTON);
+                backButton.innerHTML = Constants.BACK_TEXT;
+                backButton.disabled = !showBack;
+
+                buttonGroup.appendChild(backButton);
+
+
+                if (showNext) {
+                    let nextButton = document.createElement("button");
+                    nextButton.classList.add(Constants.NEXT_BUTTON);
+                    nextButton.innerHTML = Constants.NEXT_TEXT;
+
+                    nextButton.disabled = disableNext;
+
+                    buttonGroup.appendChild(nextButton);
+                } else {
+                    let doneButton = document.createElement("button");
+                    doneButton.classList.add(Constants.DONE_BUTTON);
+                    doneButton.innerHTML = Constants.DONE_TEXT;
+
+                    doneButton.disabled = disableNext;
+
+                    buttonGroup.appendChild(doneButton);
+                }
+
+                bubble.appendChild(buttonGroup);
+            }
+
+            let closeButton = document.createElement("a");
+            closeButton.innerHTML = Constants.TIMES;
+            closeButton.classList.add(Constants.CLOSE_TOUR);
+
+            bubble.appendChild(closeButton);
+
+            Components.ui.appendChild(bubble);
+        }
+
+        /**
+         * Return the appropriate icon for the step.
+         * @returns {*}     String that describe the class that should represent the icon
+         */
+        function _getIconType() {
+            let currentStepType = Components.stepDescription[Constants.TYPE];
+            if (Components.stepDescription[Constants.TRANSITION]) {
+                return Constants.LOADING_ICON;
+            } else if (currentStepType === Constants.ACTION_TYPE) {
+                return Constants.ACTION_ICON;
+            } else if (currentStepType === Constants.DEFAULT_TYPE) {
+                return Constants.DEFAULT_ICON;
+            }
+            return "";
+        }
+
+        /**
+         * Modify the content bubble location. Get the current bubble and change everything in it.
+         * @param {boolean} noButtons  True will hide all buttons
+         * @param {boolean} showSkip  True to show skip button
+         * @param {boolean} showBack  True to show Back Button
+         * @param {boolean} showNext  True to show Next Button, False to show Done Button
+         * @param {boolean} disableNext  True to disable either Next or Done button
+         */
+        function _modifyContentBubble(noButtons, showSkip, showBack, showNext, disableNext) {
+            /*
+             * First block try to modify the icon in the bubble
+             */
+            let currentIconType = _getIconType();
+            let currentIcon = Utils.getEleFromClassName(Constants.ICON_STYLE);
+            if (!currentIcon.classList.contains(currentIconType)) {
+                for (let i = 0; i < currentIcon.classList.length; i++) {
+                    if (currentIcon.classList.item(i).indexOf(Constants.ICON_REGEXP) > -1) {
+                        currentIcon.classList.remove(currentIcon.classList.item(i));
+                    }
+                }
+                currentIcon.classList.add(currentIconType);
+            }
+
+            /*
+             * Modify title of the bubble to the new one
+             */
+            let contentBlock = Utils.getEleFromClassName(Constants.BUBBLE_CONTENT);
+            let contentTitle = Utils.getEleFromClassName(Constants.BUBBLE_TITLE);
+            if (Utils.isValid(Components.stepDescription[Constants.TITLE])) {
+                if (Utils.isValid(contentTitle)) {
+                    contentTitle.innerText = Components.stepDescription[Constants.TITLE];
+                } else {
+                    let contentTitle = document.createElement("div");
+                    contentTitle.innerText = Components.stepDescription[Constants.TITLE];
+                    contentTitle.classList.add(Constants.BUBBLE_TITLE);
+                    contentBlock.insertBefore(contentTitle, Utils.getEleFromClassName(Constants.BUBBLE_CONTENT_BODY));
+                }
+            } else if (Utils.isValid(contentTitle)) {
+                // Remove if this step doesn't have a title but previous step has 1
+                contentBlock.removeChild(contentTitle);
+            }
+
+            /*
+             * Modify the step description of the bubble to the new one
+             */
+            let contentBody = Utils.getEleFromClassName(Constants.BUBBLE_CONTENT_BODY);
+            contentBody.innerText = Components.stepDescription[Constants.CONTENT];
 
             /**
-             * Create content bubble next to target to display the content of the step
-             * @param {boolean} isLastStep  True if it is the last step of the tour
+             * Modify the button block.
+             * 1. If the new step doesn't have buttons but the previous one has ... remove button-group.
+             * 2. Modify the other buttons accordingly.
              */
-            createContentBubble: function (isLastStep) {
-                let element = Utils.getEleFromClassName(Constants.TARGET_BORDER);
-                let targetPosition = element.getBoundingClientRect();
-                let top = targetPosition.top;
-                let left = targetPosition.left;
-                let bottom = top + targetPosition.height;
-                let right = left + targetPosition.width;
-
-                let bubble = document.createElement("div");
-
-                let iconDiv = document.createElement("div");
-                iconDiv.classList.add(Constants.ICON);
-
-                bubble.appendChild(iconDiv);
-
-                let contentDiv = document.createElement("p");
-                contentDiv.innerText = this.stepDescription[Constants.CONTENT];
-
-                bubble.classList.add(Constants.TOUR_BUBBLE);
-
-                switch (this.stepDescription[Constants.POSITION]) {
-                    case "top":
-                        bubble.classList.add("top");
-                        break;
-                    case "right":
-                        bubble.classList.add("right");
-                        break;
-                    case "left":
-                        bubble.classList.add("left");
-                        break;
-                    default: // This is either bottom or something that doesn't exist
-                        bubble.classList.add("bottom");
-                        break;
+            let bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE);
+            if (noButtons) {
+                let buttonGroup = Utils.getEleFromClassName(Constants.BUTTON_GROUP);
+                if (Utils.isValid(buttonGroup)) {
+                    bubble.removeChild(buttonGroup);
                 }
-                bubble.appendChild(contentDiv);
+            } else {
+                let buttonGroup = document.createElement("div");
+                buttonGroup.classList.add(Constants.BUTTON_GROUP);
 
-                if (!Utils.isValid(this.stepDescription[Constants.NEXT_ON_TARGET]) && !Utils.isValid(this.stepDescription[Constants.NO_BUTTONS])) {
-                    let buttonGroup = document.createElement("div");
-                    buttonGroup.classList.add(Constants.BUTTON_GROUP);
+                let skipButton = Utils.getEleFromClassName(Constants.SKIP_BUTTON);
+                if (Utils.isValid(skipButton)) {
+                    skipButton.disabled = !showSkip;
+                } else {
+                    let skipButton = document.createElement("button");
+                    skipButton.classList.add(Constants.SKIP_BUTTON);
+                    skipButton.innerHTML = Constants.SKIP_TEXT;
+                    skipButton.disabled = !showSkip;
+                    buttonGroup.appendChild(skipButton);
+                }
 
-                    if (!Utils.isValid(this.stepDescription[Constants.NO_SKIP])) {
-                        let skipButton = document.createElement("button");
-                        skipButton.classList.add(Constants.SKIP_BUTTON);
-                        buttonGroup.appendChild(skipButton);
-                    }
+                let backButton = Utils.getEleFromClassName(Constants.BACK_BUTTON);
+                if (Utils.isValid(backButton)) {
+                    backButton.disabled = !showBack;
+                } else {
+                    let backButton = document.createElement("button");
+                    backButton.classList.add(Constants.BACK_BUTTON);
+                    backButton.innerHTML = Constants.BACK_TEXT;
+                    backButton.disabled = !showBack;
+                    buttonGroup.appendChild(backButton);
+                }
 
-                    if (!Utils.isValid(this.stepDescription[Constants.NO_BACK])) {
-                        let backButton = document.createElement("button");
-                        backButton.classList.add(Constants.BACK_BUTTON);
-                        buttonGroup.appendChild(backButton);
-                    }
-
-                    if (!Utils.isValid(this.stepDescription[Constants.NO_NEXT]) && !isLastStep) {
-                        // Unlikely to be used
+                if (showNext) {
+                    let nextButton = Utils.getEleFromClassName(Constants.NEXT_BUTTON);
+                    if (Utils.isValid(nextButton)) {
+                        nextButton.disabled = disableNext;
+                    } else {
                         let nextButton = document.createElement("button");
                         nextButton.classList.add(Constants.NEXT_BUTTON);
+                        nextButton.innerHTML = Constants.NEXT_TEXT;
+                        nextButton.disabled = disableNext;
                         buttonGroup.appendChild(nextButton);
                     }
-
-                    if (isLastStep) {
+                } else {
+                    let doneButton = Utils.getEleFromClassName(Constants.DONE_BUTTON);
+                    if (Utils.isValid(doneButton)) {
+                        doneButton.disabled = disableNext;
+                    } else {
                         let doneButton = document.createElement("button");
                         doneButton.classList.add(Constants.DONE_BUTTON);
+                        doneButton.innerHTML = Constants.DONE_TEXT;
+                        doneButton.disabled = disableNext;
                         buttonGroup.appendChild(doneButton);
                     }
-                    bubble.appendChild(buttonGroup);
+                }
+                bubble.appendChild(buttonGroup);
+            }
+        }
+
+        /**
+         * Find the current location of the bubble and modify it to point at correct target
+         * Also, create the arrow according to the position defined by user
+         */
+        function _placeBubbleLocation() {
+            let targetPosition = Components.rect;
+            let bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE);
+
+            if (Utils.isValid(bubble)) {
+                let bubbleRect = bubble.getBoundingClientRect();
+                let halfBubbleHeight = bubbleRect.height / 2;
+                let halfBubbleWidth = bubbleRect.width / 2;
+
+                let halfTargetHeight = Components.rect.height / 2;
+                let halfTargetWidth = Components.rect.width / 2;
+
+                let arrow = document.createElement("span");
+                arrow.classList.add(Constants.ARROW_LOCATION);
+
+                switch (Components.stepDescription[Constants.POSITION]) {
+                    case Constants.TOP:
+                        arrow.classList.add(Constants.TOP);
+                        bubble.style.top = Components.rect.top - bubbleRect.height - Constants.ARROW_SIZE + Constants.PX;
+                        bubble.style.left = Components.rect.left + halfTargetWidth - halfBubbleWidth + Constants.PX;
+                        break;
+                    case Constants.RIGHT:
+                        arrow.classList.add(Constants.RIGHT);
+                        bubble.style.top = Components.rect.top + halfTargetHeight - halfBubbleHeight + Constants.PX;
+                        bubble.style.left = targetPosition.right + Constants.ARROW_SIZE + Constants.PX;
+                        break;
+                    case Constants.LEFT:
+                        arrow.classList.add(Constants.LEFT);
+                        bubble.style.left = Components.rect.left - bubbleRect.width - Constants.ARROW_SIZE + Constants.PX;
+                        bubble.style.top = Components.rect.top + halfTargetHeight - halfBubbleHeight + Constants.PX;
+                        break;
+                    default: // This is either bottom or something that doesn't exist
+                        arrow.classList.add(Constants.BOTTOM);
+                        bubble.style.top = targetPosition.bottom + Constants.ARROW_SIZE + Constants.PX;
+                        bubble.style.left = Components.rect.left + halfTargetWidth - halfBubbleWidth + Constants.PX;
+                        break;
                 }
 
-                let closeButton = document.createElement("a");
-                closeButton.appendChild(document.createTextNode(Constants.EMPTY));
-                closeButton.classList.add(Constants.CLOSE_TOUR);
+                let innerHollowArrow = document.createElement("span");
+                innerHollowArrow.classList.add(Constants.HOLLOW_ARROW);
+                arrow.appendChild(innerHollowArrow);
 
-                bubble.appendChild(closeButton);
+                bubble.appendChild(arrow);
+            }
+        }
 
-                document.body.appendChild(bubble);
-            },
+        /**
+         * Find the size and location of the bubble and target, then move the bubble to that location accordingly
+         * This will automatically trigger the
+         */
+        function _modifyBubbleLocation() {
+            let bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE);
 
-            /**
-             * Remove content bubble from document body for cleaning up
-             */
-            clearContentBubble: function () {
-                let contentBubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE);
-                document.body.removeChild(contentBubble);
-            },
-
-            /**
-             * Create a border around target by generating an overlay over target. The overlay can be clicked through only when the step can be interated or triggerable
-             * @param canInteract     Boolean value to see if user can interact with the UI
-             */
-            addBorderAroundTarget: function (canInteract) {
-                if (Utils.isValid(this.rect)) {
-
-                    let borderOverlay = document.createElement("div");
-                    borderOverlay.classList.add(Constants.TARGET_BORDER);
-                    borderOverlay.width = this.rect.width + Constants.BORDER_WIDTH * 2;
-                    borderOverlay.height = this.rect.height + Constants.BORDER_WIDTH * 2;
-                    borderOverlay.top = this.rect.top - Constants.BORDER_WIDTH;
-                    borderOverlay.left = this.rect.left - Constants.BORDER_WIDTH;
-
-                    if (canInteract) {
-                        borderOverlay.classList.add(Constants.TARGET_INTERACTABLE);
-                    }
-
-                    document.body.appendChild(borderOverlay);
+            if (Utils.isValid(bubble)) {
+                let arrow = Utils.getEleFromClassName(Constants.ARROW_LOCATION);
+                if (Utils.isValid(arrow)) {
+                    bubble.removeChild(arrow);
                 }
-            },
+            }
+            // Remove the arrow from the bubble, the recalculate the new location the re-attach a new arrow accordingly
+            _placeBubbleLocation();
+        }
 
-            /**
-             * Clear the border around target for cleaning up
-             */
-            clearBorderAroundTarget: function () {
+        /**
+         * Find the location of the bubble and put it in the middle of the screen.
+         */
+        function _placeFloatBubble() {
+            let bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE);
+            bubble.classList.add(Constants.FLOAT_STYLE);
+        }
+
+        /**
+         * Modify the bubble to floating style, first add the float style to the bubble.
+         * Then remove the arrow that ties to the previous target, and set top and left to auto for CSS to take over.
+         * Because Styles have higher priority than CSS styles.
+         */
+        function _modifyFloatBubble() {
+            let bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE);
+            bubble.classList.add(Constants.FLOAT_STYLE);
+            let arrow = Utils.getEleFromClassName(Constants.ARROW_LOCATION);
+            if (Utils.isValid(arrow)) {
+                bubble.removeChild(arrow);
+                bubble.style.top = "";
+                bubble.style.left = "";
+            }
+        }
+
+        /**
+         * Create a border around target by generating an overlay over target. The overlay can be clicked through only when the step can be interated or triggerable
+         */
+        function _addBorderAroundTarget() {
+            if (Utils.isValid(Components.rect)) {
+                let borderOverlay = document.createElement("div");
+                borderOverlay.classList.add(Constants.TARGET_BORDER);
+                borderOverlay.style.width = Components.rect.width + Constants.BORDER_WIDTH * 2 + Constants.PX;
+                borderOverlay.style.height = Components.rect.height + Constants.BORDER_WIDTH * 2 + Constants.PX;
+                borderOverlay.style.top = Components.rect.top - Constants.BORDER_WIDTH * 2 + Constants.PX;
+                borderOverlay.style.left = Components.rect.left - Constants.BORDER_WIDTH * 2 + Constants.PX;
+
+                if (Components.stepDescription[Constants.CAN_INTERACT]) {
+                    borderOverlay.classList.add(Constants.TARGET_INTERACTABLE);
+                }
+
+                Components.ui.appendChild(borderOverlay);
+            }
+        }
+
+        /**
+         * Modify the border around target to the new position so that the transition animation can happen.
+         * If the previous node is interactable and current node is not, remove interactable class from the border
+         */
+        function _modifyBorderAroundTarget() {
+            if (Utils.isValid(Components.rect)) {
                 let borderOverlay = Utils.getEleFromClassName(Constants.TARGET_BORDER);
-                document.body.removeChild(borderOverlay);
+                borderOverlay.style.width = Components.rect.width + Constants.BORDER_WIDTH * 2 + Constants.PX;
+                borderOverlay.style.height = Components.rect.height + Constants.BORDER_WIDTH * 2 + Constants.PX;
+                borderOverlay.style.top = Components.rect.top - Constants.BORDER_WIDTH * 2 + Constants.PX;
+                borderOverlay.style.left = Components.rect.left - Constants.BORDER_WIDTH * 2 + Constants.PX;
+
+                if (Components.stepDescription[Constants.CAN_INTERACT]) {
+                    borderOverlay.classList.add(Constants.TARGET_INTERACTABLE);
+                } else {
+                    if (borderOverlay.classList.contains(Constants.TARGET_INTERACTABLE)) {
+                        borderOverlay.classList.remove(Constants.TARGET_INTERACTABLE);
+                    }
+                }
+            }
+        }
+
+        /**
+         * Main function to create overlays, border around target and the content bubble next to target
+         * @param noButtons        True to hide all buttons
+         * @param showSkip        True to show Skip button
+         * @param showBack        True to show Back Button
+         * @param showNext        True to show Next Button, False to show Done Button
+         * @param disableNext     True to disable Next and Done button
+         */
+        Components.prototype.createComponents = function (noButtons, showSkip, showBack, showNext, disableNext) {
+            if (!Utils.isFloatStep(Components.stepDescription)) {
+                _addOverlays();
+                _addBorderAroundTarget();
+                _createContentBubble(noButtons, showSkip, showBack, showNext, disableNext);
+                // Note to self: must append every to the body here so that we can modify the location of the bubble later
+                document.body.appendChild(Components.ui);
+                _placeBubbleLocation();
+            } else {
+                // The target element cannot be found which mean this is a floating step
+                _addOverlay();
+                _createContentBubble(noButtons, showSkip, showBack, showNext, disableNext);
+                // Note to self: must append every to the body here so that we can modify the location of the bubble later
+                document.body.appendChild(Components.ui);
+                _placeFloatBubble();
             }
         };
+
+        /**
+         * Main function to modify the existing overlays, border around target and the content bubble next to target.
+         * This function is called when all of those nodes already exist in the DOM. Modify it so that it transition
+         * @param noButtons        True to hide all buttons
+         * @param showSkip        True to show Skip button
+         * @param showBack        True to show Back Button
+         * @param showNext        True to show Next Button, False to show Done Button
+         * @param disableNext     True to disable Next and Done button
+         */
+        Components.prototype.modifyComponents = function (noButtons, showSkip, showBack, showNext, disableNext) {
+            Components.ui = Utils.getEleFromClassName(Constants.FLEXTOUR);
+
+            if (!Utils.isFloatStep(Components.stepDescription)) {
+                _modifyOverlays();
+                _modifyBorderAroundTarget();
+                _modifyContentBubble(noButtons, showSkip, showBack, showNext, disableNext);
+                _modifyBubbleLocation();
+            } else {
+                // The target element cannot be found which mean this is a floating step
+                _addOverlay();
+                _modifyContentBubble(noButtons, showSkip, showBack, showNext, disableNext);
+                _modifyFloatBubble();
+            }
+        };
+
+        /**
+         * Main function to clean up the components that were added into the DOM.
+         */
+        Components.prototype.removeComponents = function () {
+            document.body.removeChild(Components.ui);
+        };
+
+        module.exports = Components;
 
         /***/
     },
     /* 2 */
     /***/ function (module, exports) {
 
-        /**
-         * Created by NhatHo on 2016-05-27.
-         */
+        /*******************************************************************************
+         * Copyright (c) 2016. MIT License.
+         * NhatHo-nhatminhhoca@gmail.com
+         ******************************************************************************/
 
         module.exports = {
             CLASS: ".",
+            COLON: ":",
+            COMMA: ",",
+            WAIT: "?",
+            SKIP: "!",
+            CURRENT_TARGET: "@target@",
+            IS_VISIBLE: "isVisible",
+            DOES_EXIST: "doesExist",
             OVERLAY_STYLE: "flextour-overlay-styles",
+
+            FLEXTOUR: "flextour",
 
             // Bubble Block
             TARGET_BORDER: "flextour-target-border",
             TARGET_INTERACTABLE: "interactable",
             TOUR_BUBBLE: "flextour-tour-bubble",
+            ARROW_LOCATION: "arrow-location",
+            HOLLOW_ARROW: "inner-arrow",
+            BUBBLE_CONTENT: "flextour-content",
+            BUBBLE_CONTENT_BODY: "flextour-content-body",
+            FLOAT_STYLE: "flextour-float-bubble",
+            BUBBLE_TITLE: "flextour-bubble-title",
+            ICON_STYLE: "icon-style",
 
-            ICON: "flextour-icon",
+            ICON_REGEXP: "flextour-icon",
+            ACTION_ICON: "flextour-icon-action",
+            DEFAULT_ICON: "flextour-icon-info",
+            LOADING_ICON: "flextour-icon-loading",
+
             CLOSE_TOUR: "flextour-close",
 
             SKIP_BUTTON: "flextour-skip-button",
@@ -545,8 +1082,8 @@ var FlexTour =
             BUTTON_GROUP: "flextour-button-group",
 
             // Event Block
-            FLEX_CLICK: "click.flextour",
-            FLEX_RESIZE: "resize.flextour",
+            FLEX_CLICK: "click",
+            FLEX_RESIZE: "resize",
 
             // Tour Attributes Block
             TOUR_DEFAULT_SETTINGS: {
@@ -555,27 +1092,29 @@ var FlexTour =
                 noButtons: false,
                 noBack: false,
                 noSkip: false,
-                noNext: false,
                 stepNumber: true,
                 endOnOverlayClick: true,
                 endOnEsc: true
             },
 
             ID: "id",
+            TITLE: "title",
             STEPS: "steps",
+            NO_BUTTONS: "noButtons",
             NO_BACK: "noBack",
             NO_SKIP: "noSkip",
-            NO_NEXT: "noNext",
-            NO_BUTTONS: "noButtons",
             CAN_INTERACT: "canInteract",
             TYPE: "type",
             CONTENT: "content",
+            PREREQUISITES: "prerequisites",
             TARGET: "target",
             POSITION: "position",
             NEXT_ON_TARGET: "nextOnTargetClick",
-            WAIT_INTERVALS: "timeIntervals",
+            WAIT_INTERVALS: "waitIntervals",
             RETRIES: "retries",
             END_ON_ESC: "endOnEsc",
+            DELAY: "delay",
+            TRANSITION: "transition",
 
             DEFAULT_TYPE: "info",
             ACTION_TYPE: "action",
@@ -583,8 +1122,21 @@ var FlexTour =
 
             TOUR: "tour",
 
-            EMPTY: "&nbsp,",
-            BORDER_WIDTH: 2
+            TIMES: "&times;",
+            BORDER_WIDTH: 3,
+            ARROW_SIZE: 20,
+            PX: "px",
+
+            TOP: "top",
+            RIGHT: "right",
+            LEFT: "left",
+            BOTTOM: "bottom",
+            FLOAT: "float",
+
+            SKIP_TEXT: "Skip",
+            NEXT_TEXT: "Next",
+            BACK_TEXT: "Back",
+            DONE_TEXT: "Done"
         };
 
         /***/
@@ -592,20 +1144,20 @@ var FlexTour =
     /* 3 */
     /***/ function (module, exports, __webpack_require__) {
 
-        /**
-         * Created by NhatHo on 2016-06-01.
-         */
+        /*******************************************************************************
+         * Copyright (c) 2016. MIT License.
+         * NhatHo-nhatminhhoca@gmail.com
+         ******************************************************************************/
 
-        var Constants = __webpack_require__(2);
+        let Constants = __webpack_require__(2);
 
         module.exports = {
 
             /**
-             * Shallow clone an object and return the first object in list
-             * Similar to extend in jquery. clone(output, obj1, obj2)
-             * The right most will override the left objects
-             * @param out        Object to be override, usually the result object
-             * @returns {*|{}}      Return back the object in 1st location
+             * Clone given objects into another object. Doesn't work with array.
+             * This is not deep clone so only 1 level will be cloned, the rest will keep its references
+             * @param out           The output object
+             * @returns {*|{}}      Cloned object of all other objects in the list
              */
             clone: function (out) {
                 out = out || {};
@@ -619,68 +1171,51 @@ var FlexTour =
                             out[key] = arguments[i][key];
                     }
                 }
-
                 return out;
             },
 
-            /**
-             * Deep clone an object and merge it with all objects on the right
-             * @param out       Given object for merging and cloning
-             * @returns {*|{}}  Original object after merging and cloning
-             */
-            deepClone: function (out) {
-                out = out || {};
-
-                for (let i = 1; i < arguments.length; i++) {
-                    let obj = arguments[i];
-
-                    if (!obj)
-                        continue;
-
-                    for (let key in obj) {
-                        if (obj.hasOwnProperty(key)) {
-                            if (typeof obj[key] === 'object')
-                                out[key] = this.deepClone(out[key], obj[key]);
-                            else
-                                out[key] = obj[key];
-                        }
-                    }
-                }
-
-                return out;
-            },
 
             /**
              * Check if the target is visible or not. This has a draw back that the target might not have render completely
              * If that is the case the bubble and highlight box will not render properly.
-             * @param target    Target of current step
+             * @param targets    Array of targets of current step
              * @return {boolean}    True if target takes up a rectangle in the DOM, false otherwise
              */
-            isVisible: function (target) {
-                let element = document.querySelector(target);
-                if (this.isValid(element)) {
-                    return element.offsetHeight > 0 && element.offsetWidth > 0;
+            isVisible: function (targets) {
+                let result = true;
+                for (let i = 0; i < targets.length; i++) {
+                    let element = document.querySelector(targets[i]);
+                    if (this.isValid(element)) {
+                        result = result && element.offsetHeight > 0 && element.offsetWidth > 0;
+                    }
                 }
-                return false;
+                return result;
             },
 
             /**
              * Check if the target exists in the DOM or not. This operator costs less than _isTargetVisible function.
-             * @param target    Target of current step
+             * @param targets    Target of current step
              * @returns {boolean}       True if target exists in DOM, false otherwise
              */
-            doesExist: function (target) {
-                let element = document.querySelector(target);
-                return this.isValid(element);
+            doesExist: function (targets) {
+                let result = true;
+                for (let i = 0; i < targets.length; i++) {
+                    result = result && this.isValid(document.querySelector(targets[i]));
+                }
+                return result;
             },
 
             /**
-             * Check if a given object a valid object with content
+             * Check if a given object a valid object with content.
+             * If given an array, the array must have element
              * @param object        Any object, array, letiable
              * @returns {boolean}   True if valid, false otherwise
              */
             isValid: function (object) {
-                return (object == null || typeof object == 'undefined');
+                if (Array.isArray(object)) {
+                    return object.length > 0;
+                }
+                return (object != null && typeof object != 'undefined');
             },
 
             /**
@@ -751,1958 +1286,111 @@ var FlexTour =
              */
             getElesFromClassName: function (className) {
                 return document.querySelectorAll(this.getClassName(className));
+            },
+
+            /**
+             * Check if the description of this step is valid.
+             * Step must at least have target and description
+             * @param stepDesc      The description of the step
+             * @returns {*|boolean} True if it has target AND content, false otherwise
+             */
+            isStepWithTarget: function (stepDesc) {
+                return (this.isValid(stepDesc[Constants.TARGET]) && this.isValid(stepDesc[Constants.CONTENT]));
+            },
+
+            /**
+             * Check if the current step is a floating step. Meaning there isn't a target.
+             * @param stepDesc      Description of the step
+             * @returns {boolean|*} True when step has content and position is set to float
+             */
+            isFloatStep: function (stepDesc) {
+                return (stepDesc[Constants.POSITION] === Constants.FLOAT && this.isValid(stepDesc[Constants.CONTENT]));
+            },
+
+            /**
+             * Get the element list from the given classname.
+             * Run through each element and attach event and callback function to it
+             * @param className     The className of element (without the DOT)
+             * @param event         The event that will trigger
+             * @param callback      The callback function that will be triggered when event is triggered
+             */
+            getElementsAndAttachEvent: function (className, event, callback) {
+                let els = this.getElesFromClassName(className);
+                for (let i = 0; i < els.length; i++) {
+                    this.addEvent(els[i], event, callback);
+                }
+            },
+
+            /**
+             * Get the element list from the given classname.
+             * Run through each element and UNATTACH event and trigger callback function
+             * @param className     The className of element (without the DOT)
+             * @param event         The event that will trigger
+             * @param callback      The callback function that will be triggered when event is triggered
+             */
+            removeELementsAndAttachedEvent: function (className, event, callback) {
+                let els = this.getElesFromClassName(className);
+                for (let i = 0; i < els.length; i++) {
+                    this.removeEvent(els[i], event, callback);
+                }
+            },
+
+            /**
+             * Execute the function with given name in a given lists of function.
+             * Make sure that the function exists in the list before executing it.
+             * @param functionName      The name of the given function
+             * @param functionsList      The list that SHOULD contain the given function
+             */
+            executeFunctionWithName: function (functionName, functionsList) {
+                if (typeof functionsList[functionName] === "function") {
+                    return functionsList[functionName].call();
+                }
+                // If the given function name exist in the list, return false to halt the process. Because this could cause the flow to break.
+                return false;
+            },
+
+            /**
+             * Get the innerwidth of window first
+             * If it doesn't exist then get clientWidth through documentElement which is needed for IE8 or earlier
+             * Lastly, if those 2 methods failed, get clientWidth through document.body
+             * @returns {Number|number}     window width through 1 of 3 methods
+             */
+            getFullWindowWidth: function () {
+                return window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth; // For IE8 or earlier
+            },
+
+            /**
+             * Get the innerHeight of window first
+             * If it doesn't exist then get clientHeight through documentElement which is needed for IE8 or earlier
+             * Lastly, if those 2 methods failed, get clientHeight through document.body
+             * @returns {Number|number}     window height through 1 of 3 methods
+             */
+            getFullWindowHeight: function () {
+                return window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight; // For IE8 or earlier
+            },
+
+            /**
+             * Returns a function, that, as long as it continues to be invoked, will not
+             * be triggered. The function will be called after it stops being called for
+             * N milliseconds. If `immediate` is passed, trigger the function on the
+             * leading edge, instead of the trailing.
+             * Taken from Underscore.js
+             */
+            debounce: function (func, wait, immediate) {
+                let timeout;
+                return function () {
+                    let context = this, args = arguments;
+                    let later = function () {
+                        timeout = null;
+                        if (!immediate) func.apply(context, args);
+                    };
+                    let callNow = immediate && !timeout;
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                    if (callNow) func.apply(context, args);
+                };
             }
         };
-
-
-        /***/
-    },
-    /* 4 */
-    /***/ function (module, exports, __webpack_require__) {
-
-        var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;
-        /*! tether 1.3.1 */
-
-        (function (root, factory) {
-            if (true) {
-                !(__WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-            } else if (typeof exports === 'object') {
-                module.exports = factory(require, exports, module);
-            } else {
-                root.Tether = factory();
-            }
-        }(this, function (require, exports, module) {
-
-            'use strict';
-
-            var _createClass = (function () {
-                function defineProperties(target, props) {
-                    for (var i = 0; i < props.length; i++) {
-                        var descriptor = props[i];
-                        descriptor.enumerable = descriptor.enumerable || false;
-                        descriptor.configurable = true;
-                        if ('value' in descriptor) descriptor.writable = true;
-                        Object.defineProperty(target, descriptor.key, descriptor);
-                    }
-                }
-
-                return function (Constructor, protoProps, staticProps) {
-                    if (protoProps) defineProperties(Constructor.prototype, protoProps);
-                    if (staticProps) defineProperties(Constructor, staticProps);
-                    return Constructor;
-                };
-            })();
-
-            function _classCallCheck(instance, Constructor) {
-                if (!(instance instanceof Constructor)) {
-                    throw new TypeError('Cannot call a class as a function');
-                }
-            }
-
-            var TetherBase = undefined;
-            if (typeof TetherBase === 'undefined') {
-                TetherBase = {modules: []};
-            }
-
-            var zeroElement = null;
-
-            function getScrollParents(el) {
-                // In firefox if the el is inside an iframe with display: none; window.getComputedStyle() will return null;
-                // https://bugzilla.mozilla.org/show_bug.cgi?id=548397
-                var computedStyle = getComputedStyle(el) || {};
-                var position = computedStyle.position;
-                var parents = [];
-
-                if (position === 'fixed') {
-                    return [el];
-                }
-
-                var parent = el;
-                while ((parent = parent.parentNode) && parent && parent.nodeType === 1) {
-                    var style = undefined;
-                    try {
-                        style = getComputedStyle(parent);
-                    } catch (err) {
-                    }
-
-                    if (typeof style === 'undefined' || style === null) {
-                        parents.push(parent);
-                        return parents;
-                    }
-
-                    var _style = style;
-                    var overflow = _style.overflow;
-                    var overflowX = _style.overflowX;
-                    var overflowY = _style.overflowY;
-
-                    if (/(auto|scroll)/.test(overflow + overflowY + overflowX)) {
-                        if (position !== 'absolute' || ['relative', 'absolute', 'fixed'].indexOf(style.position) >= 0) {
-                            parents.push(parent);
-                        }
-                    }
-                }
-
-                parents.push(document.body);
-                return parents;
-            }
-
-            var uniqueId = (function () {
-                var id = 0;
-                return function () {
-                    return ++id;
-                };
-            })();
-
-            var zeroPosCache = {};
-            var getOrigin = function getOrigin() {
-                // getBoundingClientRect is unfortunately too accurate.  It introduces a pixel or two of
-                // jitter as the user scrolls that messes with our ability to detect if two positions
-                // are equivilant or not.  We place an element at the top left of the page that will
-                // get the same jitter, so we can cancel the two out.
-                var node = zeroElement;
-                if (!node) {
-                    node = document.createElement('div');
-                    node.setAttribute('data-tether-id', uniqueId());
-                    extend(node.style, {
-                        top: 0,
-                        left: 0,
-                        position: 'absolute'
-                    });
-
-                    document.body.appendChild(node);
-
-                    zeroElement = node;
-                }
-
-                var id = node.getAttribute('data-tether-id');
-                if (typeof zeroPosCache[id] === 'undefined') {
-                    zeroPosCache[id] = {};
-
-                    var rect = node.getBoundingClientRect();
-                    for (var k in rect) {
-                        // Can't use extend, as on IE9, elements don't resolve to be hasOwnProperty
-                        zeroPosCache[id][k] = rect[k];
-                    }
-
-                    // Clear the cache when this position call is done
-                    defer(function () {
-                        delete zeroPosCache[id];
-                    });
-                }
-
-                return zeroPosCache[id];
-            };
-
-            function removeUtilElements() {
-                if (zeroElement) {
-                    document.body.removeChild(zeroElement);
-                }
-                zeroElement = null;
-            }
-
-            function getBounds(el) {
-                var doc = undefined;
-                if (el === document) {
-                    doc = document;
-                    el = document.documentElement;
-                } else {
-                    doc = el.ownerDocument;
-                }
-
-                var docEl = doc.documentElement;
-
-                var box = {};
-                // The original object returned by getBoundingClientRect is immutable, so we clone it
-                // We can't use extend because the properties are not considered part of the object by hasOwnProperty in IE9
-                var rect = el.getBoundingClientRect();
-                for (var k in rect) {
-                    box[k] = rect[k];
-                }
-
-                var origin = getOrigin();
-
-                box.top -= origin.top;
-                box.left -= origin.left;
-
-                if (typeof box.width === 'undefined') {
-                    box.width = document.body.scrollWidth - box.left - box.right;
-                }
-                if (typeof box.height === 'undefined') {
-                    box.height = document.body.scrollHeight - box.top - box.bottom;
-                }
-
-                box.top = box.top - docEl.clientTop;
-                box.left = box.left - docEl.clientLeft;
-                box.right = doc.body.clientWidth - box.width - box.left;
-                box.bottom = doc.body.clientHeight - box.height - box.top;
-
-                return box;
-            }
-
-            function getOffsetParent(el) {
-                return el.offsetParent || document.documentElement;
-            }
-
-            function getScrollBarSize() {
-                var inner = document.createElement('div');
-                inner.style.width = '100%';
-                inner.style.height = '200px';
-
-                var outer = document.createElement('div');
-                extend(outer.style, {
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    pointerEvents: 'none',
-                    visibility: 'hidden',
-                    width: '200px',
-                    height: '150px',
-                    overflow: 'hidden'
-                });
-
-                outer.appendChild(inner);
-
-                document.body.appendChild(outer);
-
-                var widthContained = inner.offsetWidth;
-                outer.style.overflow = 'scroll';
-                var widthScroll = inner.offsetWidth;
-
-                if (widthContained === widthScroll) {
-                    widthScroll = outer.clientWidth;
-                }
-
-                document.body.removeChild(outer);
-
-                var width = widthContained - widthScroll;
-
-                return {width: width, height: width};
-            }
-
-            function extend() {
-                var out = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-
-                var args = [];
-
-                Array.prototype.push.apply(args, arguments);
-
-                args.slice(1).forEach(function (obj) {
-                    if (obj) {
-                        for (var key in obj) {
-                            if (({}).hasOwnProperty.call(obj, key)) {
-                                out[key] = obj[key];
-                            }
-                        }
-                    }
-                });
-
-                return out;
-            }
-
-            function removeClass(el, name) {
-                if (typeof el.classList !== 'undefined') {
-                    name.split(' ').forEach(function (cls) {
-                        if (cls.trim()) {
-                            el.classList.remove(cls);
-                        }
-                    });
-                } else {
-                    var regex = new RegExp('(^| )' + name.split(' ').join('|') + '( |$)', 'gi');
-                    var className = getClassName(el).replace(regex, ' ');
-                    setClassName(el, className);
-                }
-            }
-
-            function addClass(el, name) {
-                if (typeof el.classList !== 'undefined') {
-                    name.split(' ').forEach(function (cls) {
-                        if (cls.trim()) {
-                            el.classList.add(cls);
-                        }
-                    });
-                } else {
-                    removeClass(el, name);
-                    var cls = getClassName(el) + (' ' + name);
-                    setClassName(el, cls);
-                }
-            }
-
-            function hasClass(el, name) {
-                if (typeof el.classList !== 'undefined') {
-                    return el.classList.contains(name);
-                }
-                var className = getClassName(el);
-                return new RegExp('(^| )' + name + '( |$)', 'gi').test(className);
-            }
-
-            function getClassName(el) {
-                if (el.className instanceof SVGAnimatedString) {
-                    return el.className.baseVal;
-                }
-                return el.className;
-            }
-
-            function setClassName(el, className) {
-                el.setAttribute('class', className);
-            }
-
-            function updateClasses(el, add, all) {
-                // Of the set of 'all' classes, we need the 'add' classes, and only the
-                // 'add' classes to be set.
-                all.forEach(function (cls) {
-                    if (add.indexOf(cls) === -1 && hasClass(el, cls)) {
-                        removeClass(el, cls);
-                    }
-                });
-
-                add.forEach(function (cls) {
-                    if (!hasClass(el, cls)) {
-                        addClass(el, cls);
-                    }
-                });
-            }
-
-            var deferred = [];
-
-            var defer = function defer(fn) {
-                deferred.push(fn);
-            };
-
-            var flush = function flush() {
-                var fn = undefined;
-                while (fn = deferred.pop()) {
-                    fn();
-                }
-            };
-
-            var Evented = (function () {
-                function Evented() {
-                    _classCallCheck(this, Evented);
-                }
-
-                _createClass(Evented, [{
-                    key: 'on',
-                    value: function on(event, handler, ctx) {
-                        var once = arguments.length <= 3 || arguments[3] === undefined ? false : arguments[3];
-
-                        if (typeof this.bindings === 'undefined') {
-                            this.bindings = {};
-                        }
-                        if (typeof this.bindings[event] === 'undefined') {
-                            this.bindings[event] = [];
-                        }
-                        this.bindings[event].push({handler: handler, ctx: ctx, once: once});
-                    }
-                }, {
-                    key: 'once',
-                    value: function once(event, handler, ctx) {
-                        this.on(event, handler, ctx, true);
-                    }
-                }, {
-                    key: 'off',
-                    value: function off(event, handler) {
-                        if (typeof this.bindings !== 'undefined' && typeof this.bindings[event] !== 'undefined') {
-                            return;
-                        }
-
-                        if (typeof handler === 'undefined') {
-                            delete this.bindings[event];
-                        } else {
-                            var i = 0;
-                            while (i < this.bindings[event].length) {
-                                if (this.bindings[event][i].handler === handler) {
-                                    this.bindings[event].splice(i, 1);
-                                } else {
-                                    ++i;
-                                }
-                            }
-                        }
-                    }
-                }, {
-                    key: 'trigger',
-                    value: function trigger(event) {
-                        if (typeof this.bindings !== 'undefined' && this.bindings[event]) {
-                            var i = 0;
-
-                            for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-                                args[_key - 1] = arguments[_key];
-                            }
-
-                            while (i < this.bindings[event].length) {
-                                var _bindings$event$i = this.bindings[event][i];
-                                var handler = _bindings$event$i.handler;
-                                var ctx = _bindings$event$i.ctx;
-                                var once = _bindings$event$i.once;
-
-                                var context = ctx;
-                                if (typeof context === 'undefined') {
-                                    context = this;
-                                }
-
-                                handler.apply(context, args);
-
-                                if (once) {
-                                    this.bindings[event].splice(i, 1);
-                                } else {
-                                    ++i;
-                                }
-                            }
-                        }
-                    }
-                }]);
-
-                return Evented;
-            })();
-
-            TetherBase.Utils = {
-                getScrollParents: getScrollParents,
-                getBounds: getBounds,
-                getOffsetParent: getOffsetParent,
-                extend: extend,
-                addClass: addClass,
-                removeClass: removeClass,
-                hasClass: hasClass,
-                updateClasses: updateClasses,
-                defer: defer,
-                flush: flush,
-                uniqueId: uniqueId,
-                Evented: Evented,
-                getScrollBarSize: getScrollBarSize,
-                removeUtilElements: removeUtilElements
-            };
-            /* globals TetherBase, performance */
-
-            'use strict';
-
-            var _slicedToArray = (function () {
-                function sliceIterator(arr, i) {
-                    var _arr = [];
-                    var _n = true;
-                    var _d = false;
-                    var _e = undefined;
-                    try {
-                        for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-                            _arr.push(_s.value);
-                            if (i && _arr.length === i) break;
-                        }
-                    } catch (err) {
-                        _d = true;
-                        _e = err;
-                    } finally {
-                        try {
-                            if (!_n && _i['return']) _i['return']();
-                        } finally {
-                            if (_d) throw _e;
-                        }
-                    }
-                    return _arr;
-                }
-
-                return function (arr, i) {
-                    if (Array.isArray(arr)) {
-                        return arr;
-                    } else if (Symbol.iterator in Object(arr)) {
-                        return sliceIterator(arr, i);
-                    } else {
-                        throw new TypeError('Invalid attempt to destructure non-iterable instance');
-                    }
-                };
-            })();
-
-            var _createClass = (function () {
-                function defineProperties(target, props) {
-                    for (var i = 0; i < props.length; i++) {
-                        var descriptor = props[i];
-                        descriptor.enumerable = descriptor.enumerable || false;
-                        descriptor.configurable = true;
-                        if ('value' in descriptor) descriptor.writable = true;
-                        Object.defineProperty(target, descriptor.key, descriptor);
-                    }
-                }
-
-                return function (Constructor, protoProps, staticProps) {
-                    if (protoProps) defineProperties(Constructor.prototype, protoProps);
-                    if (staticProps) defineProperties(Constructor, staticProps);
-                    return Constructor;
-                };
-            })();
-
-            var _get = function get(_x6, _x7, _x8) {
-                var _again = true;
-                while (_again) {
-                    var object = _x6, property = _x7, receiver = _x8;
-                    _again = false;
-                    if (object === null) object = Function.prototype;
-                    var desc = Object.getOwnPropertyDescriptor(object, property);
-                    if (desc === undefined) {
-                        var parent = Object.getPrototypeOf(object);
-                        if (parent === null) {
-                            return undefined;
-                        } else {
-                            _x6 = parent;
-                            _x7 = property;
-                            _x8 = receiver;
-                            _again = true;
-                            desc = parent = undefined;
-                        }
-                    } else if ('value' in desc) {
-                        return desc.value;
-                    } else {
-                        var getter = desc.get;
-                        if (getter === undefined) {
-                            return undefined;
-                        }
-                        return getter.call(receiver);
-                    }
-                }
-            };
-
-            function _classCallCheck(instance, Constructor) {
-                if (!(instance instanceof Constructor)) {
-                    throw new TypeError('Cannot call a class as a function');
-                }
-            }
-
-            function _inherits(subClass, superClass) {
-                if (typeof superClass !== 'function' && superClass !== null) {
-                    throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);
-                }
-                subClass.prototype = Object.create(superClass && superClass.prototype, {
-                    constructor: {
-                        value: subClass,
-                        enumerable: false,
-                        writable: true,
-                        configurable: true
-                    }
-                });
-                if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-            }
-
-            if (typeof TetherBase === 'undefined') {
-                throw new Error('You must include the utils.js file before tether.js');
-            }
-
-            var _TetherBase$Utils = TetherBase.Utils;
-            var getScrollParents = _TetherBase$Utils.getScrollParents;
-            var getBounds = _TetherBase$Utils.getBounds;
-            var getOffsetParent = _TetherBase$Utils.getOffsetParent;
-            var extend = _TetherBase$Utils.extend;
-            var addClass = _TetherBase$Utils.addClass;
-            var removeClass = _TetherBase$Utils.removeClass;
-            var updateClasses = _TetherBase$Utils.updateClasses;
-            var defer = _TetherBase$Utils.defer;
-            var flush = _TetherBase$Utils.flush;
-            var getScrollBarSize = _TetherBase$Utils.getScrollBarSize;
-            var removeUtilElements = _TetherBase$Utils.removeUtilElements;
-
-            function within(a, b) {
-                var diff = arguments.length <= 2 || arguments[2] === undefined ? 1 : arguments[2];
-
-                return a + diff >= b && b >= a - diff;
-            }
-
-            var transformKey = (function () {
-                if (typeof document === 'undefined') {
-                    return '';
-                }
-                var el = document.createElement('div');
-
-                var transforms = ['transform', 'webkitTransform', 'OTransform', 'MozTransform', 'msTransform'];
-                for (var i = 0; i < transforms.length; ++i) {
-                    var key = transforms[i];
-                    if (el.style[key] !== undefined) {
-                        return key;
-                    }
-                }
-            })();
-
-            var tethers = [];
-
-            var position = function position() {
-                tethers.forEach(function (tether) {
-                    tether.position(false);
-                });
-                flush();
-            };
-
-            function now() {
-                if (typeof performance !== 'undefined' && typeof performance.now !== 'undefined') {
-                    return performance.now();
-                }
-                return +new Date();
-            }
-
-            (function () {
-                var lastCall = null;
-                var lastDuration = null;
-                var pendingTimeout = null;
-
-                var tick = function tick() {
-                    if (typeof lastDuration !== 'undefined' && lastDuration > 16) {
-                        // We voluntarily throttle ourselves if we can't manage 60fps
-                        lastDuration = Math.min(lastDuration - 16, 250);
-
-                        // Just in case this is the last event, remember to position just once more
-                        pendingTimeout = setTimeout(tick, 250);
-                        return;
-                    }
-
-                    if (typeof lastCall !== 'undefined' && now() - lastCall < 10) {
-                        // Some browsers call events a little too frequently, refuse to run more than is reasonable
-                        return;
-                    }
-
-                    if (pendingTimeout != null) {
-                        clearTimeout(pendingTimeout);
-                        pendingTimeout = null;
-                    }
-
-                    lastCall = now();
-                    position();
-                    lastDuration = now() - lastCall;
-                };
-
-                if (typeof window !== 'undefined' && typeof window.addEventListener !== 'undefined') {
-                    ['resize', 'scroll', 'touchmove'].forEach(function (event) {
-                        window.addEventListener(event, tick);
-                    });
-                }
-            })();
-
-            var MIRROR_LR = {
-                center: 'center',
-                left: 'right',
-                right: 'left'
-            };
-
-            var MIRROR_TB = {
-                middle: 'middle',
-                top: 'bottom',
-                bottom: 'top'
-            };
-
-            var OFFSET_MAP = {
-                top: 0,
-                left: 0,
-                middle: '50%',
-                center: '50%',
-                bottom: '100%',
-                right: '100%'
-            };
-
-            var autoToFixedAttachment = function autoToFixedAttachment(attachment, relativeToAttachment) {
-                var left = attachment.left;
-                var top = attachment.top;
-
-                if (left === 'auto') {
-                    left = MIRROR_LR[relativeToAttachment.left];
-                }
-
-                if (top === 'auto') {
-                    top = MIRROR_TB[relativeToAttachment.top];
-                }
-
-                return {left: left, top: top};
-            };
-
-            var attachmentToOffset = function attachmentToOffset(attachment) {
-                var left = attachment.left;
-                var top = attachment.top;
-
-                if (typeof OFFSET_MAP[attachment.left] !== 'undefined') {
-                    left = OFFSET_MAP[attachment.left];
-                }
-
-                if (typeof OFFSET_MAP[attachment.top] !== 'undefined') {
-                    top = OFFSET_MAP[attachment.top];
-                }
-
-                return {left: left, top: top};
-            };
-
-            function addOffset() {
-                var out = {top: 0, left: 0};
-
-                for (var _len = arguments.length, offsets = Array(_len), _key = 0; _key < _len; _key++) {
-                    offsets[_key] = arguments[_key];
-                }
-
-                offsets.forEach(function (_ref) {
-                    var top = _ref.top;
-                    var left = _ref.left;
-
-                    if (typeof top === 'string') {
-                        top = parseFloat(top, 10);
-                    }
-                    if (typeof left === 'string') {
-                        left = parseFloat(left, 10);
-                    }
-
-                    out.top += top;
-                    out.left += left;
-                });
-
-                return out;
-            }
-
-            function offsetToPx(offset, size) {
-                if (typeof offset.left === 'string' && offset.left.indexOf('%') !== -1) {
-                    offset.left = parseFloat(offset.left, 10) / 100 * size.width;
-                }
-                if (typeof offset.top === 'string' && offset.top.indexOf('%') !== -1) {
-                    offset.top = parseFloat(offset.top, 10) / 100 * size.height;
-                }
-
-                return offset;
-            }
-
-            var parseOffset = function parseOffset(value) {
-                var _value$split = value.split(' ');
-
-                var _value$split2 = _slicedToArray(_value$split, 2);
-
-                var top = _value$split2[0];
-                var left = _value$split2[1];
-
-                return {top: top, left: left};
-            };
-            var parseAttachment = parseOffset;
-
-            var TetherClass = (function (_Evented) {
-                _inherits(TetherClass, _Evented);
-
-                function TetherClass(options) {
-                    var _this = this;
-
-                    _classCallCheck(this, TetherClass);
-
-                    _get(Object.getPrototypeOf(TetherClass.prototype), 'constructor', this).call(this);
-                    this.position = this.position.bind(this);
-
-                    tethers.push(this);
-
-                    this.history = [];
-
-                    this.setOptions(options, false);
-
-                    TetherBase.modules.forEach(function (module) {
-                        if (typeof module.initialize !== 'undefined') {
-                            module.initialize.call(_this);
-                        }
-                    });
-
-                    this.position();
-                }
-
-                _createClass(TetherClass, [{
-                    key: 'getClass',
-                    value: function getClass() {
-                        var key = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
-                        var classes = this.options.classes;
-
-                        if (typeof classes !== 'undefined' && classes[key]) {
-                            return this.options.classes[key];
-                        } else if (this.options.classPrefix) {
-                            return this.options.classPrefix + '-' + key;
-                        } else {
-                            return key;
-                        }
-                    }
-                }, {
-                    key: 'setOptions',
-                    value: function setOptions(options) {
-                        var _this2 = this;
-
-                        var pos = arguments.length <= 1 || arguments[1] === undefined ? true : arguments[1];
-
-                        var defaults = {
-                            offset: '0 0',
-                            targetOffset: '0 0',
-                            targetAttachment: 'auto auto',
-                            classPrefix: 'tether'
-                        };
-
-                        this.options = extend(defaults, options);
-
-                        var _options = this.options;
-                        var element = _options.element;
-                        var target = _options.target;
-                        var targetModifier = _options.targetModifier;
-
-                        this.element = element;
-                        this.target = target;
-                        this.targetModifier = targetModifier;
-
-                        if (this.target === 'viewport') {
-                            this.target = document.body;
-                            this.targetModifier = 'visible';
-                        } else if (this.target === 'scroll-handle') {
-                            this.target = document.body;
-                            this.targetModifier = 'scroll-handle';
-                        }
-
-                        ['element', 'target'].forEach(function (key) {
-                            if (typeof _this2[key] === 'undefined') {
-                                throw new Error('Tether Error: Both element and target must be defined');
-                            }
-
-                            if (typeof _this2[key].jquery !== 'undefined') {
-                                _this2[key] = _this2[key][0];
-                            } else if (typeof _this2[key] === 'string') {
-                                _this2[key] = document.querySelector(_this2[key]);
-                            }
-                        });
-
-                        addClass(this.element, this.getClass('element'));
-                        if (!(this.options.addTargetClasses === false)) {
-                            addClass(this.target, this.getClass('target'));
-                        }
-
-                        if (!this.options.attachment) {
-                            throw new Error('Tether Error: You must provide an attachment');
-                        }
-
-                        this.targetAttachment = parseAttachment(this.options.targetAttachment);
-                        this.attachment = parseAttachment(this.options.attachment);
-                        this.offset = parseOffset(this.options.offset);
-                        this.targetOffset = parseOffset(this.options.targetOffset);
-
-                        if (typeof this.scrollParents !== 'undefined') {
-                            this.disable();
-                        }
-
-                        if (this.targetModifier === 'scroll-handle') {
-                            this.scrollParents = [this.target];
-                        } else {
-                            this.scrollParents = getScrollParents(this.target);
-                        }
-
-                        if (!(this.options.enabled === false)) {
-                            this.enable(pos);
-                        }
-                    }
-                }, {
-                    key: 'getTargetBounds',
-                    value: function getTargetBounds() {
-                        if (typeof this.targetModifier !== 'undefined') {
-                            if (this.targetModifier === 'visible') {
-                                if (this.target === document.body) {
-                                    return {
-                                        top: pageYOffset,
-                                        left: pageXOffset,
-                                        height: innerHeight,
-                                        width: innerWidth
-                                    };
-                                } else {
-                                    var bounds = getBounds(this.target);
-
-                                    var out = {
-                                        height: bounds.height,
-                                        width: bounds.width,
-                                        top: bounds.top,
-                                        left: bounds.left
-                                    };
-
-                                    out.height = Math.min(out.height, bounds.height - (pageYOffset - bounds.top));
-                                    out.height = Math.min(out.height, bounds.height - (bounds.top + bounds.height - (pageYOffset + innerHeight)));
-                                    out.height = Math.min(innerHeight, out.height);
-                                    out.height -= 2;
-
-                                    out.width = Math.min(out.width, bounds.width - (pageXOffset - bounds.left));
-                                    out.width = Math.min(out.width, bounds.width - (bounds.left + bounds.width - (pageXOffset + innerWidth)));
-                                    out.width = Math.min(innerWidth, out.width);
-                                    out.width -= 2;
-
-                                    if (out.top < pageYOffset) {
-                                        out.top = pageYOffset;
-                                    }
-                                    if (out.left < pageXOffset) {
-                                        out.left = pageXOffset;
-                                    }
-
-                                    return out;
-                                }
-                            } else if (this.targetModifier === 'scroll-handle') {
-                                var bounds = undefined;
-                                var target = this.target;
-                                if (target === document.body) {
-                                    target = document.documentElement;
-
-                                    bounds = {
-                                        left: pageXOffset,
-                                        top: pageYOffset,
-                                        height: innerHeight,
-                                        width: innerWidth
-                                    };
-                                } else {
-                                    bounds = getBounds(target);
-                                }
-
-                                var style = getComputedStyle(target);
-
-                                var hasBottomScroll = target.scrollWidth > target.clientWidth || [style.overflow, style.overflowX].indexOf('scroll') >= 0 || this.target !== document.body;
-
-                                var scrollBottom = 0;
-                                if (hasBottomScroll) {
-                                    scrollBottom = 15;
-                                }
-
-                                var height = bounds.height - parseFloat(style.borderTopWidth) - parseFloat(style.borderBottomWidth) - scrollBottom;
-
-                                var out = {
-                                    width: 15,
-                                    height: height * 0.975 * (height / target.scrollHeight),
-                                    left: bounds.left + bounds.width - parseFloat(style.borderLeftWidth) - 15
-                                };
-
-                                var fitAdj = 0;
-                                if (height < 408 && this.target === document.body) {
-                                    fitAdj = -0.00011 * Math.pow(height, 2) - 0.00727 * height + 22.58;
-                                }
-
-                                if (this.target !== document.body) {
-                                    out.height = Math.max(out.height, 24);
-                                }
-
-                                var scrollPercentage = this.target.scrollTop / (target.scrollHeight - height);
-                                out.top = scrollPercentage * (height - out.height - fitAdj) + bounds.top + parseFloat(style.borderTopWidth);
-
-                                if (this.target === document.body) {
-                                    out.height = Math.max(out.height, 24);
-                                }
-
-                                return out;
-                            }
-                        } else {
-                            return getBounds(this.target);
-                        }
-                    }
-                }, {
-                    key: 'clearCache',
-                    value: function clearCache() {
-                        this._cache = {};
-                    }
-                }, {
-                    key: 'cache',
-                    value: function cache(k, getter) {
-                        // More than one module will often need the same DOM info, so
-                        // we keep a cache which is cleared on each position call
-                        if (typeof this._cache === 'undefined') {
-                            this._cache = {};
-                        }
-
-                        if (typeof this._cache[k] === 'undefined') {
-                            this._cache[k] = getter.call(this);
-                        }
-
-                        return this._cache[k];
-                    }
-                }, {
-                    key: 'enable',
-                    value: function enable() {
-                        var _this3 = this;
-
-                        var pos = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
-
-                        if (!(this.options.addTargetClasses === false)) {
-                            addClass(this.target, this.getClass('enabled'));
-                        }
-                        addClass(this.element, this.getClass('enabled'));
-                        this.enabled = true;
-
-                        this.scrollParents.forEach(function (parent) {
-                            if (parent !== document) {
-                                parent.addEventListener('scroll', _this3.position);
-                            }
-                        });
-
-                        if (pos) {
-                            this.position();
-                        }
-                    }
-                }, {
-                    key: 'disable',
-                    value: function disable() {
-                        var _this4 = this;
-
-                        removeClass(this.target, this.getClass('enabled'));
-                        removeClass(this.element, this.getClass('enabled'));
-                        this.enabled = false;
-
-                        if (typeof this.scrollParents !== 'undefined') {
-                            this.scrollParents.forEach(function (parent) {
-                                parent.removeEventListener('scroll', _this4.position);
-                            });
-                        }
-                    }
-                }, {
-                    key: 'destroy',
-                    value: function destroy() {
-                        var _this5 = this;
-
-                        this.disable();
-
-                        tethers.forEach(function (tether, i) {
-                            if (tether === _this5) {
-                                tethers.splice(i, 1);
-                            }
-                        });
-
-                        // Remove any elements we were using for convenience from the DOM
-                        if (tethers.length === 0) {
-                            removeUtilElements();
-                        }
-                    }
-                }, {
-                    key: 'updateAttachClasses',
-                    value: function updateAttachClasses(elementAttach, targetAttach) {
-                        var _this6 = this;
-
-                        elementAttach = elementAttach || this.attachment;
-                        targetAttach = targetAttach || this.targetAttachment;
-                        var sides = ['left', 'top', 'bottom', 'right', 'middle', 'center'];
-
-                        if (typeof this._addAttachClasses !== 'undefined' && this._addAttachClasses.length) {
-                            // updateAttachClasses can be called more than once in a position call, so
-                            // we need to clean up after ourselves such that when the last defer gets
-                            // ran it doesn't add any extra classes from previous calls.
-                            this._addAttachClasses.splice(0, this._addAttachClasses.length);
-                        }
-
-                        if (typeof this._addAttachClasses === 'undefined') {
-                            this._addAttachClasses = [];
-                        }
-                        var add = this._addAttachClasses;
-
-                        if (elementAttach.top) {
-                            add.push(this.getClass('element-attached') + '-' + elementAttach.top);
-                        }
-                        if (elementAttach.left) {
-                            add.push(this.getClass('element-attached') + '-' + elementAttach.left);
-                        }
-                        if (targetAttach.top) {
-                            add.push(this.getClass('target-attached') + '-' + targetAttach.top);
-                        }
-                        if (targetAttach.left) {
-                            add.push(this.getClass('target-attached') + '-' + targetAttach.left);
-                        }
-
-                        var all = [];
-                        sides.forEach(function (side) {
-                            all.push(_this6.getClass('element-attached') + '-' + side);
-                            all.push(_this6.getClass('target-attached') + '-' + side);
-                        });
-
-                        defer(function () {
-                            if (!(typeof _this6._addAttachClasses !== 'undefined')) {
-                                return;
-                            }
-
-                            updateClasses(_this6.element, _this6._addAttachClasses, all);
-                            if (!(_this6.options.addTargetClasses === false)) {
-                                updateClasses(_this6.target, _this6._addAttachClasses, all);
-                            }
-
-                            delete _this6._addAttachClasses;
-                        });
-                    }
-                }, {
-                    key: 'position',
-                    value: function position() {
-                        var _this7 = this;
-
-                        var flushChanges = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
-
-                        // flushChanges commits the changes immediately, leave true unless you are positioning multiple
-                        // tethers (in which case call Tether.Utils.flush yourself when you're done)
-
-                        if (!this.enabled) {
-                            return;
-                        }
-
-                        this.clearCache();
-
-                        // Turn 'auto' attachments into the appropriate corner or edge
-                        var targetAttachment = autoToFixedAttachment(this.targetAttachment, this.attachment);
-
-                        this.updateAttachClasses(this.attachment, targetAttachment);
-
-                        var elementPos = this.cache('element-bounds', function () {
-                            return getBounds(_this7.element);
-                        });
-
-                        var width = elementPos.width;
-                        var height = elementPos.height;
-
-                        if (width === 0 && height === 0 && typeof this.lastSize !== 'undefined') {
-                            var _lastSize = this.lastSize;
-
-                            // We cache the height and width to make it possible to position elements that are
-                            // getting hidden.
-                            width = _lastSize.width;
-                            height = _lastSize.height;
-                        } else {
-                            this.lastSize = {width: width, height: height};
-                        }
-
-                        var targetPos = this.cache('target-bounds', function () {
-                            return _this7.getTargetBounds();
-                        });
-                        var targetSize = targetPos;
-
-                        // Get an actual px offset from the attachment
-                        var offset = offsetToPx(attachmentToOffset(this.attachment), {width: width, height: height});
-                        var targetOffset = offsetToPx(attachmentToOffset(targetAttachment), targetSize);
-
-                        var manualOffset = offsetToPx(this.offset, {width: width, height: height});
-                        var manualTargetOffset = offsetToPx(this.targetOffset, targetSize);
-
-                        // Add the manually provided offset
-                        offset = addOffset(offset, manualOffset);
-                        targetOffset = addOffset(targetOffset, manualTargetOffset);
-
-                        // It's now our goal to make (element position + offset) == (target position + target offset)
-                        var left = targetPos.left + targetOffset.left - offset.left;
-                        var top = targetPos.top + targetOffset.top - offset.top;
-
-                        for (var i = 0; i < TetherBase.modules.length; ++i) {
-                            var _module2 = TetherBase.modules[i];
-                            var ret = _module2.position.call(this, {
-                                left: left,
-                                top: top,
-                                targetAttachment: targetAttachment,
-                                targetPos: targetPos,
-                                elementPos: elementPos,
-                                offset: offset,
-                                targetOffset: targetOffset,
-                                manualOffset: manualOffset,
-                                manualTargetOffset: manualTargetOffset,
-                                scrollbarSize: scrollbarSize,
-                                attachment: this.attachment
-                            });
-
-                            if (ret === false) {
-                                return false;
-                            } else if (typeof ret === 'undefined' || typeof ret !== 'object') {
-
-                            } else {
-                                top = ret.top;
-                                left = ret.left;
-                            }
-                        }
-
-                        // We describe the position three different ways to give the optimizer
-                        // a chance to decide the best possible way to position the element
-                        // with the fewest repaints.
-                        var next = {
-                            // It's position relative to the page (absolute positioning when
-                            // the element is a child of the body)
-                            page: {
-                                top: top,
-                                left: left
-                            },
-
-                            // It's position relative to the viewport (fixed positioning)
-                            viewport: {
-                                top: top - pageYOffset,
-                                bottom: pageYOffset - top - height + innerHeight,
-                                left: left - pageXOffset,
-                                right: pageXOffset - left - width + innerWidth
-                            }
-                        };
-
-                        var scrollbarSize = undefined;
-                        if (document.body.scrollWidth > window.innerWidth) {
-                            scrollbarSize = this.cache('scrollbar-size', getScrollBarSize);
-                            next.viewport.bottom -= scrollbarSize.height;
-                        }
-
-                        if (document.body.scrollHeight > window.innerHeight) {
-                            scrollbarSize = this.cache('scrollbar-size', getScrollBarSize);
-                            next.viewport.right -= scrollbarSize.width;
-                        }
-
-                        if (['', 'static'].indexOf(document.body.style.position) === -1 || ['', 'static'].indexOf(document.body.parentElement.style.position) === -1) {
-                            // Absolute positioning in the body will be relative to the page, not the 'initial containing block'
-                            next.page.bottom = document.body.scrollHeight - top - height;
-                            next.page.right = document.body.scrollWidth - left - width;
-                        }
-
-                        if (typeof this.options.optimizations !== 'undefined' && this.options.optimizations.moveElement !== false && !(typeof this.targetModifier !== 'undefined')) {
-                            (function () {
-                                var offsetParent = _this7.cache('target-offsetparent', function () {
-                                    return getOffsetParent(_this7.target);
-                                });
-                                var offsetPosition = _this7.cache('target-offsetparent-bounds', function () {
-                                    return getBounds(offsetParent);
-                                });
-                                var offsetParentStyle = getComputedStyle(offsetParent);
-                                var offsetParentSize = offsetPosition;
-
-                                var offsetBorder = {};
-                                ['Top', 'Left', 'Bottom', 'Right'].forEach(function (side) {
-                                    offsetBorder[side.toLowerCase()] = parseFloat(offsetParentStyle['border' + side + 'Width']);
-                                });
-
-                                offsetPosition.right = document.body.scrollWidth - offsetPosition.left - offsetParentSize.width + offsetBorder.right;
-                                offsetPosition.bottom = document.body.scrollHeight - offsetPosition.top - offsetParentSize.height + offsetBorder.bottom;
-
-                                if (next.page.top >= offsetPosition.top + offsetBorder.top && next.page.bottom >= offsetPosition.bottom) {
-                                    if (next.page.left >= offsetPosition.left + offsetBorder.left && next.page.right >= offsetPosition.right) {
-                                        // We're within the visible part of the target's scroll parent
-                                        var scrollTop = offsetParent.scrollTop;
-                                        var scrollLeft = offsetParent.scrollLeft;
-
-                                        // It's position relative to the target's offset parent (absolute positioning when
-                                        // the element is moved to be a child of the target's offset parent).
-                                        next.offset = {
-                                            top: next.page.top - offsetPosition.top + scrollTop - offsetBorder.top,
-                                            left: next.page.left - offsetPosition.left + scrollLeft - offsetBorder.left
-                                        };
-                                    }
-                                }
-                            })();
-                        }
-
-                        // We could also travel up the DOM and try each containing context, rather than only
-                        // looking at the body, but we're gonna get diminishing returns.
-
-                        this.move(next);
-
-                        this.history.unshift(next);
-
-                        if (this.history.length > 3) {
-                            this.history.pop();
-                        }
-
-                        if (flushChanges) {
-                            flush();
-                        }
-
-                        return true;
-                    }
-
-                    // THE ISSUE
-                }, {
-                    key: 'move',
-                    value: function move(pos) {
-                        var _this8 = this;
-
-                        if (!(typeof this.element.parentNode !== 'undefined')) {
-                            return;
-                        }
-
-                        var same = {};
-
-                        for (var type in pos) {
-                            same[type] = {};
-
-                            for (var key in pos[type]) {
-                                var found = false;
-
-                                for (var i = 0; i < this.history.length; ++i) {
-                                    var point = this.history[i];
-                                    if (typeof point[type] !== 'undefined' && !within(point[type][key], pos[type][key])) {
-                                        found = true;
-                                        break;
-                                    }
-                                }
-
-                                if (!found) {
-                                    same[type][key] = true;
-                                }
-                            }
-                        }
-
-                        var css = {top: '', left: '', right: '', bottom: ''};
-
-                        var transcribe = function transcribe(_same, _pos) {
-                            var hasOptimizations = typeof _this8.options.optimizations !== 'undefined';
-                            var gpu = hasOptimizations ? _this8.options.optimizations.gpu : null;
-                            if (gpu !== false) {
-                                var yPos = undefined,
-                                    xPos = undefined;
-                                if (_same.top) {
-                                    css.top = 0;
-                                    yPos = _pos.top;
-                                } else {
-                                    css.bottom = 0;
-                                    yPos = -_pos.bottom;
-                                }
-
-                                if (_same.left) {
-                                    css.left = 0;
-                                    xPos = _pos.left;
-                                } else {
-                                    css.right = 0;
-                                    xPos = -_pos.right;
-                                }
-
-                                css[transformKey] = 'translateX(' + Math.round(xPos) + 'px) translateY(' + Math.round(yPos) + 'px)';
-
-                                if (transformKey !== 'msTransform') {
-                                    // The Z transform will keep this in the GPU (faster, and prevents artifacts),
-                                    // but IE9 doesn't support 3d transforms and will choke.
-                                    css[transformKey] += " translateZ(0)";
-                                }
-                            } else {
-                                if (_same.top) {
-                                    css.top = _pos.top + 'px';
-                                } else {
-                                    css.bottom = _pos.bottom + 'px';
-                                }
-
-                                if (_same.left) {
-                                    css.left = _pos.left + 'px';
-                                } else {
-                                    css.right = _pos.right + 'px';
-                                }
-                            }
-                        };
-
-                        var moved = false;
-                        if ((same.page.top || same.page.bottom) && (same.page.left || same.page.right)) {
-                            css.position = 'absolute';
-                            transcribe(same.page, pos.page);
-                        } else if ((same.viewport.top || same.viewport.bottom) && (same.viewport.left || same.viewport.right)) {
-                            css.position = 'fixed';
-                            transcribe(same.viewport, pos.viewport);
-                        } else if (typeof same.offset !== 'undefined' && same.offset.top && same.offset.left) {
-                            (function () {
-                                css.position = 'absolute';
-                                var offsetParent = _this8.cache('target-offsetparent', function () {
-                                    return getOffsetParent(_this8.target);
-                                });
-
-                                if (getOffsetParent(_this8.element) !== offsetParent) {
-                                    defer(function () {
-                                        _this8.element.parentNode.removeChild(_this8.element);
-                                        offsetParent.appendChild(_this8.element);
-                                    });
-                                }
-
-                                transcribe(same.offset, pos.offset);
-                                moved = true;
-                            })();
-                        } else {
-                            css.position = 'absolute';
-                            transcribe({top: true, left: true}, pos.page);
-                        }
-
-                        if (!moved) {
-                            var offsetParentIsBody = true;
-                            var currentNode = this.element.parentNode;
-                            while (currentNode && currentNode.nodeType === 1 && currentNode.tagName !== 'BODY') {
-                                if (getComputedStyle(currentNode).position !== 'static') {
-                                    offsetParentIsBody = false;
-                                    break;
-                                }
-
-                                currentNode = currentNode.parentNode;
-                            }
-
-                            if (!offsetParentIsBody) {
-                                this.element.parentNode.removeChild(this.element);
-                                document.body.appendChild(this.element);
-                            }
-                        }
-
-                        // Any css change will trigger a repaint, so let's avoid one if nothing changed
-                        var writeCSS = {};
-                        var write = false;
-                        for (var key in css) {
-                            var val = css[key];
-                            var elVal = this.element.style[key];
-
-                            if (elVal !== val) {
-                                write = true;
-                                writeCSS[key] = val;
-                            }
-                        }
-
-                        if (write) {
-                            defer(function () {
-                                extend(_this8.element.style, writeCSS);
-                            });
-                        }
-                    }
-                }]);
-
-                return TetherClass;
-            })(Evented);
-
-            TetherClass.modules = [];
-
-            TetherBase.position = position;
-
-            var Tether = extend(TetherClass, TetherBase);
-            /* globals TetherBase */
-
-            'use strict';
-
-            var _slicedToArray = (function () {
-                function sliceIterator(arr, i) {
-                    var _arr = [];
-                    var _n = true;
-                    var _d = false;
-                    var _e = undefined;
-                    try {
-                        for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-                            _arr.push(_s.value);
-                            if (i && _arr.length === i) break;
-                        }
-                    } catch (err) {
-                        _d = true;
-                        _e = err;
-                    } finally {
-                        try {
-                            if (!_n && _i['return']) _i['return']();
-                        } finally {
-                            if (_d) throw _e;
-                        }
-                    }
-                    return _arr;
-                }
-
-                return function (arr, i) {
-                    if (Array.isArray(arr)) {
-                        return arr;
-                    } else if (Symbol.iterator in Object(arr)) {
-                        return sliceIterator(arr, i);
-                    } else {
-                        throw new TypeError('Invalid attempt to destructure non-iterable instance');
-                    }
-                };
-            })();
-
-            var _TetherBase$Utils = TetherBase.Utils;
-            var getBounds = _TetherBase$Utils.getBounds;
-            var extend = _TetherBase$Utils.extend;
-            var updateClasses = _TetherBase$Utils.updateClasses;
-            var defer = _TetherBase$Utils.defer;
-
-            var BOUNDS_FORMAT = ['left', 'top', 'right', 'bottom'];
-
-            function getBoundingRect(tether, to) {
-                if (to === 'scrollParent') {
-                    to = tether.scrollParents[0];
-                } else if (to === 'window') {
-                    to = [pageXOffset, pageYOffset, innerWidth + pageXOffset, innerHeight + pageYOffset];
-                }
-
-                if (to === document) {
-                    to = to.documentElement;
-                }
-
-                if (typeof to.nodeType !== 'undefined') {
-                    (function () {
-                        var size = getBounds(to);
-                        var pos = size;
-                        var style = getComputedStyle(to);
-
-                        to = [pos.left, pos.top, size.width + pos.left, size.height + pos.top];
-
-                        BOUNDS_FORMAT.forEach(function (side, i) {
-                            side = side[0].toUpperCase() + side.substr(1);
-                            if (side === 'Top' || side === 'Left') {
-                                to[i] += parseFloat(style['border' + side + 'Width']);
-                            } else {
-                                to[i] -= parseFloat(style['border' + side + 'Width']);
-                            }
-                        });
-                    })();
-                }
-
-                return to;
-            }
-
-            TetherBase.modules.push({
-                position: function position(_ref) {
-                    var _this = this;
-
-                    var top = _ref.top;
-                    var left = _ref.left;
-                    var targetAttachment = _ref.targetAttachment;
-
-                    if (!this.options.constraints) {
-                        return true;
-                    }
-
-                    var _cache = this.cache('element-bounds', function () {
-                        return getBounds(_this.element);
-                    });
-
-                    var height = _cache.height;
-                    var width = _cache.width;
-
-                    if (width === 0 && height === 0 && typeof this.lastSize !== 'undefined') {
-                        var _lastSize = this.lastSize;
-
-                        // Handle the item getting hidden as a result of our positioning without glitching
-                        // the classes in and out
-                        width = _lastSize.width;
-                        height = _lastSize.height;
-                    }
-
-                    var targetSize = this.cache('target-bounds', function () {
-                        return _this.getTargetBounds();
-                    });
-
-                    var targetHeight = targetSize.height;
-                    var targetWidth = targetSize.width;
-
-                    var allClasses = [this.getClass('pinned'), this.getClass('out-of-bounds')];
-
-                    this.options.constraints.forEach(function (constraint) {
-                        var outOfBoundsClass = constraint.outOfBoundsClass;
-                        var pinnedClass = constraint.pinnedClass;
-
-                        if (outOfBoundsClass) {
-                            allClasses.push(outOfBoundsClass);
-                        }
-                        if (pinnedClass) {
-                            allClasses.push(pinnedClass);
-                        }
-                    });
-
-                    allClasses.forEach(function (cls) {
-                        ['left', 'top', 'right', 'bottom'].forEach(function (side) {
-                            allClasses.push(cls + '-' + side);
-                        });
-                    });
-
-                    var addClasses = [];
-
-                    var tAttachment = extend({}, targetAttachment);
-                    var eAttachment = extend({}, this.attachment);
-
-                    this.options.constraints.forEach(function (constraint) {
-                        var to = constraint.to;
-                        var attachment = constraint.attachment;
-                        var pin = constraint.pin;
-
-                        if (typeof attachment === 'undefined') {
-                            attachment = '';
-                        }
-
-                        var changeAttachX = undefined,
-                            changeAttachY = undefined;
-                        if (attachment.indexOf(' ') >= 0) {
-                            var _attachment$split = attachment.split(' ');
-
-                            var _attachment$split2 = _slicedToArray(_attachment$split, 2);
-
-                            changeAttachY = _attachment$split2[0];
-                            changeAttachX = _attachment$split2[1];
-                        } else {
-                            changeAttachX = changeAttachY = attachment;
-                        }
-
-                        var bounds = getBoundingRect(_this, to);
-
-                        if (changeAttachY === 'target' || changeAttachY === 'both') {
-                            if (top < bounds[1] && tAttachment.top === 'top') {
-                                top += targetHeight;
-                                tAttachment.top = 'bottom';
-                            }
-
-                            if (top + height > bounds[3] && tAttachment.top === 'bottom') {
-                                top -= targetHeight;
-                                tAttachment.top = 'top';
-                            }
-                        }
-
-                        if (changeAttachY === 'together') {
-                            if (tAttachment.top === 'top') {
-                                if (eAttachment.top === 'bottom' && top < bounds[1]) {
-                                    top += targetHeight;
-                                    tAttachment.top = 'bottom';
-
-                                    top += height;
-                                    eAttachment.top = 'top';
-                                } else if (eAttachment.top === 'top' && top + height > bounds[3] && top - (height - targetHeight) >= bounds[1]) {
-                                    top -= height - targetHeight;
-                                    tAttachment.top = 'bottom';
-
-                                    eAttachment.top = 'bottom';
-                                }
-                            }
-
-                            if (tAttachment.top === 'bottom') {
-                                if (eAttachment.top === 'top' && top + height > bounds[3]) {
-                                    top -= targetHeight;
-                                    tAttachment.top = 'top';
-
-                                    top -= height;
-                                    eAttachment.top = 'bottom';
-                                } else if (eAttachment.top === 'bottom' && top < bounds[1] && top + (height * 2 - targetHeight) <= bounds[3]) {
-                                    top += height - targetHeight;
-                                    tAttachment.top = 'top';
-
-                                    eAttachment.top = 'top';
-                                }
-                            }
-
-                            if (tAttachment.top === 'middle') {
-                                if (top + height > bounds[3] && eAttachment.top === 'top') {
-                                    top -= height;
-                                    eAttachment.top = 'bottom';
-                                } else if (top < bounds[1] && eAttachment.top === 'bottom') {
-                                    top += height;
-                                    eAttachment.top = 'top';
-                                }
-                            }
-                        }
-
-                        if (changeAttachX === 'target' || changeAttachX === 'both') {
-                            if (left < bounds[0] && tAttachment.left === 'left') {
-                                left += targetWidth;
-                                tAttachment.left = 'right';
-                            }
-
-                            if (left + width > bounds[2] && tAttachment.left === 'right') {
-                                left -= targetWidth;
-                                tAttachment.left = 'left';
-                            }
-                        }
-
-                        if (changeAttachX === 'together') {
-                            if (left < bounds[0] && tAttachment.left === 'left') {
-                                if (eAttachment.left === 'right') {
-                                    left += targetWidth;
-                                    tAttachment.left = 'right';
-
-                                    left += width;
-                                    eAttachment.left = 'left';
-                                } else if (eAttachment.left === 'left') {
-                                    left += targetWidth;
-                                    tAttachment.left = 'right';
-
-                                    left -= width;
-                                    eAttachment.left = 'right';
-                                }
-                            } else if (left + width > bounds[2] && tAttachment.left === 'right') {
-                                if (eAttachment.left === 'left') {
-                                    left -= targetWidth;
-                                    tAttachment.left = 'left';
-
-                                    left -= width;
-                                    eAttachment.left = 'right';
-                                } else if (eAttachment.left === 'right') {
-                                    left -= targetWidth;
-                                    tAttachment.left = 'left';
-
-                                    left += width;
-                                    eAttachment.left = 'left';
-                                }
-                            } else if (tAttachment.left === 'center') {
-                                if (left + width > bounds[2] && eAttachment.left === 'left') {
-                                    left -= width;
-                                    eAttachment.left = 'right';
-                                } else if (left < bounds[0] && eAttachment.left === 'right') {
-                                    left += width;
-                                    eAttachment.left = 'left';
-                                }
-                            }
-                        }
-
-                        if (changeAttachY === 'element' || changeAttachY === 'both') {
-                            if (top < bounds[1] && eAttachment.top === 'bottom') {
-                                top += height;
-                                eAttachment.top = 'top';
-                            }
-
-                            if (top + height > bounds[3] && eAttachment.top === 'top') {
-                                top -= height;
-                                eAttachment.top = 'bottom';
-                            }
-                        }
-
-                        if (changeAttachX === 'element' || changeAttachX === 'both') {
-                            if (left < bounds[0]) {
-                                if (eAttachment.left === 'right') {
-                                    left += width;
-                                    eAttachment.left = 'left';
-                                } else if (eAttachment.left === 'center') {
-                                    left += width / 2;
-                                    eAttachment.left = 'left';
-                                }
-                            }
-
-                            if (left + width > bounds[2]) {
-                                if (eAttachment.left === 'left') {
-                                    left -= width;
-                                    eAttachment.left = 'right';
-                                } else if (eAttachment.left === 'center') {
-                                    left -= width / 2;
-                                    eAttachment.left = 'right';
-                                }
-                            }
-                        }
-
-                        if (typeof pin === 'string') {
-                            pin = pin.split(',').map(function (p) {
-                                return p.trim();
-                            });
-                        } else if (pin === true) {
-                            pin = ['top', 'left', 'right', 'bottom'];
-                        }
-
-                        pin = pin || [];
-
-                        var pinned = [];
-                        var oob = [];
-
-                        if (top < bounds[1]) {
-                            if (pin.indexOf('top') >= 0) {
-                                top = bounds[1];
-                                pinned.push('top');
-                            } else {
-                                oob.push('top');
-                            }
-                        }
-
-                        if (top + height > bounds[3]) {
-                            if (pin.indexOf('bottom') >= 0) {
-                                top = bounds[3] - height;
-                                pinned.push('bottom');
-                            } else {
-                                oob.push('bottom');
-                            }
-                        }
-
-                        if (left < bounds[0]) {
-                            if (pin.indexOf('left') >= 0) {
-                                left = bounds[0];
-                                pinned.push('left');
-                            } else {
-                                oob.push('left');
-                            }
-                        }
-
-                        if (left + width > bounds[2]) {
-                            if (pin.indexOf('right') >= 0) {
-                                left = bounds[2] - width;
-                                pinned.push('right');
-                            } else {
-                                oob.push('right');
-                            }
-                        }
-
-                        if (pinned.length) {
-                            (function () {
-                                var pinnedClass = undefined;
-                                if (typeof _this.options.pinnedClass !== 'undefined') {
-                                    pinnedClass = _this.options.pinnedClass;
-                                } else {
-                                    pinnedClass = _this.getClass('pinned');
-                                }
-
-                                addClasses.push(pinnedClass);
-                                pinned.forEach(function (side) {
-                                    addClasses.push(pinnedClass + '-' + side);
-                                });
-                            })();
-                        }
-
-                        if (oob.length) {
-                            (function () {
-                                var oobClass = undefined;
-                                if (typeof _this.options.outOfBoundsClass !== 'undefined') {
-                                    oobClass = _this.options.outOfBoundsClass;
-                                } else {
-                                    oobClass = _this.getClass('out-of-bounds');
-                                }
-
-                                addClasses.push(oobClass);
-                                oob.forEach(function (side) {
-                                    addClasses.push(oobClass + '-' + side);
-                                });
-                            })();
-                        }
-
-                        if (pinned.indexOf('left') >= 0 || pinned.indexOf('right') >= 0) {
-                            eAttachment.left = tAttachment.left = false;
-                        }
-                        if (pinned.indexOf('top') >= 0 || pinned.indexOf('bottom') >= 0) {
-                            eAttachment.top = tAttachment.top = false;
-                        }
-
-                        if (tAttachment.top !== targetAttachment.top || tAttachment.left !== targetAttachment.left || eAttachment.top !== _this.attachment.top || eAttachment.left !== _this.attachment.left) {
-                            _this.updateAttachClasses(eAttachment, tAttachment);
-                            _this.trigger('update', {
-                                attachment: eAttachment,
-                                targetAttachment: tAttachment
-                            });
-                        }
-                    });
-
-                    defer(function () {
-                        if (!(_this.options.addTargetClasses === false)) {
-                            updateClasses(_this.target, addClasses, allClasses);
-                        }
-                        updateClasses(_this.element, addClasses, allClasses);
-                    });
-
-                    return {top: top, left: left};
-                }
-            });
-            /* globals TetherBase */
-
-            'use strict';
-
-            var _TetherBase$Utils = TetherBase.Utils;
-            var getBounds = _TetherBase$Utils.getBounds;
-            var updateClasses = _TetherBase$Utils.updateClasses;
-            var defer = _TetherBase$Utils.defer;
-
-            TetherBase.modules.push({
-                position: function position(_ref) {
-                    var _this = this;
-
-                    var top = _ref.top;
-                    var left = _ref.left;
-
-                    var _cache = this.cache('element-bounds', function () {
-                        return getBounds(_this.element);
-                    });
-
-                    var height = _cache.height;
-                    var width = _cache.width;
-
-                    var targetPos = this.getTargetBounds();
-
-                    var bottom = top + height;
-                    var right = left + width;
-
-                    var abutted = [];
-                    if (top <= targetPos.bottom && bottom >= targetPos.top) {
-                        ['left', 'right'].forEach(function (side) {
-                            var targetPosSide = targetPos[side];
-                            if (targetPosSide === left || targetPosSide === right) {
-                                abutted.push(side);
-                            }
-                        });
-                    }
-
-                    if (left <= targetPos.right && right >= targetPos.left) {
-                        ['top', 'bottom'].forEach(function (side) {
-                            var targetPosSide = targetPos[side];
-                            if (targetPosSide === top || targetPosSide === bottom) {
-                                abutted.push(side);
-                            }
-                        });
-                    }
-
-                    var allClasses = [];
-                    var addClasses = [];
-
-                    var sides = ['left', 'top', 'right', 'bottom'];
-                    allClasses.push(this.getClass('abutted'));
-                    sides.forEach(function (side) {
-                        allClasses.push(_this.getClass('abutted') + '-' + side);
-                    });
-
-                    if (abutted.length) {
-                        addClasses.push(this.getClass('abutted'));
-                    }
-
-                    abutted.forEach(function (side) {
-                        addClasses.push(_this.getClass('abutted') + '-' + side);
-                    });
-
-                    defer(function () {
-                        if (!(_this.options.addTargetClasses === false)) {
-                            updateClasses(_this.target, addClasses, allClasses);
-                        }
-                        updateClasses(_this.element, addClasses, allClasses);
-                    });
-
-                    return true;
-                }
-            });
-            /* globals TetherBase */
-
-            'use strict';
-
-            var _slicedToArray = (function () {
-                function sliceIterator(arr, i) {
-                    var _arr = [];
-                    var _n = true;
-                    var _d = false;
-                    var _e = undefined;
-                    try {
-                        for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-                            _arr.push(_s.value);
-                            if (i && _arr.length === i) break;
-                        }
-                    } catch (err) {
-                        _d = true;
-                        _e = err;
-                    } finally {
-                        try {
-                            if (!_n && _i['return']) _i['return']();
-                        } finally {
-                            if (_d) throw _e;
-                        }
-                    }
-                    return _arr;
-                }
-
-                return function (arr, i) {
-                    if (Array.isArray(arr)) {
-                        return arr;
-                    } else if (Symbol.iterator in Object(arr)) {
-                        return sliceIterator(arr, i);
-                    } else {
-                        throw new TypeError('Invalid attempt to destructure non-iterable instance');
-                    }
-                };
-            })();
-
-            TetherBase.modules.push({
-                position: function position(_ref) {
-                    var top = _ref.top;
-                    var left = _ref.left;
-
-                    if (!this.options.shift) {
-                        return;
-                    }
-
-                    var shift = this.options.shift;
-                    if (typeof this.options.shift === 'function') {
-                        shift = this.options.shift.call(this, {top: top, left: left});
-                    }
-
-                    var shiftTop = undefined,
-                        shiftLeft = undefined;
-                    if (typeof shift === 'string') {
-                        shift = shift.split(' ');
-                        shift[1] = shift[1] || shift[0];
-
-                        var _shift = shift;
-
-                        var _shift2 = _slicedToArray(_shift, 2);
-
-                        shiftTop = _shift2[0];
-                        shiftLeft = _shift2[1];
-
-                        shiftTop = parseFloat(shiftTop, 10);
-                        shiftLeft = parseFloat(shiftLeft, 10);
-                    } else {
-                        shiftTop = shift.top;
-                        shiftLeft = shift.left;
-                    }
-
-                    top += shiftTop;
-                    left += shiftLeft;
-
-                    return {top: top, left: left};
-                }
-            });
-            return Tether;
-
-        }));
 
 
         /***/
