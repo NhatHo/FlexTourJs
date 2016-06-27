@@ -183,8 +183,7 @@ var FlexTour =
          * Attached all necessary handlers to the elements
          */
         function _addClickEvents() {
-            if (Utils.isValid(FlexTour.currentTour[Constants.END_ON_OVERLAY_CLICK])) {
-                debugger;
+            if (FlexTour.currentTour[Constants.END_ON_OVERLAY_CLICK]) {
                 Utils.getElementsAndAttachEvent(Constants.OVERLAY_STYLE, Constants.FLEX_CLICK, _exit);
             }
 

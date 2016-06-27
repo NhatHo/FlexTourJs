@@ -118,7 +118,6 @@ function _centralOrganizer(stepDesc) {
  */
 function _addClickEvents() {
     if (FlexTour.currentTour[Constants.END_ON_OVERLAY_CLICK]) {
-        debugger;
         Utils.getElementsAndAttachEvent(Constants.OVERLAY_STYLE, Constants.FLEX_CLICK, _exit);
     }
 
