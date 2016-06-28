@@ -208,10 +208,7 @@ var FlexTour =
 		function _addClickEventOnTargetClick(currentStep) {
 			let currentTarget = document.querySelector(currentStep[Constants.TARGET]);
 			if (Utils.isValid(currentTarget)) {
-				Utils.addEvent(currentTarget, Constants.FLEX_CLICK, function onClick() {
-					_nextStep();
-					_removeClickEventOnTargetClick(currentStep);
-				});
+				Utils.addEvent(currentTarget, Constants.FLEX_CLICK, _nextStep);
 			}
 		}
 
@@ -402,6 +399,11 @@ var FlexTour =
 		 * Trigger next step of the tour. If the next step is the last step, trigger the isLastStep flag
 		 */
 		function _nextStep() {
+			let currentStep = FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber];
+			if (Utils.isValid(currentStep[Constants.NEXT_ON_TARGET])) {
+				// Clean up next on target click here.
+				_removeClickEventOnTargetClick(currentStep);
+			}
 			if (_isAllowToMove(FlexTour.currentStepNumber + 1, 0)) {
 				_transitionToNextStep(FlexTour.currentStepNumber + 1);
 			}
@@ -430,7 +432,7 @@ var FlexTour =
 		 * Add window resize event to recalculate location of tour step.
 		 */
 		function _addResizeWindowListener() {
-			Utils.addEvent(window, Constants.FLEX_RESIZE, _resizeWindow);
+			Utils.addEvent(window, Constants.FLEX_RESIZE, Utils.debounce(_resizeWindow, 500, false));
 		}
 
 		/**
@@ -438,23 +440,21 @@ var FlexTour =
 		 * This event is only trigger once every 1/2 second. So that it won't go crazy and trigger too many event on resizing
 		 */
 		function _resizeWindow() {
-			Utils.debounce(function () {
-				_centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber]);
-			}, 500, false)
+			_centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber]);
 		}
 
 		/**
 		 * Remove resize listener from window without detaching other handlers from main program
 		 */
 		function _unbindResizeWindowListener() {
-			Utils.removeEvent(window, Constants.FLEX_RESIZE, _resizeWindow);
+			Utils.removeEvent(document, Constants.FLEX_RESIZE, Utils.debounce(_resizeWindow, 500, false));
 		}
 
 		/**
 		 * Attach keyup event into the window element so that it will be trigger on keyup
 		 */
 		function _addKeyBoardListener() {
-			Utils.addEvent(window, Constants.KEY_UP, _keyUpCallBack);
+			Utils.addEvent(window, Constants.KEY_UP, _keyUpCallBack, true);
 		}
 
 		/**
@@ -473,7 +473,7 @@ var FlexTour =
 		 * Unbind the keyup handler on exit, so that it won't cause memory leak
 		 */
 		function _unbindKeyboardListener() {
-			Utils.removeEvent(window, Constants.KEY_UP, _keyUpCallBack(event));
+			Utils.removeEvent(window, Constants.KEY_UP, _keyUpCallBack, true);
 		}
 
 		function _exit() {
@@ -1279,13 +1279,13 @@ var FlexTour =
 			 * @param el        Element to be attached listener/event on
 			 * @param type      Type of event to listen to
 			 * @param callback  Callback function when event is fired
+			 * @param capture   Use Capture for this event or not
 			 */
-			addEvent: function (el, type, callback) {
+			addEvent: function (el, type, callback, capture) {
 				if (!this.isValid(el))
 					return;
-				debugger;
 				if (el.addEventListener) {
-					el.addEventListener(type, callback, false);
+					el.addEventListener(type, callback, capture || false);
 				} else if (el.attachEvent) {
 					el.attachEvent("on" + type, callback);
 				} else {
@@ -1298,12 +1298,13 @@ var FlexTour =
 			 * @param el        Element that contains event that needs to be removed
 			 * @param type      Type of event that was attached
 			 * @param callback  Function to remove from the event
+			 * @param capture   Use Capture for this event or not
 			 */
-			removeEvent: function (el, type, callback) {
+			removeEvent: function (el, type, callback, capture) {
 				if (!this.isValid(el))
 					return;
 				if (el.removeEventListener) {
-					el.removeEventListener(type, callback);
+					el.removeEventListener(type, callback, capture || false);
 				} else if (el.detachEvent) {
 					el.detachEvent(type, callback);
 				} else {
