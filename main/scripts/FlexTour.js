@@ -61,8 +61,7 @@ function _centralOrganizer(stepDesc) {
     let currentStepNumber = FlexTour.currentStepNumber;
 
     if (Utils.isValid(FlexTour.Component)) {
-        let showSkip = false,
-            showBack = false,
+        let showBack = false,
             showNext = false,
             disableNext = false,
             noButtons = false;
@@ -80,9 +79,6 @@ function _centralOrganizer(stepDesc) {
             showNext = true;
         }
 
-        if (currentStepNumber < numberOfStep - 2 && !stepDesc[Constants.NEXT_ON_TARGET] && !stepDesc[Constants.NO_SKIP]) {
-            showSkip = true;
-        }
         if (stepDesc[Constants.NEXT_ON_TARGET]) {
             disableNext = true;
         }
@@ -99,12 +95,17 @@ function _centralOrganizer(stepDesc) {
          * Create components can be only called once when the tour start for the first time.
          */
         if (!FlexTour.running) {
-            FlexTour.Component.createComponents(noButtons, showSkip, showBack, showNext, disableNext);
+            FlexTour.Component.createComponents(noButtons, showBack, showNext, disableNext);
             FlexTour.running = true;
             _addResizeWindowListener();
             _addKeyBoardListener();
         } else {
-            FlexTour.Component.modifyComponents(noButtons, showSkip, showBack, showNext, disableNext);
+            FlexTour.Component.modifyComponents(noButtons, showBack, showNext, disableNext);
+        }
+
+        // Add event to Skip button if it exist
+        if (Utils.isValid(stepDesc[Constants.SKIP])) {
+            Utils.getElementsAndAttachEvent(Constants.SKIP_BUTTON, Constants.FLEX_CLICK, _skipStep);
         }
 
         _addClickEvents();
@@ -124,8 +125,6 @@ function _addClickEvents() {
     if (FlexTour.currentTour[Constants.END_ON_OVERLAY_CLICK]) {
         Utils.getElementsAndAttachEvent(Constants.OVERLAY_STYLE, Constants.FLEX_CLICK, _exit);
     }
-
-    Utils.getElementsAndAttachEvent(Constants.SKIP_BUTTON, Constants.FLEX_CLICK, _skipStep);
 
     Utils.getElementsAndAttachEvent(Constants.BACK_BUTTON, Constants.FLEX_CLICK, _previousStep);
 
@@ -152,8 +151,6 @@ function _addClickEventOnTargetClick(currentStep) {
 function _removeEvents() {
     Utils.removeELementsAndAttachedEvent(Constants.OVERLAY_STYLE, Constants.FLEX_CLICK, _exit);
 
-    Utils.removeELementsAndAttachedEvent(Constants.SKIP_BUTTON, Constants.FLEX_CLICK, _skipStep);
-
     Utils.removeELementsAndAttachedEvent(Constants.BACK_BUTTON, Constants.FLEX_CLICK, _previousStep);
 
     Utils.removeELementsAndAttachedEvent(Constants.NEXT_BUTTON, Constants.FLEX_CLICK, _nextStep);
@@ -177,7 +174,7 @@ function _removeClickEventOnTargetClick(currentStep) {
  * THIS PART RIGHT HERE IS WHAT MAKE FLEXTOUR DIFFERENT FROM OTHER ENGINES.
  *
  *
- * IMPORTANT: It's the developer job to know if the previous step can be reached. If the previous step should not be REACHED, set "noBack: true" in step description. Samething for SKIP Button.
+ * IMPORTANT: It's the developer job to know if the previous step can be reached. If the previous step should not be REACHED, set "noBack: true" in step description. Samething for SKIP_INDICATOR Button.
  * Check if the next, previous or skip step is allowed to be executed.
  * The prerequisites array can contain up to 3 types:
  *  -- Prerequisite functions: regular function name. I.e: "getInputString", etc.
@@ -218,10 +215,8 @@ function _isAllowToMove(possibleStepNumber, currPrerequisite) {
                     possibleStep[Constants.RETRIES]--;
                     // Retry the the waitFor after certain time invertal
                     setTimeout(function () {
-                        if (_isAllowToMove(possibleStepNumber, currPrerequisite)) {
-                            // Proceed to next one when this is waitFor is met. Of course this will require the next conditions are also successful
-                            _transitionToNextStep(possibleStepNumber);
-                        }
+                        // Proceed to next one when this is waitFor is met. Of course this will require the next conditions are also successful
+                        _precheckForTransition(possibleStepNumber, currPrerequisite);
                     }, possibleStep[Constants.WAIT_INTERVALS]);
                 }
             } else {
@@ -232,7 +227,7 @@ function _isAllowToMove(possibleStepNumber, currPrerequisite) {
                 // Move to the next prerequisite when the Wait for condition is met.
                 return _isAllowToMove(possibleStepNumber, ++currPrerequisite);
             }
-        } else if (prerequisite.indexOf(Constants.SKIP) > -1) {
+        } else if (prerequisite.indexOf(Constants.SKIP_INDICATOR) > -1) {
             /**
              * The syntax is: "!funcName:params". For sure the 2nd element after split is funcName
              * IMPORTANT: as mentioned before, this should be the last on the list. When this is true it will autmatically increment the FlexTour.currentStepNumber to 2 steps ahead which effectively skip the current possible step.
@@ -240,15 +235,20 @@ function _isAllowToMove(possibleStepNumber, currPrerequisite) {
              * REASONING: Treat this as a prerequisite, the condition must be met (true) for the tour to flow normally, if the condition is NOT met (false), the tour will skipped the step as indicated. Works well with isVisible, and doesExist. These will check the condition, if condition is true then stay. If condition is false then skip.
              */
 
-            let prerequisiteBlock = prerequisite.split(Constants.SKIP)[1].trim();
+            let prerequisiteBlock = prerequisite.split(Constants.SKIP_INDICATOR)[1].trim();
 
             if (!_executePrerequisiteCondition(possibleStep, prerequisiteBlock)) {
+                let skipNumber = possibleStep[Constants.SKIP];
                 if (possibleStepNumber > FlexTour.currentStepNumber) {
                     // If the tour is going forward then skip it forward
-                    _transitionToNextStep(possibleStepNumber + 1);
+                    if (Utils.isValid(skipNumber)) {
+                        _precheckForTransition(skipNumber, 0);
+                    } else {
+                        _precheckForTransition(possibleStepNumber + 1, 0);
+                    }
                 } else {
-                    // If the tour is going backward then skip it backward
-                    _transitionToNextStep(possibleStepNumber - 1);
+                    // If the tour is going backward then skip it backward 1 step only
+                    _precheckForTransition(possibleStepNumber - 1, 0);
                 }
                 // At this point the step will be skipped. Return false so the potential step will not be rendered.
                 return false;
@@ -312,11 +312,25 @@ function _executePrerequisiteCondition(stepDesc, prerequisite) {
 }
 
 /**
+ * Factored function to check if the next step is allowed, if yes move to that step
+ * @param stepNumber        Next step index number
+ * @param prerequisiteNumber        The prerequisite to be checked
+ */
+function _precheckForTransition(stepNumber, prerequisiteNumber) {
+    if (_isAllowToMove(stepNumber, prerequisiteNumber)) {
+        _transitionToNextStep(stepNumber);
+    }
+}
+
+/**
  * Skip the next step to the next next step.
  */
 function _skipStep() {
-    if (_isAllowToMove(FlexTour.currentStepNumber + 2, 0)) {
-        _transitionToNextStep(FlexTour.currentStepNumber + 2);
+    Utils.removeELementsAndAttachedEvent(Constants.SKIP_BUTTON, Constants.FLEX_CLICK, _skipStep);
+
+    let skipToStep = FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber][Constants.SKIP];
+    if (Utils.isValid(skipToStep)) {
+        _precheckForTransition(skipToStep, 0);
     }
 }
 
@@ -324,9 +338,7 @@ function _skipStep() {
  * Decrement current step counter and go back to previous step ... Obviously it will not be the last step
  */
 function _previousStep() {
-    if (_isAllowToMove(FlexTour.currentStepNumber - 1, 0)) {
-        _transitionToNextStep(FlexTour.currentStepNumber - 1);
-    }
+    _precheckForTransition(FlexTour.currentStepNumber - 1, 0);
 }
 
 /**
@@ -338,9 +350,7 @@ function _nextStep() {
         // Clean up next on target click here.
         _removeClickEventOnTargetClick(currentStep);
     }
-    if (_isAllowToMove(FlexTour.currentStepNumber + 1, 0)) {
-        _transitionToNextStep(FlexTour.currentStepNumber + 1);
-    }
+    _precheckForTransition(FlexTour.currentStepNumber + 1, 0);
 }
 
 /**

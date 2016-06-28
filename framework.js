@@ -127,8 +127,7 @@ var FlexTour =
 			let currentStepNumber = FlexTour.currentStepNumber;
 
 			if (Utils.isValid(FlexTour.Component)) {
-				let showSkip = false,
-					showBack = false,
+				let showBack = false,
 					showNext = false,
 					disableNext = false,
 					noButtons = false;
@@ -146,9 +145,6 @@ var FlexTour =
 					showNext = true;
 				}
 
-				if (currentStepNumber < numberOfStep - 2 && !stepDesc[Constants.NEXT_ON_TARGET] && !stepDesc[Constants.NO_SKIP]) {
-					showSkip = true;
-				}
 				if (stepDesc[Constants.NEXT_ON_TARGET]) {
 					disableNext = true;
 				}
@@ -165,12 +161,17 @@ var FlexTour =
 				 * Create components can be only called once when the tour start for the first time.
 				 */
 				if (!FlexTour.running) {
-					FlexTour.Component.createComponents(noButtons, showSkip, showBack, showNext, disableNext);
+					FlexTour.Component.createComponents(noButtons, showBack, showNext, disableNext);
 					FlexTour.running = true;
 					_addResizeWindowListener();
 					_addKeyBoardListener();
 				} else {
-					FlexTour.Component.modifyComponents(noButtons, showSkip, showBack, showNext, disableNext);
+					FlexTour.Component.modifyComponents(noButtons, showBack, showNext, disableNext);
+				}
+
+				// Add event to Skip button if it exist
+				if (Utils.isValid(stepDesc[Constants.SKIP])) {
+					Utils.getElementsAndAttachEvent(Constants.SKIP_BUTTON, Constants.FLEX_CLICK, _skipStep);
 				}
 
 				_addClickEvents();
@@ -190,8 +191,6 @@ var FlexTour =
 			if (FlexTour.currentTour[Constants.END_ON_OVERLAY_CLICK]) {
 				Utils.getElementsAndAttachEvent(Constants.OVERLAY_STYLE, Constants.FLEX_CLICK, _exit);
 			}
-
-			Utils.getElementsAndAttachEvent(Constants.SKIP_BUTTON, Constants.FLEX_CLICK, _skipStep);
 
 			Utils.getElementsAndAttachEvent(Constants.BACK_BUTTON, Constants.FLEX_CLICK, _previousStep);
 
@@ -218,8 +217,6 @@ var FlexTour =
 		function _removeEvents() {
 			Utils.removeELementsAndAttachedEvent(Constants.OVERLAY_STYLE, Constants.FLEX_CLICK, _exit);
 
-			Utils.removeELementsAndAttachedEvent(Constants.SKIP_BUTTON, Constants.FLEX_CLICK, _skipStep);
-
 			Utils.removeELementsAndAttachedEvent(Constants.BACK_BUTTON, Constants.FLEX_CLICK, _previousStep);
 
 			Utils.removeELementsAndAttachedEvent(Constants.NEXT_BUTTON, Constants.FLEX_CLICK, _nextStep);
@@ -243,7 +240,7 @@ var FlexTour =
 		 * THIS PART RIGHT HERE IS WHAT MAKE FLEXTOUR DIFFERENT FROM OTHER ENGINES.
 		 *
 		 *
-		 * IMPORTANT: It's the developer job to know if the previous step can be reached. If the previous step should not be REACHED, set "noBack: true" in step description. Samething for SKIP Button.
+		 * IMPORTANT: It's the developer job to know if the previous step can be reached. If the previous step should not be REACHED, set "noBack: true" in step description. Samething for SKIP_INDICATOR Button.
 		 * Check if the next, previous or skip step is allowed to be executed.
 		 * The prerequisites array can contain up to 3 types:
 		 *  -- Prerequisite functions: regular function name. I.e: "getInputString", etc.
@@ -284,10 +281,8 @@ var FlexTour =
 							possibleStep[Constants.RETRIES]--;
 							// Retry the the waitFor after certain time invertal
 							setTimeout(function () {
-								if (_isAllowToMove(possibleStepNumber, currPrerequisite)) {
-									// Proceed to next one when this is waitFor is met. Of course this will require the next conditions are also successful
-									_transitionToNextStep(possibleStepNumber);
-								}
+								// Proceed to next one when this is waitFor is met. Of course this will require the next conditions are also successful
+								_precheckForTransition(possibleStepNumber, currPrerequisite);
 							}, possibleStep[Constants.WAIT_INTERVALS]);
 						}
 					} else {
@@ -298,7 +293,7 @@ var FlexTour =
 						// Move to the next prerequisite when the Wait for condition is met.
 						return _isAllowToMove(possibleStepNumber, ++currPrerequisite);
 					}
-				} else if (prerequisite.indexOf(Constants.SKIP) > -1) {
+				} else if (prerequisite.indexOf(Constants.SKIP_INDICATOR) > -1) {
 					/**
 					 * The syntax is: "!funcName:params". For sure the 2nd element after split is funcName
 					 * IMPORTANT: as mentioned before, this should be the last on the list. When this is true it will autmatically increment the FlexTour.currentStepNumber to 2 steps ahead which effectively skip the current possible step.
@@ -306,15 +301,20 @@ var FlexTour =
 					 * REASONING: Treat this as a prerequisite, the condition must be met (true) for the tour to flow normally, if the condition is NOT met (false), the tour will skipped the step as indicated. Works well with isVisible, and doesExist. These will check the condition, if condition is true then stay. If condition is false then skip.
 					 */
 
-					let prerequisiteBlock = prerequisite.split(Constants.SKIP)[1].trim();
+					let prerequisiteBlock = prerequisite.split(Constants.SKIP_INDICATOR)[1].trim();
 
 					if (!_executePrerequisiteCondition(possibleStep, prerequisiteBlock)) {
+						let skipNumber = possibleStep[Constants.SKIP];
 						if (possibleStepNumber > FlexTour.currentStepNumber) {
 							// If the tour is going forward then skip it forward
-							_transitionToNextStep(possibleStepNumber + 1);
+							if (Utils.isValid(skipNumber)) {
+								_precheckForTransition(skipNumber, 0);
+							} else {
+								_precheckForTransition(possibleStepNumber + 1, 0);
+							}
 						} else {
-							// If the tour is going backward then skip it backward
-							_transitionToNextStep(possibleStepNumber - 1);
+							// If the tour is going backward then skip it backward 1 step only
+							_precheckForTransition(possibleStepNumber - 1, 0);
 						}
 						// At this point the step will be skipped. Return false so the potential step will not be rendered.
 						return false;
@@ -378,11 +378,25 @@ var FlexTour =
 		}
 
 		/**
+		 * Factored function to check if the next step is allowed, if yes move to that step
+		 * @param stepNumber        Next step index number
+		 * @param prerequisiteNumber        The prerequisite to be checked
+		 */
+		function _precheckForTransition(stepNumber, prerequisiteNumber) {
+			if (_isAllowToMove(stepNumber, prerequisiteNumber)) {
+				_transitionToNextStep(stepNumber);
+			}
+		}
+
+		/**
 		 * Skip the next step to the next next step.
 		 */
 		function _skipStep() {
-			if (_isAllowToMove(FlexTour.currentStepNumber + 2, 0)) {
-				_transitionToNextStep(FlexTour.currentStepNumber + 2);
+			Utils.removeELementsAndAttachedEvent(Constants.SKIP_BUTTON, Constants.FLEX_CLICK, _skipStep);
+
+			let skipToStep = FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber][Constants.SKIP];
+			if (Utils.isValid(skipToStep)) {
+				_precheckForTransition(skipToStep, 0);
 			}
 		}
 
@@ -390,9 +404,7 @@ var FlexTour =
 		 * Decrement current step counter and go back to previous step ... Obviously it will not be the last step
 		 */
 		function _previousStep() {
-			if (_isAllowToMove(FlexTour.currentStepNumber - 1, 0)) {
-				_transitionToNextStep(FlexTour.currentStepNumber - 1);
-			}
+			_precheckForTransition(FlexTour.currentStepNumber - 1, 0);
 		}
 
 		/**
@@ -404,9 +416,7 @@ var FlexTour =
 				// Clean up next on target click here.
 				_removeClickEventOnTargetClick(currentStep);
 			}
-			if (_isAllowToMove(FlexTour.currentStepNumber + 1, 0)) {
-				_transitionToNextStep(FlexTour.currentStepNumber + 1);
-			}
+			_precheckForTransition(FlexTour.currentStepNumber + 1, 0);
 		}
 
 		/**
@@ -679,12 +689,11 @@ var FlexTour =
 		/**
 		 * Create content bubble next to target to display the content of the step
 		 * @param {boolean} noButtons  True will hide all buttons
-		 * @param {boolean} showSkip  True to show skip button
 		 * @param {boolean} showBack  True to show Back Button
 		 * @param {boolean} showNext  True to show Next Button, False to show Done Button
 		 * @param {boolean} disableNext  True to disable either Next or Done button
 		 */
-		function _createContentBubble(noButtons, showSkip, showBack, showNext, disableNext) {
+		function _createContentBubble(noButtons, showBack, showNext, disableNext) {
 			let bubble = document.createElement("div");
 			bubble.classList.add(Constants.TOUR_BUBBLE);
 
@@ -713,12 +722,13 @@ var FlexTour =
 				let buttonGroup = document.createElement("div");
 				buttonGroup.classList.add(Constants.BUTTON_GROUP);
 
-				let skipButton = document.createElement("button");
-				skipButton.classList.add(Constants.SKIP_BUTTON);
-				skipButton.innerHTML = Constants.SKIP_TEXT;
-				skipButton.disabled = !showSkip;
+				if (Utils.isValid(Components.stepDescription[Constants.SKIP])) {
+					let skipButton = document.createElement("button");
+					skipButton.classList.add(Constants.SKIP_BUTTON);
+					skipButton.innerHTML = Constants.SKIP_TEXT;
 
-				buttonGroup.appendChild(skipButton);
+					buttonGroup.appendChild(skipButton);
+				}
 
 				let backButton = document.createElement("button");
 				backButton.classList.add(Constants.BACK_BUTTON);
@@ -777,12 +787,11 @@ var FlexTour =
 		/**
 		 * Modify the content bubble location. Get the current bubble and change everything in it.
 		 * @param {boolean} noButtons  True will hide all buttons
-		 * @param {boolean} showSkip  True to show skip button
 		 * @param {boolean} showBack  True to show Back Button
 		 * @param {boolean} showNext  True to show Next Button, False to show Done Button
 		 * @param {boolean} disableNext  True to disable either Next or Done button
 		 */
-		function _modifyContentBubble(noButtons, showSkip, showBack, showNext, disableNext) {
+		function _modifyContentBubble(noButtons, showBack, showNext, disableNext) {
 			/*
 			 * First block try to modify the icon in the bubble
 			 */
@@ -837,15 +846,20 @@ var FlexTour =
 				let buttonGroup = document.createElement("div");
 				buttonGroup.classList.add(Constants.BUTTON_GROUP);
 
+				let skipRequirement = Components.stepDescription[Constants.SKIP];
 				let skipButton = Utils.getEleFromClassName(Constants.SKIP_BUTTON);
-				if (Utils.isValid(skipButton)) {
-					skipButton.disabled = !showSkip;
+				if (Utils.isValid(skipRequirement)) {
+					if (!Utils.isValid(skipButton)) {
+						let skipButton = document.createElement("button");
+						skipButton.classList.add(Constants.SKIP_BUTTON);
+						skipButton.innerHTML = Constants.SKIP_TEXT;
+						buttonGroup.appendChild(skipButton);
+					}
 				} else {
-					let skipButton = document.createElement("button");
-					skipButton.classList.add(Constants.SKIP_BUTTON);
-					skipButton.innerHTML = Constants.SKIP_TEXT;
-					skipButton.disabled = !showSkip;
-					buttonGroup.appendChild(skipButton);
+					if (Utils.isValid(skipButton)) {
+						let buttonGroupInDOM = skipButton.parentNode;
+						buttonGroupInDOM.removeChild(skipButton);
+					}
 				}
 
 				let backButton = Utils.getEleFromClassName(Constants.BACK_BUTTON);
@@ -1030,23 +1044,22 @@ var FlexTour =
 		/**
 		 * Main function to create overlays, border around target and the content bubble next to target
 		 * @param noButtons        True to hide all buttons
-		 * @param showSkip        True to show Skip button
 		 * @param showBack        True to show Back Button
 		 * @param showNext        True to show Next Button, False to show Done Button
 		 * @param disableNext     True to disable Next and Done button
 		 */
-		Components.prototype.createComponents = function (noButtons, showSkip, showBack, showNext, disableNext) {
+		Components.prototype.createComponents = function (noButtons, showBack, showNext, disableNext) {
 			if (!Utils.isFloatStep(Components.stepDescription)) {
 				_addOverlays();
 				_addBorderAroundTarget();
-				_createContentBubble(noButtons, showSkip, showBack, showNext, disableNext);
+				_createContentBubble(noButtons, showBack, showNext, disableNext);
 				// Note to self: must append every to the body here so that we can modify the location of the bubble later
 				document.body.appendChild(Components.ui);
 				_placeBubbleLocation();
 			} else {
 				// The target element cannot be found which mean this is a floating step
 				_addOverlay();
-				_createContentBubble(noButtons, showSkip, showBack, showNext, disableNext);
+				_createContentBubble(noButtons, showBack, showNext, disableNext);
 				// Note to self: must append every to the body here so that we can modify the location of the bubble later
 				document.body.appendChild(Components.ui);
 				_placeFloatBubble();
@@ -1057,23 +1070,22 @@ var FlexTour =
 		 * Main function to modify the existing overlays, border around target and the content bubble next to target.
 		 * This function is called when all of those nodes already exist in the DOM. Modify it so that it transition
 		 * @param noButtons        True to hide all buttons
-		 * @param showSkip        True to show Skip button
 		 * @param showBack        True to show Back Button
 		 * @param showNext        True to show Next Button, False to show Done Button
 		 * @param disableNext     True to disable Next and Done button
 		 */
-		Components.prototype.modifyComponents = function (noButtons, showSkip, showBack, showNext, disableNext) {
+		Components.prototype.modifyComponents = function (noButtons, showBack, showNext, disableNext) {
 			Components.ui = Utils.getEleFromClassName(Constants.FLEXTOUR);
 
 			if (!Utils.isFloatStep(Components.stepDescription)) {
 				_modifyOverlays();
 				_modifyBorderAroundTarget();
-				_modifyContentBubble(noButtons, showSkip, showBack, showNext, disableNext);
+				_modifyContentBubble(noButtons, showBack, showNext, disableNext);
 				_modifyBubbleLocation();
 			} else {
 				// The target element cannot be found which mean this is a floating step
 				_addOverlay();
-				_modifyContentBubble(noButtons, showSkip, showBack, showNext, disableNext);
+				_modifyContentBubble(noButtons, showBack, showNext, disableNext);
 				_modifyFloatBubble();
 			}
 		};
@@ -1102,7 +1114,7 @@ var FlexTour =
 			COLON: ":",
 			COMMA: ",",
 			WAIT: "?",
-			SKIP: "!",
+			SKIP_INDICATOR: "!",
 			CURRENT_TARGET: "@target@",
 			IS_VISIBLE: "isVisible",
 			DOES_EXIST: "doesExist",
@@ -1157,7 +1169,6 @@ var FlexTour =
 			STEPS: "steps",
 			NO_BUTTONS: "noButtons",
 			NO_BACK: "noBack",
-			NO_SKIP: "noSkip",
 			CAN_INTERACT: "canInteract",
 			TYPE: "type",
 			CONTENT: "content",
@@ -1171,6 +1182,7 @@ var FlexTour =
 			END_ON_OVERLAY_CLICK: "endOnOverlayClick",
 			DELAY: "delay",
 			TRANSITION: "transition",
+			SKIP: "skip",
 
 			DEFAULT_TYPE: "info",
 			ACTION_TYPE: "action",

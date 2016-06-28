@@ -145,12 +145,11 @@ function _addOverlay() {
 /**
  * Create content bubble next to target to display the content of the step
  * @param {boolean} noButtons  True will hide all buttons
- * @param {boolean} showSkip  True to show skip button
  * @param {boolean} showBack  True to show Back Button
  * @param {boolean} showNext  True to show Next Button, False to show Done Button
  * @param {boolean} disableNext  True to disable either Next or Done button
  */
-function _createContentBubble(noButtons, showSkip, showBack, showNext, disableNext) {
+function _createContentBubble(noButtons, showBack, showNext, disableNext) {
     let bubble = document.createElement("div");
     bubble.classList.add(Constants.TOUR_BUBBLE);
 
@@ -179,12 +178,13 @@ function _createContentBubble(noButtons, showSkip, showBack, showNext, disableNe
         let buttonGroup = document.createElement("div");
         buttonGroup.classList.add(Constants.BUTTON_GROUP);
 
-        let skipButton = document.createElement("button");
-        skipButton.classList.add(Constants.SKIP_BUTTON);
-        skipButton.innerHTML = Constants.SKIP_TEXT;
-        skipButton.disabled = !showSkip;
+        if (Utils.isValid(Components.stepDescription[Constants.SKIP])) {
+            let skipButton = document.createElement("button");
+            skipButton.classList.add(Constants.SKIP_BUTTON);
+            skipButton.innerHTML = Constants.SKIP_TEXT;
 
-        buttonGroup.appendChild(skipButton);
+            buttonGroup.appendChild(skipButton);
+        }
 
         let backButton = document.createElement("button");
         backButton.classList.add(Constants.BACK_BUTTON);
@@ -243,12 +243,11 @@ function _getIconType() {
 /**
  * Modify the content bubble location. Get the current bubble and change everything in it.
  * @param {boolean} noButtons  True will hide all buttons
- * @param {boolean} showSkip  True to show skip button
  * @param {boolean} showBack  True to show Back Button
  * @param {boolean} showNext  True to show Next Button, False to show Done Button
  * @param {boolean} disableNext  True to disable either Next or Done button
  */
-function _modifyContentBubble(noButtons, showSkip, showBack, showNext, disableNext) {
+function _modifyContentBubble(noButtons, showBack, showNext, disableNext) {
     /*
      * First block try to modify the icon in the bubble
      */
@@ -303,15 +302,20 @@ function _modifyContentBubble(noButtons, showSkip, showBack, showNext, disableNe
         let buttonGroup = document.createElement("div");
         buttonGroup.classList.add(Constants.BUTTON_GROUP);
 
+        let skipRequirement = Components.stepDescription[Constants.SKIP];
         let skipButton = Utils.getEleFromClassName(Constants.SKIP_BUTTON);
-        if (Utils.isValid(skipButton)) {
-            skipButton.disabled = !showSkip;
+        if (Utils.isValid(skipRequirement)) {
+            if (!Utils.isValid(skipButton)) {
+                let skipButton = document.createElement("button");
+                skipButton.classList.add(Constants.SKIP_BUTTON);
+                skipButton.innerHTML = Constants.SKIP_TEXT;
+                buttonGroup.appendChild(skipButton);
+            }
         } else {
-            let skipButton = document.createElement("button");
-            skipButton.classList.add(Constants.SKIP_BUTTON);
-            skipButton.innerHTML = Constants.SKIP_TEXT;
-            skipButton.disabled = !showSkip;
-            buttonGroup.appendChild(skipButton);
+            if (Utils.isValid(skipButton)) {
+                let buttonGroupInDOM = skipButton.parentNode;
+                buttonGroupInDOM.removeChild(skipButton);
+            }
         }
 
         let backButton = Utils.getEleFromClassName(Constants.BACK_BUTTON);
@@ -496,23 +500,22 @@ function _modifyBorderAroundTarget() {
 /**
  * Main function to create overlays, border around target and the content bubble next to target
  * @param noButtons        True to hide all buttons
- * @param showSkip        True to show Skip button
  * @param showBack        True to show Back Button
  * @param showNext        True to show Next Button, False to show Done Button
  * @param disableNext     True to disable Next and Done button
  */
-Components.prototype.createComponents = function (noButtons, showSkip, showBack, showNext, disableNext) {
+Components.prototype.createComponents = function (noButtons, showBack, showNext, disableNext) {
     if (!Utils.isFloatStep(Components.stepDescription)) {
         _addOverlays();
         _addBorderAroundTarget();
-        _createContentBubble(noButtons, showSkip, showBack, showNext, disableNext);
+        _createContentBubble(noButtons, showBack, showNext, disableNext);
         // Note to self: must append every to the body here so that we can modify the location of the bubble later
         document.body.appendChild(Components.ui);
         _placeBubbleLocation();
     } else {
         // The target element cannot be found which mean this is a floating step
         _addOverlay();
-        _createContentBubble(noButtons, showSkip, showBack, showNext, disableNext);
+        _createContentBubble(noButtons, showBack, showNext, disableNext);
         // Note to self: must append every to the body here so that we can modify the location of the bubble later
         document.body.appendChild(Components.ui);
         _placeFloatBubble();
@@ -523,23 +526,22 @@ Components.prototype.createComponents = function (noButtons, showSkip, showBack,
  * Main function to modify the existing overlays, border around target and the content bubble next to target.
  * This function is called when all of those nodes already exist in the DOM. Modify it so that it transition
  * @param noButtons        True to hide all buttons
- * @param showSkip        True to show Skip button
  * @param showBack        True to show Back Button
  * @param showNext        True to show Next Button, False to show Done Button
  * @param disableNext     True to disable Next and Done button
  */
-Components.prototype.modifyComponents = function (noButtons, showSkip, showBack, showNext, disableNext) {
+Components.prototype.modifyComponents = function (noButtons, showBack, showNext, disableNext) {
     Components.ui = Utils.getEleFromClassName(Constants.FLEXTOUR);
 
     if (!Utils.isFloatStep(Components.stepDescription)) {
         _modifyOverlays();
         _modifyBorderAroundTarget();
-        _modifyContentBubble(noButtons, showSkip, showBack, showNext, disableNext);
+        _modifyContentBubble(noButtons, showBack, showNext, disableNext);
         _modifyBubbleLocation();
     } else {
         // The target element cannot be found which mean this is a floating step
         _addOverlay();
-        _modifyContentBubble(noButtons, showSkip, showBack, showNext, disableNext);
+        _modifyContentBubble(noButtons, showBack, showNext, disableNext);
         _modifyFloatBubble();
     }
 };

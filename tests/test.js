@@ -39,6 +39,7 @@ let tourDesc = [{
     }, {
         content: "Random Header",
         position: "bottom",
+        skip: 4,
         target: "#randomEle",
         type: "info",
         prerequisites: ["!skipWhenElementIsNotShowed"]
