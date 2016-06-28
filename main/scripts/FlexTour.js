@@ -91,21 +91,25 @@ function _centralOrganizer(stepDesc) {
             showBack = true;
         }
 
+        if (Utils.isValid(stepDesc[Constants.NEXT_ON_TARGET])) {
+            _addClickEventOnTargetClick(stepDesc);
+        }
+
         /**
          * Create components can be only called once when the tour start for the first time.
          */
         if (!FlexTour.running) {
             FlexTour.Component.createComponents(noButtons, showSkip, showBack, showNext, disableNext);
             FlexTour.running = true;
+            _addResizeWindowListener();
+            _addKeyBoardListener();
         } else {
             FlexTour.Component.modifyComponents(noButtons, showSkip, showBack, showNext, disableNext);
         }
 
         _addClickEvents();
-        _addResizeWindowListener();
 
         if (stepDesc[Constants.TRANSITION] && _isAllowToMove(currentStepNumber + 1, 0)) {
-            console.log("Inside transition step.");
             _transitionToNextStep(currentStepNumber + 1);
         }
     } else {
@@ -130,13 +134,15 @@ function _addClickEvents() {
     Utils.getElementsAndAttachEvent(Constants.DONE_BUTTON, Constants.FLEX_CLICK, _exit);
 
     Utils.getElementsAndAttachEvent(Constants.CLOSE_TOUR, Constants.FLEX_CLICK, _exit);
+}
 
-    let currentStep = FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber];
-    if (currentStep[Constants.NEXT_ON_TARGET]) {
-        let currentTarget = document.querySelector(currentStep[Constants.TARGET]);
-        if (Utils.isValid(currentTarget)) {
-            Utils.addEvent(currentTarget, Constants.FLEX_CLICK, _nextStep);
-        }
+/**
+ * This function get attached only when the step has NextOnTargetClick set to true
+ */
+function _addClickEventOnTargetClick(currentStep) {
+    let currentTarget = document.querySelector(currentStep[Constants.TARGET]);
+    if (Utils.isValid(currentTarget)) {
+        Utils.addEvent(currentTarget, Constants.FLEX_CLICK, _nextStep);
     }
 }
 
@@ -155,13 +161,15 @@ function _removeEvents() {
     Utils.removeELementsAndAttachedEvent(Constants.DONE_BUTTON, Constants.FLEX_CLICK, _exit);
 
     Utils.removeELementsAndAttachedEvent(Constants.CLOSE_TOUR, Constants.FLEX_CLICK, _exit);
+}
 
-    let currentStep = FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber];
-    if (currentStep[Constants.NEXT_ON_TARGET]) {
-        let currentTarget = document.querySelector(currentStep[Constants.TARGET]);
-        if (Utils.isValid(currentTarget)) {
-            Utils.removeEvent(currentTarget, Constants.FLEX_CLICK, _nextStep);
-        }
+/**
+ * Remove the event listener for nextOnTargetClick
+ */
+function _removeClickEventOnTargetClick(currentStep) {
+    let currentTarget = document.querySelector(currentStep[Constants.TARGET]);
+    if (Utils.isValid(currentTarget)) {
+        Utils.removeEvent(currentTarget, Constants.FLEX_CLICK, _nextStep); //Remove this event listener
     }
 }
 
@@ -325,6 +333,11 @@ function _previousStep() {
  * Trigger next step of the tour. If the next step is the last step, trigger the isLastStep flag
  */
 function _nextStep() {
+    let currentStep = FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber];
+    if (Utils.isValid(currentStep[Constants.NEXT_ON_TARGET])) {
+        // Clean up next on target click here.
+        _removeClickEventOnTargetClick(currentStep);
+    }
     if (_isAllowToMove(FlexTour.currentStepNumber + 1, 0)) {
         _transitionToNextStep(FlexTour.currentStepNumber + 1);
     }
@@ -343,7 +356,6 @@ function _transitionToNextStep(stepNumber) {
     }
 
     if (Utils.isValid(stepDelay)) {
-        console.log("Trigger after delay.");
         setTimeout(__transitionFunction.bind(this, stepNumber), stepDelay);
     } else {
         __transitionFunction(stepNumber);
@@ -352,28 +364,60 @@ function _transitionToNextStep(stepNumber) {
 
 /**
  * Add window resize event to recalculate location of tour step.
- * The event is namespaced to avoid conflict with program's handler and easier to unbind later on.
- * This event is only trigger once every 1/2 second. So that it won't go crazy and trigger too many event on resizing
  */
 function _addResizeWindowListener() {
-    Utils.addEvent(window, Constants.FLEX_RESIZE, Utils.debounce(function () {
-        _centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber]);
-    }, 500, false));
+    Utils.addEvent(window, Constants.FLEX_RESIZE, Utils.debounce(_resizeWindow, 500, false));
+}
+
+/**
+ * CallBack function that get executed when window is resized
+ * This event is only trigger once every 1/2 second. So that it won't go crazy and trigger too many event on resizing
+ */
+function _resizeWindow() {
+    _centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber]);
 }
 
 /**
  * Remove resize listener from window without detaching other handlers from main program
  */
 function _unbindResizeWindowListener() {
-    Utils.removeEvent(window, Constants.FLEX_RESIZE);
+    Utils.removeEvent(document, Constants.FLEX_RESIZE, Utils.debounce(_resizeWindow, 500, false));
+}
+
+/**
+ * Attach keyup event into the window element so that it will be trigger on keyup
+ */
+function _addKeyBoardListener() {
+    Utils.addEvent(window, Constants.KEY_UP, _keyUpCallBack, true);
+}
+
+/**
+ * Callback function when keyup is triggered.
+ * When keycode is ESC, and current tour end on escape --> invoke exit
+ * @param event     Keyboard event
+ */
+function _keyUpCallBack(event) {
+    // Escape key is triggered
+    if (event.keyCode === 27 && Utils.isValid(FlexTour.currentTour[Constants.END_ON_ESC])) {
+        _exit();
+    }
+}
+
+/**
+ * Unbind the keyup handler on exit, so that it won't cause memory leak
+ */
+function _unbindKeyboardListener() {
+    Utils.removeEvent(window, Constants.KEY_UP, _keyUpCallBack, true);
 }
 
 function _exit() {
     _removeEvents();
     _unbindResizeWindowListener();
+    _unbindKeyboardListener();
 
     FlexTour.Component.removeComponents();
     FlexTour.running = false; // Reset this flag when users quit the tour
+    FlexTour.currentStepNumber = 0;
 }
 
 /**

@@ -77,12 +77,13 @@ module.exports = {
      * @param el        Element to be attached listener/event on
      * @param type      Type of event to listen to
      * @param callback  Callback function when event is fired
+     * @param capture   Use Capture for this event or not
      */
-    addEvent: function (el, type, callback) {
+    addEvent: function (el, type, callback, capture) {
         if (!this.isValid(el))
             return;
         if (el.addEventListener) {
-            el.addEventListener(type, callback, false);
+            el.addEventListener(type, callback, capture || false);
         } else if (el.attachEvent) {
             el.attachEvent("on" + type, callback);
         } else {
@@ -94,13 +95,14 @@ module.exports = {
      * Remove event listener for cleaning up
      * @param el        Element that contains event that needs to be removed
      * @param type      Type of event that was attached
-     * @param callback  Callback function triggered to handle this scenario
+     * @param callback  Function to remove from the event
+     * @param capture   Use Capture for this event or not
      */
-    removeEvent: function (el, type, callback) {
+    removeEvent: function (el, type, callback, capture) {
         if (!this.isValid(el))
             return;
         if (el.removeEventListener) {
-            el.removeEventListener(type, callback);
+            el.removeEventListener(type, callback, capture || false);
         } else if (el.detachEvent) {
             el.detachEvent(type, callback);
         } else {

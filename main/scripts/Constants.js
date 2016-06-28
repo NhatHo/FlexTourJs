@@ -44,6 +44,7 @@ module.exports = {
     // Event Block
     FLEX_CLICK: "click",
     FLEX_RESIZE: "resize",
+    KEY_UP: "keyup",
 
     // Tour Attributes Block
     TOUR_DEFAULT_SETTINGS: {

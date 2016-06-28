@@ -157,21 +157,25 @@ var FlexTour =
 					showBack = true;
 				}
 
+				if (Utils.isValid(stepDesc[Constants.NEXT_ON_TARGET])) {
+					_addClickEventOnTargetClick(stepDesc);
+				}
+
 				/**
 				 * Create components can be only called once when the tour start for the first time.
 				 */
 				if (!FlexTour.running) {
 					FlexTour.Component.createComponents(noButtons, showSkip, showBack, showNext, disableNext);
 					FlexTour.running = true;
+					_addResizeWindowListener();
+					_addKeyBoardListener();
 				} else {
 					FlexTour.Component.modifyComponents(noButtons, showSkip, showBack, showNext, disableNext);
 				}
 
 				_addClickEvents();
-				_addResizeWindowListener();
 
 				if (stepDesc[Constants.TRANSITION] && _isAllowToMove(currentStepNumber + 1, 0)) {
-					console.log("Inside transition step.");
 					_transitionToNextStep(currentStepNumber + 1);
 				}
 			} else {
@@ -196,13 +200,18 @@ var FlexTour =
 			Utils.getElementsAndAttachEvent(Constants.DONE_BUTTON, Constants.FLEX_CLICK, _exit);
 
 			Utils.getElementsAndAttachEvent(Constants.CLOSE_TOUR, Constants.FLEX_CLICK, _exit);
+		}
 
-			let currentStep = FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber];
-			if (currentStep[Constants.NEXT_ON_TARGET]) {
-				let currentTarget = document.querySelector(currentStep[Constants.TARGET]);
-				if (Utils.isValid(currentTarget)) {
-					Utils.addEvent(currentTarget, Constants.FLEX_CLICK, _nextStep);
-				}
+		/**
+		 * This function get attached only when the step has NextOnTargetClick set to true
+		 */
+		function _addClickEventOnTargetClick(currentStep) {
+			let currentTarget = document.querySelector(currentStep[Constants.TARGET]);
+			if (Utils.isValid(currentTarget)) {
+				Utils.addEvent(currentTarget, Constants.FLEX_CLICK, function onClick() {
+					_nextStep();
+					_removeClickEventOnTargetClick(currentStep);
+				});
 			}
 		}
 
@@ -221,13 +230,15 @@ var FlexTour =
 			Utils.removeELementsAndAttachedEvent(Constants.DONE_BUTTON, Constants.FLEX_CLICK, _exit);
 
 			Utils.removeELementsAndAttachedEvent(Constants.CLOSE_TOUR, Constants.FLEX_CLICK, _exit);
+		}
 
-			let currentStep = FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber];
-			if (currentStep[Constants.NEXT_ON_TARGET]) {
-				let currentTarget = document.querySelector(currentStep[Constants.TARGET]);
-				if (Utils.isValid(currentTarget)) {
-					Utils.removeEvent(currentTarget, Constants.FLEX_CLICK, _nextStep);
-				}
+		/**
+		 * Remove the event listener for nextOnTargetClick
+		 */
+		function _removeClickEventOnTargetClick(currentStep) {
+			let currentTarget = document.querySelector(currentStep[Constants.TARGET]);
+			if (Utils.isValid(currentTarget)) {
+				Utils.removeEvent(currentTarget, Constants.FLEX_CLICK, _nextStep); //Remove this event listener
 			}
 		}
 
@@ -409,7 +420,6 @@ var FlexTour =
 			}
 
 			if (Utils.isValid(stepDelay)) {
-				console.log("Trigger after delay.");
 				setTimeout(__transitionFunction.bind(this, stepNumber), stepDelay);
 			} else {
 				__transitionFunction(stepNumber);
@@ -418,28 +428,62 @@ var FlexTour =
 
 		/**
 		 * Add window resize event to recalculate location of tour step.
-		 * The event is namespaced to avoid conflict with program's handler and easier to unbind later on.
-		 * This event is only trigger once every 1/2 second. So that it won't go crazy and trigger too many event on resizing
 		 */
 		function _addResizeWindowListener() {
-			Utils.addEvent(window, Constants.FLEX_RESIZE, Utils.debounce(function () {
+			Utils.addEvent(window, Constants.FLEX_RESIZE, _resizeWindow);
+		}
+
+		/**
+		 * CallBack function that get executed when window is resized
+		 * This event is only trigger once every 1/2 second. So that it won't go crazy and trigger too many event on resizing
+		 */
+		function _resizeWindow() {
+			Utils.debounce(function () {
 				_centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber]);
-			}, 500, false));
+			}, 500, false)
 		}
 
 		/**
 		 * Remove resize listener from window without detaching other handlers from main program
 		 */
 		function _unbindResizeWindowListener() {
-			Utils.removeEvent(window, Constants.FLEX_RESIZE);
+			Utils.removeEvent(window, Constants.FLEX_RESIZE, _resizeWindow);
+		}
+
+		/**
+		 * Attach keyup event into the window element so that it will be trigger on keyup
+		 */
+		function _addKeyBoardListener() {
+			Utils.addEvent(window, Constants.KEY_UP, _keyUpCallBack);
+		}
+
+		/**
+		 * Callback function when keyup is triggered.
+		 * When keycode is ESC, and current tour end on escape --> invoke exit
+		 * @param event     Keyboard event
+		 */
+		function _keyUpCallBack(event) {
+			// Escape key is triggered
+			if (event.keyCode === 27 && Utils.isValid(FlexTour.currentTour[Constants.END_ON_ESC])) {
+				_exit();
+			}
+		}
+
+		/**
+		 * Unbind the keyup handler on exit, so that it won't cause memory leak
+		 */
+		function _unbindKeyboardListener() {
+			Utils.removeEvent(window, Constants.KEY_UP, _keyUpCallBack(event));
 		}
 
 		function _exit() {
 			_removeEvents();
 			_unbindResizeWindowListener();
+			_unbindKeyboardListener();
 
 			FlexTour.Component.removeComponents();
 			FlexTour.running = false; // Reset this flag when users quit the tour
+			FlexTour.currentStepNumber = 0;
 		}
 
 		/**
@@ -1094,6 +1138,7 @@ var FlexTour =
 			// Event Block
 			FLEX_CLICK: "click",
 			FLEX_RESIZE: "resize",
+			KEY_UP: "keyup",
 
 			// Tour Attributes Block
 			TOUR_DEFAULT_SETTINGS: {
@@ -1238,6 +1283,7 @@ var FlexTour =
 			addEvent: function (el, type, callback) {
 				if (!this.isValid(el))
 					return;
+				debugger;
 				if (el.addEventListener) {
 					el.addEventListener(type, callback, false);
 				} else if (el.attachEvent) {
@@ -1251,7 +1297,7 @@ var FlexTour =
 			 * Remove event listener for cleaning up
 			 * @param el        Element that contains event that needs to be removed
 			 * @param type      Type of event that was attached
-			 * @param callback  Callback function triggered to handle this scenario
+			 * @param callback  Function to remove from the event
 			 */
 			removeEvent: function (el, type, callback) {
 				if (!this.isValid(el))
