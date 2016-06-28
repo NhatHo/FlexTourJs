@@ -415,6 +415,14 @@ function _modifyBubbleLocation() {
             bubble.removeChild(arrow);
         }
     }
+
+    /**
+     * Remove the floating style if exist. In here we modify it so it will be concrete style
+     */
+    if (bubble.classList.contains(Constants.FLOAT_STYLE)) {
+        bubble.classList.remove(Constants.FLOAT_STYLE);
+    }
+
     // Remove the arrow from the bubble, the recalculate the new location the re-attach a new arrow accordingly
     _placeBubbleLocation();
 }
