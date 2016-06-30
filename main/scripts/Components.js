@@ -3,15 +3,27 @@
  * NhatHo-nhatminhhoca@gmail.com
  ******************************************************************************/
 
-var Constants = require("./Constants");
-var Utils = require("./Utilities");
+let Constants = require("./Constants");
+let Utils = require("./Utilities");
+let $ = require("./../../node_modules/jquery/dist/jquery.min");
+// let Tether = require("./../../node_modules/tether/dist/js/tether.min");
 
 function Components(stepDescription) {
-    Components.stepDescription = Utils.clone({}, stepDescription);
-    Components.ui = document.createElement("div");
-    Components.ui.classList.add(Constants.FLEXTOUR);
+    Components.stepDescription = $.extend({}, stepDescription);
+    Components.ui = $("<div></div>");
+    Components.ui.addClass(Constants.FLEXTOUR);
     if (Utils.isStepWithTarget(stepDescription)) {
-        Components.rect = document.querySelector(stepDescription[Constants.TARGET]).getBoundingClientRect();
+        let target = $(stepDescription[Constants.TARGET]);
+        let rect = target[0].getBoundingClientRect();
+        let actualLocation = {};
+        actualLocation.top = target.offset().top;
+        actualLocation.left = target.offset().left;
+        actualLocation.width = rect.width;
+        actualLocation.height = rect.height;
+        actualLocation.right = actualLocation.left + actualLocation.width;
+        actualLocation.bottom = actualLocation.top + actualLocation.height;
+
+        Components.rect = actualLocation;
     }
 }
 
@@ -69,14 +81,13 @@ function _getRightOverlay() {
  * @param locationObj     Object that contains width, height, top and left attributes for overlay
  */
 function _createOverlayNode(locationObj) {
-    let overlay = document.createElement("div");
-    overlay.classList.add(Constants.OVERLAY_STYLE);
-    overlay.style.width = locationObj.width;
-    overlay.style.height = locationObj.height;
-    overlay.style.top = locationObj.top;
-    overlay.style.left = locationObj.left;
-
-    Components.ui.appendChild(overlay);
+    let overlay = $("<div></div>", {
+        "class": Constants.OVERLAY_STYLE,
+        "width": locationObj.width,
+        "height": locationObj.height
+    });
+    overlay.css({top: locationObj.top, left: locationObj.left});
+    overlay.appendTo(Components.ui);
 }
 
 /**
@@ -96,10 +107,12 @@ function _addOverlays() {
  * @param locationObj   The object contains the width, height, top and left of the destination
  */
 function _modifyOverlayNode(domNode, locationObj) {
-    domNode.style.width = locationObj.width;
-    domNode.style.height = locationObj.height;
-    domNode.style.top = locationObj.top;
-    domNode.style.left = locationObj.left;
+    $(domNode).css({
+        width: locationObj.width,
+        height: locationObj.height,
+        top: locationObj.top,
+        left: locationObj.left
+    });
 }
 
 /**
@@ -107,16 +120,14 @@ function _modifyOverlayNode(domNode, locationObj) {
  */
 function _modifyOverlays() {
     let overlays = Utils.getElesFromClassName(Constants.OVERLAY_STYLE);
-    if (Utils.isValid(overlays) && overlays.length === 4) {
+    if (Utils.hasELement(overlays) && overlays.length === 4) {
         _modifyOverlayNode(overlays[0], _getTopOverlay());
         _modifyOverlayNode(overlays[1], _getRightOverlay());
         _modifyOverlayNode(overlays[2], _getBottomOverlay());
         _modifyOverlayNode(overlays[3], _getLeftOverlay());
     } else {
-        for (let i = 0; i < overlays.length; i++) {
-            Components.ui.removeChild(overlays[i]);
-            _addOverlays();
-        }
+        overlays.remove();
+        _addOverlays();
     }
 }
 
@@ -126,14 +137,12 @@ function _modifyOverlays() {
  */
 function _addOverlay() {
     let overlays = Utils.getElesFromClassName(Constants.OVERLAY_STYLE);
-    if (Utils.isValid(overlays)) {
+    if (Utils.hasELement(overlays)) {
         if (overlays.length !== 1) {
-            for (let i = 0; i < overlays.length; i++) {
-                Components.ui.removeChild(overlays[i]);
-            }
+            overlays.remove();
             _createOverlayNode({
-                width: "100%",
-                height: "100%",
+                width: Utils.getFullWindowWidth() + Constants.PX,
+                height: Utils.getFullWindowHeight() + Constants.PX,
                 top: 0,
                 left: 0
             });
@@ -150,78 +159,73 @@ function _addOverlay() {
  * @param {boolean} disableNext  True to disable either Next or Done button
  */
 function _createContentBubble(noButtons, showBack, showNext, disableNext) {
-    let bubble = document.createElement("div");
-    bubble.classList.add(Constants.TOUR_BUBBLE);
+    let bubble = $("<div></div>", {
+        "class": Constants.TOUR_BUBBLE
+    });
 
-    let iconDiv = document.createElement("div");
-    iconDiv.classList.add(Constants.ICON_STYLE, _getIconType());
-    bubble.appendChild(iconDiv);
+    $("<div></div>", {
+        "class": Constants.ICON_STYLE + " " + _getIconType()
+    }).appendTo(bubble);
 
-    let contentBlock = document.createElement("div");
-    contentBlock.classList.add(Constants.BUBBLE_CONTENT);
+    let contentBlock = $("<div></div>", {
+        "class": Constants.BUBBLE_CONTENT
+    });
 
     if (Utils.isValid(Components.stepDescription[Constants.TITLE])) {
-        let contentTitle = document.createElement("div");
-        contentTitle.innerText = Components.stepDescription[Constants.TITLE];
-        contentTitle.classList.add(Constants.BUBBLE_TITLE);
-        contentBlock.appendChild(contentTitle);
+        $("<div></div>", {
+            "class": Constants.BUBBLE_TITLE,
+            html: Components.stepDescription[Constants.TITLE]
+        }).appendTo(contentBlock);
     }
 
-    let contentBody = document.createElement("div");
-    contentBody.innerText = Components.stepDescription[Constants.CONTENT];
-    contentBody.classList.add(Constants.BUBBLE_CONTENT_BODY);
-    contentBlock.appendChild(contentBody);
+    $("<div></div>", {
+        "class": Constants.BUBBLE_CONTENT_BODY,
+        html: Components.stepDescription[Constants.CONTENT]
+    }).appendTo(contentBlock);
 
-    bubble.appendChild(contentBlock);
+    bubble.append(contentBlock);
 
     if (!noButtons) {
-        let buttonGroup = document.createElement("div");
-        buttonGroup.classList.add(Constants.BUTTON_GROUP);
+        let buttonGroup = $("<div></div>", {
+            "class": Constants.BUTTON_GROUP
+        });
 
         if (Utils.isValid(Components.stepDescription[Constants.SKIP])) {
-            let skipButton = document.createElement("button");
-            skipButton.classList.add(Constants.SKIP_BUTTON);
-            skipButton.innerHTML = Constants.SKIP_TEXT;
-
-            buttonGroup.appendChild(skipButton);
+            $("<button></button>", {
+                "class": Constants.SKIP_BUTTON,
+                text: Constants.SKIP_TEXT
+            }).appendTo(buttonGroup);
         }
 
-        let backButton = document.createElement("button");
-        backButton.classList.add(Constants.BACK_BUTTON);
-        backButton.innerHTML = Constants.BACK_TEXT;
-        backButton.disabled = !showBack;
-
-        buttonGroup.appendChild(backButton);
-
+        $("<button></button>", {
+            "class": Constants.BACK_BUTTON,
+            text: Constants.BACK_TEXT,
+            disabled: !showBack
+        }).appendTo(buttonGroup);
 
         if (showNext) {
-            let nextButton = document.createElement("button");
-            nextButton.classList.add(Constants.NEXT_BUTTON);
-            nextButton.innerHTML = Constants.NEXT_TEXT;
-
-            nextButton.disabled = disableNext;
-
-            buttonGroup.appendChild(nextButton);
+            $("<button></button>", {
+                "class": Constants.NEXT_BUTTON,
+                text: Constants.NEXT_TEXT,
+                disabled: disableNext
+            }).appendTo(buttonGroup);
         } else {
-            let doneButton = document.createElement("button");
-            doneButton.classList.add(Constants.DONE_BUTTON);
-            doneButton.innerHTML = Constants.DONE_TEXT;
-
-            doneButton.disabled = disableNext;
-
-            buttonGroup.appendChild(doneButton);
+            $("<button></button>", {
+                "class": Constants.DONE_BUTTON,
+                text: Constants.DONE_TEXT,
+                disabled: disableNext
+            }).appendTo(buttonGroup);
         }
 
-        bubble.appendChild(buttonGroup);
+        bubble.append(buttonGroup);
     }
 
-    let closeButton = document.createElement("a");
-    closeButton.innerHTML = Constants.TIMES;
-    closeButton.classList.add(Constants.CLOSE_TOUR);
+    $("<a></a>", {
+        "class": Constants.CLOSE_TOUR,
+        html: Constants.TIMES
+    }).appendTo(bubble);
 
-    bubble.appendChild(closeButton);
-
-    Components.ui.appendChild(bubble);
+    Components.ui.append(bubble);
 }
 
 /**
@@ -252,107 +256,108 @@ function _modifyContentBubble(noButtons, showBack, showNext, disableNext) {
      * First block try to modify the icon in the bubble
      */
     let currentIconType = _getIconType();
-    let currentIcon = Utils.getEleFromClassName(Constants.ICON_STYLE);
-    if (!currentIcon.classList.contains(currentIconType)) {
-        for (let i = 0; i < currentIcon.classList.length; i++) {
-            if (currentIcon.classList.item(i).indexOf(Constants.ICON_REGEXP) > -1) {
-                currentIcon.classList.remove(currentIcon.classList.item(i));
+    let currentIcon = Utils.getEleFromClassName(Constants.ICON_STYLE, true);
+    if (!currentIcon.hasClass(currentIconType)) {
+        let classTokens = currentIcon.attr("class").split(/\s+/g);
+        $.each(classTokens, function (index, item) {
+            if (item.indexOf(Constants.ICON_REGEXP) > -1) {
+                currentIcon.removeClass(item);
             }
-        }
-        currentIcon.classList.add(currentIconType);
+        });
+        currentIcon.addClass(currentIconType);
     }
 
     /*
      * Modify title of the bubble to the new one
      */
-    let contentBlock = Utils.getEleFromClassName(Constants.BUBBLE_CONTENT);
-    let contentTitle = Utils.getEleFromClassName(Constants.BUBBLE_TITLE);
+    let contentBlock = Utils.getEleFromClassName(Constants.BUBBLE_CONTENT, true);
+    let contentTitle = Utils.getEleFromClassName(Constants.BUBBLE_TITLE, true);
     if (Utils.isValid(Components.stepDescription[Constants.TITLE])) {
-        if (Utils.isValid(contentTitle)) {
-            contentTitle.innerText = Components.stepDescription[Constants.TITLE];
+        if (Utils.hasELement(contentTitle)) {
+            contentTitle.html(Components.stepDescription[Constants.TITLE]);
         } else {
-            let contentTitle = document.createElement("div");
-            contentTitle.innerText = Components.stepDescription[Constants.TITLE];
-            contentTitle.classList.add(Constants.BUBBLE_TITLE);
-            contentBlock.insertBefore(contentTitle, Utils.getEleFromClassName(Constants.BUBBLE_CONTENT_BODY));
+            $("<div></div>", {
+                "class": Constants.BUBBLE_TITLE,
+                html: Components.stepDescription[Constants.TITLE]
+            }).prependTo(contentBlock);
         }
-    } else if (Utils.isValid(contentTitle)) {
+    } else if (Utils.hasELement(contentTitle)) {
         // Remove if this step doesn't have a title but previous step has 1
-        contentBlock.removeChild(contentTitle);
+        contentTitle.remove();
     }
 
     /*
      * Modify the step description of the bubble to the new one
      */
-    let contentBody = Utils.getEleFromClassName(Constants.BUBBLE_CONTENT_BODY);
-    contentBody.innerText = Components.stepDescription[Constants.CONTENT];
+    let contentBody = Utils.getEleFromClassName(Constants.BUBBLE_CONTENT_BODY, true);
+    contentBody.html(Components.stepDescription[Constants.CONTENT]);
 
     /**
      * Modify the button block.
      * 1. If the new step doesn't have buttons but the previous one has ... remove button-group.
      * 2. Modify the other buttons accordingly.
      */
-    let bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE);
+    let bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE, true);
     if (noButtons) {
-        let buttonGroup = Utils.getEleFromClassName(Constants.BUTTON_GROUP);
-        if (Utils.isValid(buttonGroup)) {
-            bubble.removeChild(buttonGroup);
+        let buttonGroup = Utils.getEleFromClassName(Constants.BUTTON_GROUP, true);
+        if (Utils.hasELement(buttonGroup)) {
+            buttonGroup.remove();
         }
     } else {
-        let buttonGroup = document.createElement("div");
-        buttonGroup.classList.add(Constants.BUTTON_GROUP);
+        let buttonGroup = $("<div></div>", {
+            "class": Constants.BUTTON_GROUP
+        });
 
         let skipRequirement = Components.stepDescription[Constants.SKIP];
-        let skipButton = Utils.getEleFromClassName(Constants.SKIP_BUTTON);
+        let skipButton = Utils.getEleFromClassName(Constants.SKIP_BUTTON, true);
         if (Utils.isValid(skipRequirement)) {
-            if (!Utils.isValid(skipButton)) {
-                let skipButton = document.createElement("button");
-                skipButton.classList.add(Constants.SKIP_BUTTON);
-                skipButton.innerHTML = Constants.SKIP_TEXT;
-                buttonGroup.appendChild(skipButton);
+            if (!Utils.hasELement(skipButton)) {
+                $("<button></button>", {
+                    "class": Constants.SKIP_BUTTON,
+                    text: Constants.SKIP_TEXT
+                }).appendTo(buttonGroup);
             }
         } else {
-            if (Utils.isValid(skipButton)) {
-                let buttonGroupInDOM = skipButton.parentNode;
-                buttonGroupInDOM.removeChild(skipButton);
+            if (Utils.hasELement(skipButton)) {
+                Utils.getEleFromClassName(Constants.SKIP_BUTTON, true).remove();
             }
         }
 
-        let backButton = Utils.getEleFromClassName(Constants.BACK_BUTTON);
-        if (Utils.isValid(backButton)) {
-            backButton.disabled = !showBack;
+        let backButton = Utils.getEleFromClassName(Constants.BACK_BUTTON, true);
+        if (Utils.hasELement(backButton)) {
+            backButton.prop('disabled', !showBack);
         } else {
-            let backButton = document.createElement("button");
-            backButton.classList.add(Constants.BACK_BUTTON);
-            backButton.innerHTML = Constants.BACK_TEXT;
-            backButton.disabled = !showBack;
-            buttonGroup.appendChild(backButton);
+            $("<button></button>", {
+                "class": Constants.BACK_BUTTON,
+                text: Constants.BACK_TEXT,
+                disabled: !showBack
+            }).appendTo(buttonGroup);
         }
 
         if (showNext) {
-            let nextButton = Utils.getEleFromClassName(Constants.NEXT_BUTTON);
-            if (Utils.isValid(nextButton)) {
-                nextButton.disabled = disableNext;
+            let nextButton = Utils.getEleFromClassName(Constants.NEXT_BUTTON, true);
+            if (Utils.hasELement(nextButton)) {
+                nextButton.prop('disabled', disableNext);
             } else {
-                let nextButton = document.createElement("button");
-                nextButton.classList.add(Constants.NEXT_BUTTON);
-                nextButton.innerHTML = Constants.NEXT_TEXT;
-                nextButton.disabled = disableNext;
-                buttonGroup.appendChild(nextButton);
+                $("<button></button>", {
+                    "class": Constants.NEXT_BUTTON,
+                    text: Constants.NEXT_TEXT,
+                    disabled: disableNext
+                }).appendTo(buttonGroup);
             }
         } else {
-            let doneButton = Utils.getEleFromClassName(Constants.DONE_BUTTON);
-            if (Utils.isValid(doneButton)) {
-                doneButton.disabled = disableNext;
+            let doneButton = Utils.getEleFromClassName(Constants.DONE_BUTTON, true);
+            if (Utils.hasELement(doneButton)) {
+                doneButton.prop('disabled', disableNext);
             } else {
-                let doneButton = document.createElement("button");
-                doneButton.classList.add(Constants.DONE_BUTTON);
-                doneButton.innerHTML = Constants.DONE_TEXT;
-                doneButton.disabled = disableNext;
-                buttonGroup.appendChild(doneButton);
+                $("<button></button>", {
+                    "class": Constants.DONE_BUTTON,
+                    text: Constants.DONE_TEXT,
+                    disabled: disableNext
+                }).appendTo(buttonGroup);
             }
         }
-        bubble.appendChild(buttonGroup);
+        bubble.append(buttonGroup);
     }
 }
 
@@ -362,47 +367,48 @@ function _modifyContentBubble(noButtons, showBack, showNext, disableNext) {
  */
 function _placeBubbleLocation() {
     let targetPosition = Components.rect;
-    let bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE);
+    let bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE, true);
 
-    if (Utils.isValid(bubble)) {
-        let bubbleRect = bubble.getBoundingClientRect();
+    if (Utils.hasELement(bubble)) {
+        let bubbleRect = bubble[0].getBoundingClientRect();
         let halfBubbleHeight = bubbleRect.height / 2;
         let halfBubbleWidth = bubbleRect.width / 2;
 
         let halfTargetHeight = Components.rect.height / 2;
         let halfTargetWidth = Components.rect.width / 2;
 
-        let arrow = document.createElement("span");
-        arrow.classList.add(Constants.ARROW_LOCATION);
+        let arrow = $("<span></span>", {
+            "class": Constants.ARROW_LOCATION
+        });
 
         switch (Components.stepDescription[Constants.POSITION]) {
             case Constants.TOP:
-                arrow.classList.add(Constants.TOP);
-                bubble.style.top = Components.rect.top - bubbleRect.height - Constants.ARROW_SIZE + Constants.PX;
-                bubble.style.left = Components.rect.left + halfTargetWidth - halfBubbleWidth + Constants.PX;
+                arrow.addClass(Constants.TOP);
+                bubble.css({'top': Components.rect.top - bubbleRect.height - Constants.ARROW_SIZE + Constants.PX});
+                bubble.css({'left': Components.rect.left + halfTargetWidth - halfBubbleWidth + Constants.PX});
                 break;
             case Constants.RIGHT:
-                arrow.classList.add(Constants.RIGHT);
-                bubble.style.top = Components.rect.top + halfTargetHeight - halfBubbleHeight + Constants.PX;
-                bubble.style.left = targetPosition.right + Constants.ARROW_SIZE + Constants.PX;
+                arrow.addClass(Constants.RIGHT);
+                bubble.css({'top': Components.rect.top + halfTargetHeight - halfBubbleHeight + Constants.PX});
+                bubble.css({'left': targetPosition.right + Constants.ARROW_SIZE + Constants.PX});
                 break;
             case Constants.LEFT:
-                arrow.classList.add(Constants.LEFT);
-                bubble.style.left = Components.rect.left - bubbleRect.width - Constants.ARROW_SIZE + Constants.PX;
-                bubble.style.top = Components.rect.top + halfTargetHeight - halfBubbleHeight + Constants.PX;
+                arrow.addClass(Constants.LEFT);
+                bubble.css({'top': Components.rect.top + halfTargetHeight - halfBubbleHeight + Constants.PX});
+                bubble.css({'left': Components.rect.left - bubbleRect.width - Constants.ARROW_SIZE + Constants.PX});
                 break;
             default: // This is either bottom or something that doesn't exist
-                arrow.classList.add(Constants.BOTTOM);
-                bubble.style.top = targetPosition.bottom + Constants.ARROW_SIZE + Constants.PX;
-                bubble.style.left = Components.rect.left + halfTargetWidth - halfBubbleWidth + Constants.PX;
+                arrow.addClass(Constants.BOTTOM);
+                bubble.css({'top': targetPosition.bottom + Constants.ARROW_SIZE + Constants.PX});
+                bubble.css({'left': Components.rect.left + halfTargetWidth - halfBubbleWidth + Constants.PX});
                 break;
         }
 
-        let innerHollowArrow = document.createElement("span");
-        innerHollowArrow.classList.add(Constants.HOLLOW_ARROW);
-        arrow.appendChild(innerHollowArrow);
+        $("<span></span>", {
+            "class": Constants.HOLLOW_ARROW
+        }).appendTo(arrow);
 
-        bubble.appendChild(arrow);
+        bubble.append(arrow);
     }
 }
 
@@ -411,21 +417,12 @@ function _placeBubbleLocation() {
  * This will automatically trigger the
  */
 function _modifyBubbleLocation() {
-    let bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE);
-
-    if (Utils.isValid(bubble)) {
-        let arrow = Utils.getEleFromClassName(Constants.ARROW_LOCATION);
-        if (Utils.isValid(arrow)) {
-            bubble.removeChild(arrow);
-        }
-    }
-
+    let bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE, true);
+    Utils.getEleFromClassName(Constants.ARROW_LOCATION, true).remove();
     /**
      * Remove the floating style if exist. In here we modify it so it will be concrete style
      */
-    if (bubble.classList.contains(Constants.FLOAT_STYLE)) {
-        bubble.classList.remove(Constants.FLOAT_STYLE);
-    }
+    bubble.removeClass(Constants.FLOAT_STYLE);
 
     // Remove the arrow from the bubble, the recalculate the new location the re-attach a new arrow accordingly
     _placeBubbleLocation();
@@ -435,8 +432,8 @@ function _modifyBubbleLocation() {
  * Find the location of the bubble and put it in the middle of the screen.
  */
 function _placeFloatBubble() {
-    let bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE);
-    bubble.classList.add(Constants.FLOAT_STYLE);
+    let bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE, true);
+    bubble.addClass(Constants.FLOAT_STYLE);
 }
 
 /**
@@ -445,13 +442,15 @@ function _placeFloatBubble() {
  * Because Styles have higher priority than CSS styles.
  */
 function _modifyFloatBubble() {
-    let bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE);
-    bubble.classList.add(Constants.FLOAT_STYLE);
-    let arrow = Utils.getEleFromClassName(Constants.ARROW_LOCATION);
-    if (Utils.isValid(arrow)) {
-        bubble.removeChild(arrow);
-        bubble.style.top = "";
-        bubble.style.left = "";
+    let bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE, true);
+    bubble.addClass(Constants.FLOAT_STYLE);
+    let arrow = Utils.getEleFromClassName(Constants.ARROW_LOCATION, true);
+    if (Utils.hasELement(arrow)) {
+        arrow.remove();
+        bubble.css({
+            top: "",
+            left: ""
+        });
     }
 }
 
@@ -460,18 +459,21 @@ function _modifyFloatBubble() {
  */
 function _addBorderAroundTarget() {
     if (Utils.isValid(Components.rect)) {
-        let borderOverlay = document.createElement("div");
-        borderOverlay.classList.add(Constants.TARGET_BORDER);
-        borderOverlay.style.width = Components.rect.width + Constants.BORDER_WIDTH * 2 + Constants.PX;
-        borderOverlay.style.height = Components.rect.height + Constants.BORDER_WIDTH * 2 + Constants.PX;
-        borderOverlay.style.top = Components.rect.top - Constants.BORDER_WIDTH * 2 + Constants.PX;
-        borderOverlay.style.left = Components.rect.left - Constants.BORDER_WIDTH * 2 + Constants.PX;
+        let borderOverlay = $("<div></div>", {
+            "class": Constants.TARGET_BORDER,
+            "width": Components.rect.width + Constants.BORDER_WIDTH * 2 + Constants.PX,
+            "height": Components.rect.height + Constants.BORDER_WIDTH * 2 + Constants.PX
+        });
+        borderOverlay.css({
+            top: Components.rect.top - Constants.BORDER_WIDTH * 2 + Constants.PX,
+            left: Components.rect.left - Constants.BORDER_WIDTH * 2 + Constants.PX
+        });
 
         if (Components.stepDescription[Constants.CAN_INTERACT]) {
-            borderOverlay.classList.add(Constants.TARGET_INTERACTABLE);
+            borderOverlay.addClass(Constants.TARGET_INTERACTABLE);
         }
 
-        Components.ui.appendChild(borderOverlay);
+        Components.ui.append(borderOverlay);
     }
 }
 
@@ -481,18 +483,18 @@ function _addBorderAroundTarget() {
  */
 function _modifyBorderAroundTarget() {
     if (Utils.isValid(Components.rect)) {
-        let borderOverlay = Utils.getEleFromClassName(Constants.TARGET_BORDER);
-        borderOverlay.style.width = Components.rect.width + Constants.BORDER_WIDTH * 2 + Constants.PX;
-        borderOverlay.style.height = Components.rect.height + Constants.BORDER_WIDTH * 2 + Constants.PX;
-        borderOverlay.style.top = Components.rect.top - Constants.BORDER_WIDTH * 2 + Constants.PX;
-        borderOverlay.style.left = Components.rect.left - Constants.BORDER_WIDTH * 2 + Constants.PX;
+        let borderOverlay = Utils.getEleFromClassName(Constants.TARGET_BORDER, true);
+        borderOverlay.css({
+            width: Components.rect.width + Constants.BORDER_WIDTH * 2 + Constants.PX,
+            height: Components.rect.height + Constants.BORDER_WIDTH * 2 + Constants.PX,
+            top: Components.rect.top - Constants.BORDER_WIDTH * 2 + Constants.PX,
+            left: Components.rect.left - Constants.BORDER_WIDTH * 2 + Constants.PX
+        });
 
         if (Components.stepDescription[Constants.CAN_INTERACT]) {
-            borderOverlay.classList.add(Constants.TARGET_INTERACTABLE);
+            borderOverlay.addClass(Constants.TARGET_INTERACTABLE);
         } else {
-            if (borderOverlay.classList.contains(Constants.TARGET_INTERACTABLE)) {
-                borderOverlay.classList.remove(Constants.TARGET_INTERACTABLE);
-            }
+            borderOverlay.removeClass(Constants.TARGET_INTERACTABLE);
         }
     }
 }
@@ -510,15 +512,17 @@ Components.prototype.createComponents = function (noButtons, showBack, showNext,
         _addBorderAroundTarget();
         _createContentBubble(noButtons, showBack, showNext, disableNext);
         // Note to self: must append every to the body here so that we can modify the location of the bubble later
-        document.body.appendChild(Components.ui);
+        $(document.body).append(Components.ui);
         _placeBubbleLocation();
+        Utils.smoothScroll(Components.rect);
     } else {
         // The target element cannot be found which mean this is a floating step
         _addOverlay();
         _createContentBubble(noButtons, showBack, showNext, disableNext);
         // Note to self: must append every to the body here so that we can modify the location of the bubble later
-        document.body.appendChild(Components.ui);
+        $(document.body).append(Components.ui);
         _placeFloatBubble();
+        Utils.scrollToTop();
     }
 };
 
@@ -538,11 +542,13 @@ Components.prototype.modifyComponents = function (noButtons, showBack, showNext,
         _modifyBorderAroundTarget();
         _modifyContentBubble(noButtons, showBack, showNext, disableNext);
         _modifyBubbleLocation();
+        Utils.smoothScroll(Components.rect);
     } else {
         // The target element cannot be found which mean this is a floating step
         _addOverlay();
         _modifyContentBubble(noButtons, showBack, showNext, disableNext);
         _modifyFloatBubble();
+        Utils.scrollToTop();
     }
 };
 
@@ -550,7 +556,7 @@ Components.prototype.modifyComponents = function (noButtons, showBack, showNext,
  * Main function to clean up the components that were added into the DOM.
  */
 Components.prototype.removeComponents = function () {
-    document.body.removeChild(Components.ui);
+    Components.ui.remove();
 };
 
 module.exports = Components;

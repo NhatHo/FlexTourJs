@@ -42,9 +42,9 @@ module.exports = {
     BUTTON_GROUP: "flextour-button-group",
 
     // Event Block
-    FLEX_CLICK: "click",
-    FLEX_RESIZE: "resize",
-    KEY_UP: "keyup",
+    FLEX_CLICK: "click.flextour",
+    FLEX_RESIZE: "resize.flextour",
+    KEY_UP: "keyup.flextour",
 
     // Tour Attributes Block
     TOUR_DEFAULT_SETTINGS: {

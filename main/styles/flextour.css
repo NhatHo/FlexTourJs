@@ -56,7 +56,6 @@
   padding-bottom: 3px;
   margin-bottom: 3px;
 }
-
 .flextour-content-body {
   font-size: 12pt;
 }
@@ -310,6 +309,7 @@ a.flextour-close:hover {
   -moz-transition: all 0.5s;
   -o-transition: all 0.5s;
   transition: all 0.5s;
+  overflow: hidden;
 }
 .flextour-fixed-overlay {
   position: fixed;

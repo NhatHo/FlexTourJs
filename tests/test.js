@@ -24,7 +24,7 @@ let tourDesc = [{
     retries: 20,
     steps: [{
         title: "First Step of the thing",
-        content: "Header level 1\nTesting level again\n\nLine 3",
+        content: "Header level 1<br />Testing level again<br /><br />Line 3",
         position: "right",
         target: "#title",
         type: "info"

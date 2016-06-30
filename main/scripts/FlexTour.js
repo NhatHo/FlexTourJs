@@ -6,6 +6,7 @@
 let Components = require("./Components");
 let Constants = require("./Constants");
 let Utils = require("./Utilities");
+let $ = require("./../../node_modules/jquery/dist/jquery.min");
 
 /**
  * Pre-process all information for all tours make sure each step and each tour contains necessary
@@ -13,7 +14,7 @@ let Utils = require("./Utilities");
  * @param tourDesc      JSON description file that has all information needed
  */
 function _preprocessingTours(tourDesc) {
-    if (Array.isArray(tourDesc)) {
+    if ($.isArray(tourDesc)) {
         for (let i = 0; i < tourDesc.length; i++) {
             _initializeTour(tourDesc[i]);
         }
@@ -27,10 +28,10 @@ function _preprocessingTours(tourDesc) {
  * @param tour      The tour object ---> Must be an object
  */
 function _initializeTour(tour) {
-    let rawTour = Utils.clone({}, tour);
+    let rawTour = $.extend(true, {}, tour);
     // Fill in information for each tour in case any important information is missing
     rawTour[Constants.ID] = rawTour[Constants.ID] || Constants.TOUR + i;
-    rawTour = Utils.clone({}, Constants.TOUR_DEFAULT_SETTINGS, rawTour);
+    rawTour = $.extend({}, Constants.TOUR_DEFAULT_SETTINGS, rawTour);
 
     // Fill in information for each step in case anything important is missing
     let numOfSteps = rawTour[Constants.STEPS].length;
@@ -43,7 +44,6 @@ function _initializeTour(tour) {
         currentStep[Constants.NO_BUTTONS] = currentStep[Constants.NO_BUTTONS] || rawTour[Constants.NO_BUTTONS];
         currentStep[Constants.DELAY] = currentStep[Constants.DELAY] || rawTour[Constants.DELAY];
         currentStep[Constants.NO_BACK] = currentStep[Constants.NO_BACK] || rawTour[Constants.NO_BACK];
-        currentStep[Constants.NO_SKIP] = currentStep[Constants.NO_SKIP] || rawTour[Constants.NO_SKIP];
         currentStep[Constants.CAN_INTERACT] = currentStep[Constants.CAN_INTERACT] || currentStep[Constants.NEXT_ON_TARGET] || rawTour[Constants.CAN_INTERACT]; // This mean that if target can trigger next step on click, it must be clickable
         currentStep[Constants.WAIT_INTERVALS] = currentStep[Constants.WAIT_INTERVALS] || rawTour[Constants.WAIT_INTERVALS];
         currentStep[Constants.RETRIES] = currentStep[Constants.RETRIES] || rawTour[Constants.RETRIES];
@@ -139,8 +139,9 @@ function _addClickEvents() {
  * This function get attached only when the step has NextOnTargetClick set to true
  */
 function _addClickEventOnTargetClick(currentStep) {
-    let currentTarget = document.querySelector(currentStep[Constants.TARGET]);
-    if (Utils.isValid(currentTarget)) {
+    console.log("Attach click on target event.");
+    let currentTarget = $(currentStep[Constants.TARGET]);
+    if (Utils.hasELement(currentTarget)) {
         Utils.addEvent(currentTarget, Constants.FLEX_CLICK, _nextStep);
     }
 }
@@ -149,24 +150,25 @@ function _addClickEventOnTargetClick(currentStep) {
  * Remove all attached event to avoid leaking memories
  */
 function _removeEvents() {
-    Utils.removeELementsAndAttachedEvent(Constants.OVERLAY_STYLE, Constants.FLEX_CLICK, _exit);
+    Utils.removeELementsAndAttachedEvent(Constants.OVERLAY_STYLE, Constants.FLEX_CLICK);
 
-    Utils.removeELementsAndAttachedEvent(Constants.BACK_BUTTON, Constants.FLEX_CLICK, _previousStep);
+    Utils.removeELementsAndAttachedEvent(Constants.BACK_BUTTON, Constants.FLEX_CLICK);
 
-    Utils.removeELementsAndAttachedEvent(Constants.NEXT_BUTTON, Constants.FLEX_CLICK, _nextStep);
+    Utils.removeELementsAndAttachedEvent(Constants.NEXT_BUTTON, Constants.FLEX_CLICK);
 
-    Utils.removeELementsAndAttachedEvent(Constants.DONE_BUTTON, Constants.FLEX_CLICK, _exit);
+    Utils.removeELementsAndAttachedEvent(Constants.DONE_BUTTON, Constants.FLEX_CLICK);
 
-    Utils.removeELementsAndAttachedEvent(Constants.CLOSE_TOUR, Constants.FLEX_CLICK, _exit);
+    Utils.removeELementsAndAttachedEvent(Constants.CLOSE_TOUR, Constants.FLEX_CLICK);
 }
 
 /**
  * Remove the event listener for nextOnTargetClick
  */
 function _removeClickEventOnTargetClick(currentStep) {
-    let currentTarget = document.querySelector(currentStep[Constants.TARGET]);
-    if (Utils.isValid(currentTarget)) {
-        Utils.removeEvent(currentTarget, Constants.FLEX_CLICK, _nextStep); //Remove this event listener
+    console.log("Removing click on target, step target: " + currentStep[Constants.TARGET]);
+    let currentTarget = $(currentStep[Constants.TARGET]);
+    if (Utils.hasELement(currentTarget)) {
+        Utils.removeEvent(currentTarget, Constants.FLEX_CLICK); //Remove this event listener
     }
 }
 
@@ -325,8 +327,9 @@ function _precheckForTransition(stepNumber, prerequisiteNumber) {
 /**
  * Skip the next step to the next next step.
  */
-function _skipStep() {
-    Utils.removeELementsAndAttachedEvent(Constants.SKIP_BUTTON, Constants.FLEX_CLICK, _skipStep);
+function _skipStep(event) {
+    Utils.noDefault(event);
+    Utils.removeELementsAndAttachedEvent(Constants.SKIP_BUTTON, Constants.FLEX_CLICK);
 
     let skipToStep = FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber][Constants.SKIP];
     if (Utils.isValid(skipToStep)) {
@@ -337,7 +340,9 @@ function _skipStep() {
 /**
  * Decrement current step counter and go back to previous step ... Obviously it will not be the last step
  */
-function _previousStep() {
+function _previousStep(event) {
+    Utils.noDefault(event);
+    Utils.removeELementsAndAttachedEvent(Constants.BACK_BUTTON, Constants.FLEX_CLICK);
     _precheckForTransition(FlexTour.currentStepNumber - 1, 0);
 }
 
@@ -350,6 +355,7 @@ function _nextStep() {
         // Clean up next on target click here.
         _removeClickEventOnTargetClick(currentStep);
     }
+    Utils.removeELementsAndAttachedEvent(Constants.NEXT_BUTTON, Constants.FLEX_CLICK);
     _precheckForTransition(FlexTour.currentStepNumber + 1, 0);
 }
 
@@ -376,7 +382,7 @@ function _transitionToNextStep(stepNumber) {
  * Add window resize event to recalculate location of tour step.
  */
 function _addResizeWindowListener() {
-    Utils.addEvent(window, Constants.FLEX_RESIZE, Utils.debounce(_resizeWindow, 500, false));
+    Utils.addEvent($(window), Constants.FLEX_RESIZE, Utils.debounce(_resizeWindow, 500, false));
 }
 
 /**
@@ -391,14 +397,14 @@ function _resizeWindow() {
  * Remove resize listener from window without detaching other handlers from main program
  */
 function _unbindResizeWindowListener() {
-    Utils.removeEvent(document, Constants.FLEX_RESIZE, Utils.debounce(_resizeWindow, 500, false));
+    Utils.removeEvent($(window), Constants.FLEX_RESIZE);
 }
 
 /**
  * Attach keyup event into the window element so that it will be trigger on keyup
  */
 function _addKeyBoardListener() {
-    Utils.addEvent(window, Constants.KEY_UP, _keyUpCallBack, true);
+    Utils.addEvent($(window), Constants.KEY_UP, _keyUpCallBack);
 }
 
 /**
@@ -417,7 +423,7 @@ function _keyUpCallBack(event) {
  * Unbind the keyup handler on exit, so that it won't cause memory leak
  */
 function _unbindKeyboardListener() {
-    Utils.removeEvent(window, Constants.KEY_UP, _keyUpCallBack, true);
+    Utils.removeEvent($(window), Constants.KEY_UP);
 }
 
 function _exit() {
@@ -451,11 +457,10 @@ function FlexTour(tourDesc, actionsList) {
  */
 FlexTour.prototype.run = function () {
     if (FlexTour.toursMap.length === 0) {
-        console.log("There is NOT any available tour to run.");
         return;
     }
 
-    FlexTour.currentTour = Utils.clone({}, FlexTour.toursMap[FlexTour.currentTourIndex]);
+    FlexTour.currentTour = $.extend(true, {}, FlexTour.toursMap[FlexTour.currentTourIndex]);
     FlexTour.currentStepNumber = 0;
 
     let steps = FlexTour.currentTour[Constants.STEPS];

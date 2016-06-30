@@ -4,31 +4,9 @@
  ******************************************************************************/
 
 let Constants = require("./Constants");
+let $ = require("./../../node_modules/jquery/dist/jquery.min");
 
 module.exports = {
-
-    /**
-     * Clone given objects into another object. Doesn't work with array.
-     * This is not deep clone so only 1 level will be cloned, the rest will keep its references
-     * @param out           The output object
-     * @returns {*|{}}      Cloned object of all other objects in the list
-     */
-    clone: function (out) {
-        out = out || {};
-
-        for (let i = 1; i < arguments.length; i++) {
-            if (!arguments[i])
-                continue;
-
-            for (let key in arguments[i]) {
-                if (arguments[i].hasOwnProperty(key))
-                    out[key] = arguments[i][key];
-            }
-        }
-        return out;
-    },
-
-
     /**
      * Check if the target is visible or not. This has a draw back that the target might not have render completely
      * If that is the case the bubble and highlight box will not render properly.
@@ -38,9 +16,9 @@ module.exports = {
     isVisible: function (targets) {
         let result = true;
         for (let i = 0; i < targets.length; i++) {
-            let element = document.querySelector(targets[i]);
+            let element = $(targets[i]);
             if (this.isValid(element)) {
-                result = result && element.offsetHeight > 0 && element.offsetWidth > 0;
+                result = result && element.is(":visible");
             }
         }
         return result;
@@ -54,7 +32,7 @@ module.exports = {
     doesExist: function (targets) {
         let result = true;
         for (let i = 0; i < targets.length; i++) {
-            result = result && this.isValid(document.querySelector(targets[i]));
+            result = result && this.isValid($(targets[i]));
         }
         return result;
     },
@@ -66,10 +44,19 @@ module.exports = {
      * @returns {boolean}   True if valid, false otherwise
      */
     isValid: function (object) {
-        if (Array.isArray(object)) {
+        if ($.isArray(object)) {
             return object.length > 0;
         }
         return (object != null && typeof object != 'undefined');
+    },
+
+    /**
+     * Check if the given Jquery selector has any element
+     * @param $el       JQuery selector
+     * @returns {boolean}       True if it has child element
+     */
+    hasELement: function ($el) {
+        return ($el.length > 0);
     },
 
     /**
@@ -77,18 +64,11 @@ module.exports = {
      * @param el        Element to be attached listener/event on
      * @param type      Type of event to listen to
      * @param callback  Callback function when event is fired
-     * @param capture   Use Capture for this event or not
      */
-    addEvent: function (el, type, callback, capture) {
+    addEvent: function (el, type, callback) {
         if (!this.isValid(el))
             return;
-        if (el.addEventListener) {
-            el.addEventListener(type, callback, capture || false);
-        } else if (el.attachEvent) {
-            el.attachEvent("on" + type, callback);
-        } else {
-            el["on" + type] = callback;
-        }
+        el.on(type, callback);
     },
 
     /**
@@ -96,18 +76,11 @@ module.exports = {
      * @param el        Element that contains event that needs to be removed
      * @param type      Type of event that was attached
      * @param callback  Function to remove from the event
-     * @param capture   Use Capture for this event or not
      */
-    removeEvent: function (el, type, callback, capture) {
+    removeEvent: function (el, type, callback) {
         if (!this.isValid(el))
             return;
-        if (el.removeEventListener) {
-            el.removeEventListener(type, callback, capture || false);
-        } else if (el.detachEvent) {
-            el.detachEvent(type, callback);
-        } else {
-            el["off" + type] = callback;
-        }
+        el.off(type, callback);
     },
 
     /**
@@ -129,11 +102,22 @@ module.exports = {
     },
 
     /**
-     * Get DOM Node from given classname, only return 1 Element
-     * @param className     Given classname of element we want to get the element
+     * Get the first element found in the DOM
+     * @param className     The classname of the element without the "."
+     * @param jquerySelector    When set to true, just the return the selector instead of the 1st element
+     * @returns {*}     The first element or nothing
      */
-    getEleFromClassName: function (className) {
-        return document.querySelector(this.getClassName(className));
+    getEleFromClassName: function (className, jquerySelector) {
+        let $el = $(this.getClassName(className));
+
+        if (jquerySelector) {
+            return $el;
+        }
+
+        if ($el) {
+            return $el[0];
+        }
+        return $el;
     },
 
     /**
@@ -141,7 +125,7 @@ module.exports = {
      * @param className     Similar classname of group of elements
      */
     getElesFromClassName: function (className) {
-        return document.querySelectorAll(this.getClassName(className));
+        return $(this.getClassName(className));
     },
 
     /**
@@ -151,7 +135,7 @@ module.exports = {
      * @returns {*|boolean} True if it has target AND content, false otherwise
      */
     isStepWithTarget: function (stepDesc) {
-        return (this.isValid(stepDesc[Constants.TARGET]) && this.isValid(stepDesc[Constants.CONTENT]));
+        return (stepDesc.hasOwnProperty(Constants.TARGET) && stepDesc.hasOwnProperty(Constants.CONTENT));
     },
 
     /**
@@ -160,7 +144,7 @@ module.exports = {
      * @returns {boolean|*} True when step has content and position is set to float
      */
     isFloatStep: function (stepDesc) {
-        return (stepDesc[Constants.POSITION] === Constants.FLOAT && this.isValid(stepDesc[Constants.CONTENT]));
+        return (stepDesc[Constants.POSITION] === Constants.FLOAT && stepDesc.hasOwnProperty(Constants.CONTENT));
     },
 
     /**
@@ -172,9 +156,7 @@ module.exports = {
      */
     getElementsAndAttachEvent: function (className, event, callback) {
         let els = this.getElesFromClassName(className);
-        for (let i = 0; i < els.length; i++) {
-            this.addEvent(els[i], event, callback);
-        }
+        this.addEvent(els, event, callback);
     },
 
     /**
@@ -186,9 +168,7 @@ module.exports = {
      */
     removeELementsAndAttachedEvent: function (className, event, callback) {
         let els = this.getElesFromClassName(className);
-        for (let i = 0; i < els.length; i++) {
-            this.removeEvent(els[i], event, callback);
-        }
+        this.removeEvent(els, event, callback);
     },
 
     /**
@@ -206,23 +186,34 @@ module.exports = {
     },
 
     /**
-     * Get the innerwidth of window first
-     * If it doesn't exist then get clientWidth through documentElement which is needed for IE8 or earlier
-     * Lastly, if those 2 methods failed, get clientWidth through document.body
+     * Get max of Window height or document height
      * @returns {Number|number}     window width through 1 of 3 methods
      */
     getFullWindowWidth: function () {
-        return window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth; // For IE8 or earlier
+        let width = 0;
+        if (typeof(window.innerWidth) == 'number') {
+            //Non-IE
+            width = window.innerWidth;
+        } else if (document.documentElement && document.documentElement.clientWidth) {
+            //IE 6+ in 'standards compliant mode'
+            width = document.documentElement.clientWidth;
+        }
+        return Math.max($(document).width(), $(window).width(), width);
     },
 
     /**
-     * Get the innerHeight of window first
-     * If it doesn't exist then get clientHeight through documentElement which is needed for IE8 or earlier
-     * Lastly, if those 2 methods failed, get clientHeight through document.body
+     * Get max of either window width or document width.
      * @returns {Number|number}     window height through 1 of 3 methods
      */
     getFullWindowHeight: function () {
-        return window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight; // For IE8 or earlier
+        let height = 0;
+        if (typeof(window.innerHeight ) == 'number') {
+            height = window.innerHeight;
+        } else if (document.documentElement && document.documentElement.clientHeight) {
+            //IE 6+ in 'standards compliant mode'
+            height = document.documentElement.clientHeight;
+        }
+        return Math.max($(document).height(), $(window).height(), height);
     },
 
     /**
@@ -245,5 +236,33 @@ module.exports = {
             timeout = setTimeout(later, wait);
             if (callNow) func.apply(context, args);
         };
+    },
+
+    /**
+     * Smooth scroll to the element
+     * @param rect    The target of the step that needs to be scrolled to
+     */
+    smoothScroll: function (rect) {
+        let $elTop = rect.top;
+        let $elHeight = rect.height;
+        let windowHeight = $(window).height();
+        let offset;
+        if ($elHeight < windowHeight) {
+            offset = $elTop - ((windowHeight / 2) - ($elHeight / 2));
+        } else {
+            offset = $elTop + windowHeight / 2;
+        }
+        $('html, body').animate({
+            scrollTop: offset
+        }, 700);
+    },
+
+    /**
+     * Just scroll to the top of the page.
+     */
+    scrollToTop: function () {
+        $('html, body').animate({
+            scrollTop: 0
+        }, 700);
     }
 };
