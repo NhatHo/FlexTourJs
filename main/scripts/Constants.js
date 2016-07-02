@@ -45,6 +45,7 @@ module.exports = {
     FLEX_CLICK: "click.flextour",
     FLEX_RESIZE: "resize.flextour",
     KEY_UP: "keyup.flextour",
+    SCROLL: "scroll.flextour",
 
     // Tour Attributes Block
     TOUR_DEFAULT_SETTINGS: {
@@ -77,6 +78,13 @@ module.exports = {
     DELAY: "delay",
     TRANSITION: "transition",
     SKIP: "skip",
+    MODAL: "modal",
+    SCROLL_LOCK: "scrollLock",
+    STYLES: "styles",
+    NEXT_BUTTON_CUS: "nextButton",
+    BACK_BUTTON_CUS: "backButton",
+    SKIP_BUTTON_CUS: "skipButton",
+    DONE_BUTTON_CUS: "doneButton",
 
     DEFAULT_TYPE: "info",
     ACTION_TYPE: "action",
@@ -98,5 +106,10 @@ module.exports = {
     SKIP_TEXT: "Skip",
     NEXT_TEXT: "Next",
     BACK_TEXT: "Back",
-    DONE_TEXT: "Done"
+    DONE_TEXT: "Done",
+
+    DIV_COMP: "<div></div>",
+    SPAN_COMP: "<span></span>",
+    BUTTON_COMP: "<button></button>",
+    A_COMP: "<a></a>"
 };

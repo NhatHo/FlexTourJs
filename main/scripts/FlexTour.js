@@ -55,8 +55,9 @@ function _initializeTour(tour) {
  * This is the head quarter of displaying steps, overlay, and other things.
  * Tags: CENTRAL, ORGANIZER, RUNNER
  * @param stepDesc          Description object of current step to be run
+ * @param newStep           Flag to be set when this is the first time this step is rendered. Used to avoid duplicated event attachment
  */
-function _centralOrganizer(stepDesc) {
+function _centralOrganizer(stepDesc, newStep) {
     FlexTour.Component = new Components(stepDesc);
     let currentStepNumber = FlexTour.currentStepNumber;
 
@@ -87,20 +88,27 @@ function _centralOrganizer(stepDesc) {
             showBack = true;
         }
 
-        if (Utils.isValid(stepDesc[Constants.NEXT_ON_TARGET])) {
-            _addClickEventOnTargetClick(stepDesc);
-        }
+        let nextButtonText = FlexTour.currentTour[Constants.NEXT_BUTTON_CUS] || Constants.NEXT_TEXT,
+            backButtonText = FlexTour.currentTour[Constants.BACK_BUTTON_CUS] || Constants.BACK_TEXT,
+            skipButtonText = FlexTour.currentTour[Constants.SKIP_BUTTON_CUS] || Constants.SKIP_TEXT,
+            doneButtonText = FlexTour.currentTour[Constants.DONE_BUTTON_CUS] || Constants.DONE_TEXT;
 
         /**
          * Create components can be only called once when the tour start for the first time.
          */
         if (!FlexTour.running) {
-            FlexTour.Component.createComponents(noButtons, showBack, showNext, disableNext);
+            FlexTour.Component.createComponents(noButtons, showBack, showNext, disableNext, skipButtonText, backButtonText, nextButtonText, doneButtonText);
             FlexTour.running = true;
             _addResizeWindowListener();
             _addKeyBoardListener();
+
+            let bubbleStyles = FlexTour.currentTour[Constants.STYLES];
+            if (Utils.isValid(bubbleStyles)) {
+                Utils.getEleFromClassName(Constants.TOUR_BUBBLE, true).addClass(bubbleStyles);
+            }
+
         } else {
-            FlexTour.Component.modifyComponents(noButtons, showBack, showNext, disableNext);
+            FlexTour.Component.modifyComponents(noButtons, showBack, showNext, disableNext, skipButtonText, backButtonText, nextButtonText, doneButtonText);
         }
 
         // Add event to Skip button if it exist
@@ -108,10 +116,26 @@ function _centralOrganizer(stepDesc) {
             Utils.getElementsAndAttachEvent(Constants.SKIP_BUTTON, Constants.FLEX_CLICK, _skipStep);
         }
 
-        _addClickEvents();
-
         if (stepDesc[Constants.TRANSITION] && _isAllowToMove(currentStepNumber + 1, 0)) {
             _transitionToNextStep(currentStepNumber + 1);
+        }
+
+        /**
+         * When this is a new step, attach event handlers to it. Otherwise skip.
+         */
+        if (newStep) {
+            if (Utils.isValid(stepDesc[Constants.NEXT_ON_TARGET])) {
+                _addClickEventOnTargetClick(stepDesc);
+            }
+            if (Utils.isValid(stepDesc[Constants.MODAL])) {
+                _bindScrollListener();
+            }
+
+            _addClickEvents();
+
+            if (Utils.isValid(stepDesc[Constants.SCROLL_LOCK])) {
+                _blockScrolling();
+            }
         }
     } else {
         console.log("Target of step: " + JSON.stringify(stepDesc) + " is not found.");
@@ -139,7 +163,6 @@ function _addClickEvents() {
  * This function get attached only when the step has NextOnTargetClick set to true
  */
 function _addClickEventOnTargetClick(currentStep) {
-    console.log("Attach click on target event.");
     let currentTarget = $(currentStep[Constants.TARGET]);
     if (Utils.hasELement(currentTarget)) {
         Utils.addEvent(currentTarget, Constants.FLEX_CLICK, _nextStep);
@@ -165,7 +188,6 @@ function _removeEvents() {
  * Remove the event listener for nextOnTargetClick
  */
 function _removeClickEventOnTargetClick(currentStep) {
-    console.log("Removing click on target, step target: " + currentStep[Constants.TARGET]);
     let currentTarget = $(currentStep[Constants.TARGET]);
     if (Utils.hasELement(currentTarget)) {
         Utils.removeEvent(currentTarget, Constants.FLEX_CLICK); //Remove this event listener
@@ -186,9 +208,17 @@ function _removeClickEventOnTargetClick(currentStep) {
  *
  * Whenever a prerequisite function return false, the whole thing will return false.
  *
- * When a Wait Condition return false, it will schedule and execute the function again after a waitInterval. If you want to make sure several DOM elements should be waited for, use Comma separator to indicate. When number of retries = 0 it will go to the next prerequsite. If the next prerequisite doesn't exist then it will return false. Ideally there should be only 1 Wait Condition in the list. So you should check everything in this 1 function. If you want to use isVisible, doesExist condition and your own condition, set Retries entry in the tour so it will be reset to that.
+ * When a Wait Condition return false, it will schedule and execute the function again after a waitInterval.
+ * If you want to make sure several DOM elements should be waited for, use Comma separator to indicate.
+ * When number of retries = 0 it will go to the next prerequsite.
+ * If the next prerequisite doesn't exist then it will return false.
+ * Ideally there should be only 1 Wait Condition in the list.
+ * So you should check everything in this 1 function.
+ * If you want to use isVisible, doesExist condition and your own condition, set Retries entry in the tour so it will be reset to that.
  *
- * When a skip condition should be the last one in the list, this is a fail safe measurement for small branching method. In this function you should check if the next step or 2 step from now should be skipped. However, it's developer job to make sure that the step after skipped should be available, otherwise the engine will stop.
+ * When a skip condition should be the last one in the list, this is a fail safe measurement for small branching method.
+ * In this function you should check if the next step or 2 step from now should be skipped.
+ * However, it's developer job to make sure that the step after skipped should be available, otherwise the engine will stop.
  *
  * NOTE: Each prerequisite will be executed in turn. Except for in waitCondition, which will stay until retries reaches 0 then proceeds to the next prerequisite.
  *
@@ -232,9 +262,18 @@ function _isAllowToMove(possibleStepNumber, currPrerequisite) {
         } else if (prerequisite.indexOf(Constants.SKIP_INDICATOR) > -1) {
             /**
              * The syntax is: "!funcName:params". For sure the 2nd element after split is funcName
-             * IMPORTANT: as mentioned before, this should be the last on the list. When this is true it will autmatically increment the FlexTour.currentStepNumber to 2 steps ahead which effectively skip the current possible step.
-             * This might be hard to wrap your head around. Skip function has to return false for the step to be skipped, if it return true, the proceed to that next step. So in order for you to skip the step, your custom function must return false.
-             * REASONING: Treat this as a prerequisite, the condition must be met (true) for the tour to flow normally, if the condition is NOT met (false), the tour will skipped the step as indicated. Works well with isVisible, and doesExist. These will check the condition, if condition is true then stay. If condition is false then skip.
+             *
+             * IMPORTANT: as mentioned before, this should be the last on the list.
+             * When this is false it will autmatically increment the FlexTour.currentStepNumber to the step indicated in "skip" attribute which effectively skip the current possible step.
+             *
+             * This might be hard to wrap your head around. Skip function has to return false for the step to be skipped, if it return true, the proceed to that next step.
+             * So in order for you to skip the step, your custom function must return false.
+             *
+             * REASONING: Treat this as a prerequisite, the condition must be met (true) for the tour to flow normally, if the condition is NOT met (false), the tour will skipped the step as indicated. Works well with isVisible, and doesExist.
+             * These will check the condition, if condition is true then stay. If condition is false then skip.
+             *
+             * Meaning if you are expecting a list of elements to be visible or at least exist before proceeding, the condition will return true and the engine will proceed to next step.
+             * If any of the elements do not meet the requirement (return false), most likely the UI does not render as expected and proceeding to that step will fail --> skip it.
              */
 
             let prerequisiteBlock = prerequisite.split(Constants.SKIP_INDICATOR)[1].trim();
@@ -329,6 +368,7 @@ function _precheckForTransition(stepNumber, prerequisiteNumber) {
  */
 function _skipStep(event) {
     Utils.noDefault(event);
+    _cleanUpAfterStep();
     Utils.removeELementsAndAttachedEvent(Constants.SKIP_BUTTON, Constants.FLEX_CLICK);
 
     let skipToStep = FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber][Constants.SKIP];
@@ -342,20 +382,18 @@ function _skipStep(event) {
  */
 function _previousStep(event) {
     Utils.noDefault(event);
-    Utils.removeELementsAndAttachedEvent(Constants.BACK_BUTTON, Constants.FLEX_CLICK);
+    _cleanUpAfterStep();
+
     _precheckForTransition(FlexTour.currentStepNumber - 1, 0);
 }
 
 /**
  * Trigger next step of the tour. If the next step is the last step, trigger the isLastStep flag
  */
-function _nextStep() {
-    let currentStep = FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber];
-    if (Utils.isValid(currentStep[Constants.NEXT_ON_TARGET])) {
-        // Clean up next on target click here.
-        _removeClickEventOnTargetClick(currentStep);
-    }
-    Utils.removeELementsAndAttachedEvent(Constants.NEXT_BUTTON, Constants.FLEX_CLICK);
+function _nextStep(event) {
+    Utils.noDefault(event);
+    _cleanUpAfterStep();
+
     _precheckForTransition(FlexTour.currentStepNumber + 1, 0);
 }
 
@@ -368,7 +406,7 @@ function _transitionToNextStep(stepNumber) {
 
     function __transitionFunction(stepNumber) {
         FlexTour.currentStepNumber = stepNumber;
-        _centralOrganizer(FlexTour.currentTour[Constants.STEPS][stepNumber]);
+        _centralOrganizer(FlexTour.currentTour[Constants.STEPS][stepNumber], true);
     }
 
     if (Utils.isValid(stepDelay)) {
@@ -382,15 +420,15 @@ function _transitionToNextStep(stepNumber) {
  * Add window resize event to recalculate location of tour step.
  */
 function _addResizeWindowListener() {
-    Utils.addEvent($(window), Constants.FLEX_RESIZE, Utils.debounce(_resizeWindow, 500, false));
+    Utils.addEvent($(window), Constants.FLEX_RESIZE, Utils.debounce(__rerenderComponents, 500, false));
 }
 
 /**
  * CallBack function that get executed when window is resized
  * This event is only trigger once every 1/2 second. So that it won't go crazy and trigger too many event on resizing
  */
-function _resizeWindow() {
-    _centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber]);
+function __rerenderComponents() {
+    _centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber], false);
 }
 
 /**
@@ -426,10 +464,72 @@ function _unbindKeyboardListener() {
     Utils.removeEvent($(window), Constants.KEY_UP);
 }
 
-function _exit() {
+/**
+ * Bind scrolling event to the window. Debounce function call every 0.1 second so that it won't overload the app
+ */
+function _bindScrollListener() {
+    Utils.addEvent($(window), Constants.SCROLL, Utils.debounce(__rerenderComponents, 200, false));
+}
+
+/**
+ * Unbind scrolling event in the window. So that it won't throw unneccesary event calls when it's not needed
+ */
+function _unbindScrollListener() {
+    Utils.removeEvent($(window), Constants.SCROLL);
+}
+
+/**
+ * Clean things up after each step. Unbind the event listeners to avoid memory leaks
+ */
+function _cleanUpAfterStep() {
+    let currentStep = FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber];
+    if (Utils.isValid(currentStep[Constants.NEXT_ON_TARGET])) {
+        // Clean up next on target click here.
+        _removeClickEventOnTargetClick(currentStep);
+    }
+    if (currentStep[Constants.MODAL]) {
+        _unbindScrollListener();
+    }
     _removeEvents();
+
+    if (Utils.isValid(currentStep[Constants.SCROLL_LOCK])) {
+        _unblockScrolling();
+    }
+}
+
+/**
+ * Block the scroll bar in place. This goes against philosophy of FlexTourJS because it interfere with the application's behavior
+ * But this method reduces the performance hit of re-render when user scroll. This method only render once and locked-in place.
+ * @private
+ */
+function _blockScrolling() {
+    let top = $(window).scrollTop();
+    let left = $(window).scrollLeft();
+
+    $('body').css('overflow', 'hidden');
+    Utils.addEvent($(window), Constants.SCROLL, function () {
+        $(window).scrollTop(top).scrollLeft(left);
+    });
+    // Re-render the components after the scrolling has been locked.
+    Utils.debounce(__rerenderComponents(), 10, true);
+}
+
+/**
+ * Unblock scrolling so that it won't interfere with the application
+ */
+function _unblockScrolling() {
+    $('body').css('overflow', 'auto');
+    Utils.removeEvent($(window), Constants.SCROLL);
+}
+
+/**
+ * Clean up everything when the tour is exited. This is to prevent memory leaks for attached events in DOM elements.
+ * Remove all components and set the running flag to false, and set currentStepNumber to false
+ */
+function _exit() {
     _unbindResizeWindowListener();
     _unbindKeyboardListener();
+    _cleanUpAfterStep();
 
     FlexTour.Component.removeComponents();
     FlexTour.running = false; // Reset this flag when users quit the tour
@@ -466,7 +566,7 @@ FlexTour.prototype.run = function () {
     let steps = FlexTour.currentTour[Constants.STEPS];
     if (Utils.isValid(steps)) {
         let firstStep = steps[FlexTour.currentStepNumber];
-        _centralOrganizer(firstStep);
+        _centralOrganizer(firstStep, true);
     }
 };
 

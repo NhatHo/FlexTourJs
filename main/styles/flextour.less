@@ -1,4 +1,5 @@
 /********************* STYLES FOR FLEX TOUR ********************/
+/*** Override these variables with your own color styles ***/
 
 @OverlayBackground: rgba(0, 0, 0, 0.5);
 @BorderColor: #666;
@@ -8,8 +9,13 @@
 @ContentColor: #000;
 @ButtonColor: #206456;
 @DisabledButtonColor: #333333;
+@DisabledButtonBorder: #CCC;
 @TitleUnderlineColor: #F00000;
 @TitleTextColor: #A80000;
+@HoverButtonColor: #FFFFFF;
+@InnerArrowBackground: #FFFFFF;
+
+/********************** COMMON STYLES ****************************/
 
 .arrow-style {
   position: absolute;
@@ -76,6 +82,7 @@
 .flextour-float-bubble {
   left: 50%;
   top: 50%;
+  margin: auto;
   transform: translate(-50%, -50%);
 }
 
@@ -95,7 +102,7 @@
       .arrow-style;
       border-left: 14px solid transparent;
       border-right: 14px solid transparent;
-      border-top: 14px solid @BubbleBackground;
+      border-top: 14px solid @InnerArrowBackground;
       left: -14px;
       bottom: 6px;
     }
@@ -114,7 +121,7 @@
       .arrow-style;
       border-left: 14px solid transparent;
       border-right: 14px solid transparent;
-      border-bottom: 14px solid @BubbleBackground;
+      border-bottom: 14px solid @InnerArrowBackground;
       left: -14px;
       top: 6px;
     }
@@ -133,7 +140,7 @@
       .arrow-style;
       border-top: 14px solid transparent;
       border-bottom: 14px solid transparent;
-      border-left: 14px solid @BubbleBackground;
+      border-left: 14px solid @InnerArrowBackground;
       top: -14px;
       left: -20px;
     }
@@ -152,7 +159,7 @@
       .arrow-style;
       border-top: 14px solid transparent;
       border-bottom: 14px solid transparent;
-      border-right: 14px solid @BubbleBackground;
+      border-right: 14px solid @InnerArrowBackground;
       top: -14px;
       left: 6px;
     }
@@ -190,7 +197,7 @@
 
     &:hover {
       background-color: @ButtonColor;
-      color: @BubbleBackground;
+      color: @HoverButtonColor;
     }
 
     &:focus {
@@ -206,7 +213,7 @@
 
       background-color: @BubbleBackground;
       color: @DisabledButtonColor;
-      border-color: #CCC;
+      border-color: @DisabledButtonBorder;
     }
   }
 }

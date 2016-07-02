@@ -4,6 +4,8 @@
  ******************************************************************************/
 
 /********************* STYLES FOR FLEX TOUR ********************/
+/*** Override these variables with your own color styles ***/
+/********************** COMMON STYLES ****************************/
 .arrow-style {
   position: absolute;
   display: block;
@@ -62,6 +64,7 @@
 .flextour-float-bubble {
   left: 50%;
   top: 50%;
+  margin: auto;
   transform: translate(-50%, -50%);
 }
 .arrow-location {

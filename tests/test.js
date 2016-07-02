@@ -26,6 +26,7 @@ let tourDesc = [{
         title: "First Step of the thing",
         content: "Header level 1<br />Testing level again<br /><br />Line 3",
         position: "right",
+        skip: 5,
         target: "#title",
         type: "info"
     }, {
@@ -66,9 +67,10 @@ let tourDesc = [{
         transition: true
     }, {
         content: "Show Modal here",
-        position: "bottom",
+        position: "top",
         target: ".modal-content",
-        delay: 500,
+        scrollLock: true,
+        delay: 600,
         noBack: true,
         prerequisites: ["action1", "?isVisible:@target@"]
     }]

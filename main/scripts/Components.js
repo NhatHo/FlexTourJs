@@ -6,20 +6,18 @@
 let Constants = require("./Constants");
 let Utils = require("./Utilities");
 let $ = require("./../../node_modules/jquery/dist/jquery.min");
-// let Tether = require("./../../node_modules/tether/dist/js/tether.min");
 
 function Components(stepDescription) {
     Components.stepDescription = $.extend({}, stepDescription);
-    Components.ui = $("<div></div>");
+    Components.ui = $(Constants.DIV_COMP);
     Components.ui.addClass(Constants.FLEXTOUR);
     if (Utils.isStepWithTarget(stepDescription)) {
         let target = $(stepDescription[Constants.TARGET]);
-        let rect = target[0].getBoundingClientRect();
         let actualLocation = {};
         actualLocation.top = target.offset().top;
         actualLocation.left = target.offset().left;
-        actualLocation.width = rect.width;
-        actualLocation.height = rect.height;
+        actualLocation.width = target.outerWidth();
+        actualLocation.height = target.outerHeight();
         actualLocation.right = actualLocation.left + actualLocation.width;
         actualLocation.bottom = actualLocation.top + actualLocation.height;
 
@@ -81,7 +79,7 @@ function _getRightOverlay() {
  * @param locationObj     Object that contains width, height, top and left attributes for overlay
  */
 function _createOverlayNode(locationObj) {
-    let overlay = $("<div></div>", {
+    let overlay = $(Constants.DIV_COMP, {
         "class": Constants.OVERLAY_STYLE,
         "width": locationObj.width,
         "height": locationObj.height
@@ -157,28 +155,32 @@ function _addOverlay() {
  * @param {boolean} showBack  True to show Back Button
  * @param {boolean} showNext  True to show Next Button, False to show Done Button
  * @param {boolean} disableNext  True to disable either Next or Done button
+ * @param {String} skipButtonText   The NLS text for Skip button
+ * @param {String} backButtonText   The NLS text for Back button
+ * @param {String} nextButtonText   The NLS text for Next button
+ * @param {String} doneButtonText   The NLS text for Done button
  */
-function _createContentBubble(noButtons, showBack, showNext, disableNext) {
-    let bubble = $("<div></div>", {
+function _createContentBubble(noButtons, showBack, showNext, disableNext, skipButtonText, backButtonText, nextButtonText, doneButtonText) {
+    let bubble = $(Constants.DIV_COMP, {
         "class": Constants.TOUR_BUBBLE
     });
 
-    $("<div></div>", {
+    $(Constants.DIV_COMP, {
         "class": Constants.ICON_STYLE + " " + _getIconType()
     }).appendTo(bubble);
 
-    let contentBlock = $("<div></div>", {
+    let contentBlock = $(Constants.DIV_COMP, {
         "class": Constants.BUBBLE_CONTENT
     });
 
     if (Utils.isValid(Components.stepDescription[Constants.TITLE])) {
-        $("<div></div>", {
+        $(Constants.DIV_COMP, {
             "class": Constants.BUBBLE_TITLE,
             html: Components.stepDescription[Constants.TITLE]
         }).appendTo(contentBlock);
     }
 
-    $("<div></div>", {
+    $(Constants.DIV_COMP, {
         "class": Constants.BUBBLE_CONTENT_BODY,
         html: Components.stepDescription[Constants.CONTENT]
     }).appendTo(contentBlock);
@@ -186,33 +188,33 @@ function _createContentBubble(noButtons, showBack, showNext, disableNext) {
     bubble.append(contentBlock);
 
     if (!noButtons) {
-        let buttonGroup = $("<div></div>", {
+        let buttonGroup = $(Constants.DIV_COMP, {
             "class": Constants.BUTTON_GROUP
         });
 
         if (Utils.isValid(Components.stepDescription[Constants.SKIP])) {
-            $("<button></button>", {
+            $(Constants.BUTTON_COMP, {
                 "class": Constants.SKIP_BUTTON,
-                text: Constants.SKIP_TEXT
+                text: skipButtonText
             }).appendTo(buttonGroup);
         }
 
-        $("<button></button>", {
+        $(Constants.BUTTON_COMP, {
             "class": Constants.BACK_BUTTON,
-            text: Constants.BACK_TEXT,
+            text: backButtonText,
             disabled: !showBack
         }).appendTo(buttonGroup);
 
         if (showNext) {
-            $("<button></button>", {
+            $(Constants.BUTTON_COMP, {
                 "class": Constants.NEXT_BUTTON,
-                text: Constants.NEXT_TEXT,
+                text: nextButtonText,
                 disabled: disableNext
             }).appendTo(buttonGroup);
         } else {
-            $("<button></button>", {
+            $(Constants.BUTTON_COMP, {
                 "class": Constants.DONE_BUTTON,
-                text: Constants.DONE_TEXT,
+                text: doneButtonText,
                 disabled: disableNext
             }).appendTo(buttonGroup);
         }
@@ -220,7 +222,7 @@ function _createContentBubble(noButtons, showBack, showNext, disableNext) {
         bubble.append(buttonGroup);
     }
 
-    $("<a></a>", {
+    $(Constants.A_COMP, {
         "class": Constants.CLOSE_TOUR,
         html: Constants.TIMES
     }).appendTo(bubble);
@@ -250,8 +252,12 @@ function _getIconType() {
  * @param {boolean} showBack  True to show Back Button
  * @param {boolean} showNext  True to show Next Button, False to show Done Button
  * @param {boolean} disableNext  True to disable either Next or Done button
+ * @param {String} skipButtonText   The NLS text for Skip button
+ * @param {String} backButtonText   The NLS text for Back button
+ * @param {String} nextButtonText   The NLS text for Next button
+ * @param {String} doneButtonText   The NLS text for Done button
  */
-function _modifyContentBubble(noButtons, showBack, showNext, disableNext) {
+function _modifyContentBubble(noButtons, showBack, showNext, disableNext, skipButtonText, backButtonText, nextButtonText, doneButtonText) {
     /*
      * First block try to modify the icon in the bubble
      */
@@ -276,7 +282,7 @@ function _modifyContentBubble(noButtons, showBack, showNext, disableNext) {
         if (Utils.hasELement(contentTitle)) {
             contentTitle.html(Components.stepDescription[Constants.TITLE]);
         } else {
-            $("<div></div>", {
+            $(Constants.DIV_COMP, {
                 "class": Constants.BUBBLE_TITLE,
                 html: Components.stepDescription[Constants.TITLE]
             }).prependTo(contentBlock);
@@ -304,7 +310,7 @@ function _modifyContentBubble(noButtons, showBack, showNext, disableNext) {
             buttonGroup.remove();
         }
     } else {
-        let buttonGroup = $("<div></div>", {
+        let buttonGroup = $(Constants.DIV_COMP, {
             "class": Constants.BUTTON_GROUP
         });
 
@@ -312,9 +318,9 @@ function _modifyContentBubble(noButtons, showBack, showNext, disableNext) {
         let skipButton = Utils.getEleFromClassName(Constants.SKIP_BUTTON, true);
         if (Utils.isValid(skipRequirement)) {
             if (!Utils.hasELement(skipButton)) {
-                $("<button></button>", {
+                $(Constants.BUTTON_COMP, {
                     "class": Constants.SKIP_BUTTON,
-                    text: Constants.SKIP_TEXT
+                    text: skipButtonText
                 }).appendTo(buttonGroup);
             }
         } else {
@@ -327,9 +333,9 @@ function _modifyContentBubble(noButtons, showBack, showNext, disableNext) {
         if (Utils.hasELement(backButton)) {
             backButton.prop('disabled', !showBack);
         } else {
-            $("<button></button>", {
+            $(Constants.BUTTON_COMP, {
                 "class": Constants.BACK_BUTTON,
-                text: Constants.BACK_TEXT,
+                text: backButtonText,
                 disabled: !showBack
             }).appendTo(buttonGroup);
         }
@@ -339,9 +345,9 @@ function _modifyContentBubble(noButtons, showBack, showNext, disableNext) {
             if (Utils.hasELement(nextButton)) {
                 nextButton.prop('disabled', disableNext);
             } else {
-                $("<button></button>", {
+                $(Constants.BUTTON_COMP, {
                     "class": Constants.NEXT_BUTTON,
-                    text: Constants.NEXT_TEXT,
+                    text: nextButtonText,
                     disabled: disableNext
                 }).appendTo(buttonGroup);
             }
@@ -350,9 +356,9 @@ function _modifyContentBubble(noButtons, showBack, showNext, disableNext) {
             if (Utils.hasELement(doneButton)) {
                 doneButton.prop('disabled', disableNext);
             } else {
-                $("<button></button>", {
+                $(Constants.BUTTON_COMP, {
                     "class": Constants.DONE_BUTTON,
-                    text: Constants.DONE_TEXT,
+                    text: doneButtonText,
                     disabled: disableNext
                 }).appendTo(buttonGroup);
             }
@@ -377,7 +383,7 @@ function _placeBubbleLocation() {
         let halfTargetHeight = Components.rect.height / 2;
         let halfTargetWidth = Components.rect.width / 2;
 
-        let arrow = $("<span></span>", {
+        let arrow = $(Constants.SPAN_COMP, {
             "class": Constants.ARROW_LOCATION
         });
 
@@ -404,7 +410,7 @@ function _placeBubbleLocation() {
                 break;
         }
 
-        $("<span></span>", {
+        $(Constants.SPAN_COMP, {
             "class": Constants.HOLLOW_ARROW
         }).appendTo(arrow);
 
@@ -459,7 +465,7 @@ function _modifyFloatBubble() {
  */
 function _addBorderAroundTarget() {
     if (Utils.isValid(Components.rect)) {
-        let borderOverlay = $("<div></div>", {
+        let borderOverlay = $(Constants.DIV_COMP, {
             "class": Constants.TARGET_BORDER,
             "width": Components.rect.width + Constants.BORDER_WIDTH * 2 + Constants.PX,
             "height": Components.rect.height + Constants.BORDER_WIDTH * 2 + Constants.PX
@@ -500,25 +506,41 @@ function _modifyBorderAroundTarget() {
 }
 
 /**
+ * When the current step is not a modal, scroll to target when needed.
+ * If it is a modal, re-render continuously every 10 seconds. This is bad for performance ... but oh well.
+ * Alternatively, set scrollLock: true, so that user cannot scroll around unnecessary
+ */
+function _scrollMethod() {
+    let modal = Components.stepDescription[Constants.MODAL];
+    if (!Utils.isValid(modal)) {
+        Utils.smoothScroll(Components.rect);
+    }
+}
+
+/**
  * Main function to create overlays, border around target and the content bubble next to target
  * @param noButtons        True to hide all buttons
  * @param showBack        True to show Back Button
  * @param showNext        True to show Next Button, False to show Done Button
  * @param disableNext     True to disable Next and Done button
+ * @param {String} skipButtonText   The NLS text for Skip button
+ * @param {String} backButtonText   The NLS text for Back button
+ * @param {String} nextButtonText   The NLS text for Next button
+ * @param {String} doneButtonText   The NLS text for Done button
  */
-Components.prototype.createComponents = function (noButtons, showBack, showNext, disableNext) {
+Components.prototype.createComponents = function (noButtons, showBack, showNext, disableNext, skipButtonText, backButtonText, nextButtonText, doneButtonText) {
     if (!Utils.isFloatStep(Components.stepDescription)) {
         _addOverlays();
         _addBorderAroundTarget();
-        _createContentBubble(noButtons, showBack, showNext, disableNext);
+        _createContentBubble(noButtons, showBack, showNext, disableNext, skipButtonText, backButtonText, nextButtonText, doneButtonText);
         // Note to self: must append every to the body here so that we can modify the location of the bubble later
         $(document.body).append(Components.ui);
         _placeBubbleLocation();
-        Utils.smoothScroll(Components.rect);
+        _scrollMethod();
     } else {
         // The target element cannot be found which mean this is a floating step
         _addOverlay();
-        _createContentBubble(noButtons, showBack, showNext, disableNext);
+        _createContentBubble(noButtons, showBack, showNext, disableNext, skipButtonText, backButtonText, nextButtonText, doneButtonText);
         // Note to self: must append every to the body here so that we can modify the location of the bubble later
         $(document.body).append(Components.ui);
         _placeFloatBubble();
@@ -533,20 +555,24 @@ Components.prototype.createComponents = function (noButtons, showBack, showNext,
  * @param showBack        True to show Back Button
  * @param showNext        True to show Next Button, False to show Done Button
  * @param disableNext     True to disable Next and Done button
+ * @param {String} skipButtonText   The NLS text for Skip button
+ * @param {String} backButtonText   The NLS text for Back button
+ * @param {String} nextButtonText   The NLS text for Next button
+ * @param {String} doneButtonText   The NLS text for Done button
  */
-Components.prototype.modifyComponents = function (noButtons, showBack, showNext, disableNext) {
+Components.prototype.modifyComponents = function (noButtons, showBack, showNext, disableNext, skipButtonText, backButtonText, nextButtonText, doneButtonText) {
     Components.ui = Utils.getEleFromClassName(Constants.FLEXTOUR);
 
     if (!Utils.isFloatStep(Components.stepDescription)) {
         _modifyOverlays();
         _modifyBorderAroundTarget();
-        _modifyContentBubble(noButtons, showBack, showNext, disableNext);
+        _modifyContentBubble(noButtons, showBack, showNext, disableNext, skipButtonText, backButtonText, nextButtonText, doneButtonText);
         _modifyBubbleLocation();
-        Utils.smoothScroll(Components.rect);
+        _scrollMethod();
     } else {
         // The target element cannot be found which mean this is a floating step
         _addOverlay();
-        _modifyContentBubble(noButtons, showBack, showNext, disableNext);
+        _modifyContentBubble(noButtons, showBack, showNext, disableNext, skipButtonText, backButtonText, nextButtonText, doneButtonText);
         _modifyFloatBubble();
         Utils.scrollToTop();
     }
