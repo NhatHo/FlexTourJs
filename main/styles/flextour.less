@@ -1,7 +1,8 @@
 /********************* STYLES FOR FLEX TOUR ********************/
 /*** Override these variables with your own color styles ***/
 
-@OverlayBackground: rgba(0, 0, 0, 0.5);
+@OverlayBackground: rgb(0, 0, 0, 0.5);
+@Opacity: 0.3;
 @BorderColor: #666;
 @ShadowColor: #888;
 @BubbleBackground: #FFFFFF;
@@ -320,6 +321,10 @@ a.flextour-close {
 
 /*******************************OVERLAY STYLES***********************************/
 
+.flextour-overlay-blocks {
+  opacity: @Opacity;
+}
+
 .flextour-overlay-styles {
   position: absolute;
   z-index: 10;
@@ -343,6 +348,7 @@ a.flextour-close {
   -moz-transition: all 0.5s;
   -o-transition: all 0.5s;
   transition: all 0.5s;
+  z-index: 10;
 
   &.interactable {
     pointer-events: none;

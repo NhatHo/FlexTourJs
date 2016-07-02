@@ -680,7 +680,7 @@ var FlexTour =
 		function _getTopOverlay() {
 			return {
 				width: Utils.getFullWindowWidth() + Constants.PX,
-				height: Components.rect.top + Constants.PX,
+				height: Components.rect.top - Constants.BORDER_WIDTH + Constants.PX,
 				top: 0,
 				left: 0
 			};
@@ -692,8 +692,8 @@ var FlexTour =
 		function _getBottomOverlay() {
 			return {
 				width: Utils.getFullWindowWidth() + Constants.PX,
-				height: Utils.getFullWindowHeight() - Components.rect.bottom + Constants.PX,
-				top: Components.rect.bottom + Constants.PX,
+				height: Utils.getFullWindowHeight() - Components.rect.bottom - Constants.BORDER_WIDTH + Constants.PX,
+				top: Components.rect.bottom + Constants.BORDER_WIDTH + Constants.PX,
 				left: 0
 			};
 		}
@@ -703,10 +703,13 @@ var FlexTour =
 		 */
 		function _getLeftOverlay() {
 			// Put overlay over space on the left of target
+			// Reason for adding Overlap height is that because we use 4 separated overlays constructed based on target
+			// There is a really high chance that the overlays are not fit perfectly --> a small thin line will show --> UGLY.
+			// We set this overlay overlap the top and bottom overlay, and make them blend together to cover the thin line. 1px would work
 			return {
-				width: Components.rect.left + Constants.PX,
-				height: Components.rect.height + Constants.PX,
-				top: Components.rect.top + Constants.PX,
+				width: Components.rect.left - Constants.BORDER_WIDTH + Constants.PX,
+				height: Components.rect.height + Constants.OVERLAP_HEIGHT * 2 + Constants.BORDER_WIDTH * 2 + Constants.PX,
+				top: Components.rect.top - Constants.OVERLAP_HEIGHT - Constants.BORDER_WIDTH + Constants.PX,
 				left: 0
 			};
 		}
@@ -715,17 +718,21 @@ var FlexTour =
 		 * Add Right overlay next to target rect
 		 */
 		function _getRightOverlay() {
+			// Reason for adding Overlap height is that because we use 4 separated overlays constructed based on target
+			// There is a really high chance that the overlays are not fit perfectly --> a small thin line will show --> UGLY.
+			// We set this overlay overlap the top and bottom overlay, and make them blend together to cover the thin line. 1px would work
 			return {
-				width: Utils.getFullWindowWidth() - Components.rect.right + Constants.PX,
-				height: Components.rect.height + Constants.PX,
-				top: Components.rect.top + Constants.PX,
-				left: Components.rect.right + Constants.PX
+				width: Utils.getFullWindowWidth() - Components.rect.right - Constants.BORDER_WIDTH + Constants.PX,
+				height: Components.rect.height + Constants.OVERLAP_HEIGHT * 2 + Constants.BORDER_WIDTH * 2 + Constants.PX,
+				top: Components.rect.top - Constants.OVERLAP_HEIGHT - Constants.BORDER_WIDTH + Constants.PX,
+				left: Components.rect.right + Constants.BORDER_WIDTH + Constants.PX
 			};
 		}
 
 		/**
 		 * Generate generic overlay from given width, height, top and left
 		 * @param locationObj     Object that contains width, height, top and left attributes for overlay
+		 * @return {object|*}       The DOM block that contains all overlays
 		 */
 		function _createOverlayNode(locationObj) {
 			let overlay = $(Constants.DIV_COMP, {
@@ -734,7 +741,7 @@ var FlexTour =
 				"height": locationObj.height
 			});
 			overlay.css({top: locationObj.top, left: locationObj.left});
-			overlay.appendTo(Components.ui);
+			return overlay;
 		}
 
 		/**
@@ -742,10 +749,18 @@ var FlexTour =
 		 * Keep the same pattern as the padding. Top->Right->Bottom->Left
 		 */
 		function _addOverlays() {
-			_createOverlayNode(_getTopOverlay());
-			_createOverlayNode(_getRightOverlay());
-			_createOverlayNode(_getBottomOverlay());
-			_createOverlayNode(_getLeftOverlay());
+			let overlayDiv = Utils.getEleFromClassName(Constants.OVERLAY_BLOCK, true);
+			if (!Utils.hasELement(overlayDiv)) {
+				overlayDiv = $(Constants.DIV_COMP, {
+					"class": Constants.OVERLAY_BLOCK
+				});
+			}
+			overlayDiv.append(_createOverlayNode(_getTopOverlay()));
+			overlayDiv.append(_createOverlayNode(_getRightOverlay()));
+			overlayDiv.append(_createOverlayNode(_getBottomOverlay()));
+			overlayDiv.append(_createOverlayNode(_getLeftOverlay()));
+
+			overlayDiv.appendTo(Components.ui);
 		}
 
 		/**
@@ -783,19 +798,36 @@ var FlexTour =
 		 * Check if already there is a UNIQUE Overlay in the DOM, if yes don't do anyway, if not create 1 and add to the DOM
 		 */
 		function _addOverlay() {
+			let overlayDiv = $(Constants.DIV_COMP, {
+				"class": Constants.OVERLAY_BLOCK
+			});
+			overlayDiv(_createOverlayNode({
+				width: Utils.getFullWindowWidth() + Constants.PX,
+				height: Utils.getFullWindowHeight() + Constants.PX,
+				top: 0,
+				left: 0
+			}));
+			overlayDiv.appendTo(Components.ui);
+		}
+
+		/**
+		 * Check if there are 4 overlays, remove them all then add a single overlay.
+		 * If there is exactly 1 overlay, leave it be because it already covers the whole screen.
+		 */
+		function _modifyOverlay() {
 			let overlays = Utils.getElesFromClassName(Constants.OVERLAY_STYLE);
+			let overlayDiv = Utils.getEleFromClassName(Constants.OVERLAY_BLOCK, true);
 			if (Utils.hasELement(overlays)) {
 				if (overlays.length !== 1) {
 					overlays.remove();
-					_createOverlayNode({
+					overlayDiv.append(_createOverlayNode({
 						width: Utils.getFullWindowWidth() + Constants.PX,
 						height: Utils.getFullWindowHeight() + Constants.PX,
 						top: 0,
 						left: 0
-					});
+					}));
 				}
 			}
-
 		}
 
 		/**
@@ -1220,7 +1252,7 @@ var FlexTour =
 				_scrollMethod();
 			} else {
 				// The target element cannot be found which mean this is a floating step
-				_addOverlay();
+				_modifyOverlay();
 				_modifyContentBubble(noButtons, showBack, showNext, disableNext, skipButtonText, backButtonText, nextButtonText, doneButtonText);
 				_modifyFloatBubble();
 				Utils.scrollToTop();
@@ -1256,6 +1288,7 @@ var FlexTour =
 			IS_VISIBLE: "isVisible",
 			DOES_EXIST: "doesExist",
 			OVERLAY_STYLE: "flextour-overlay-styles",
+			OVERLAY_BLOCK: "flextour-overlay-blocks",
 
 			FLEXTOUR: "flextour",
 
@@ -1337,6 +1370,7 @@ var FlexTour =
 
 			TIMES: "&times;",
 			BORDER_WIDTH: 3,
+			OVERLAP_HEIGHT: 1,
 			ARROW_SIZE: 20,
 			PX: "px",
 

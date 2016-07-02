@@ -13,6 +13,7 @@ module.exports = {
     IS_VISIBLE: "isVisible",
     DOES_EXIST: "doesExist",
     OVERLAY_STYLE: "flextour-overlay-styles",
+    OVERLAY_BLOCK: "flextour-overlay-blocks",
 
     FLEXTOUR: "flextour",
 
@@ -94,6 +95,7 @@ module.exports = {
 
     TIMES: "&times;",
     BORDER_WIDTH: 3,
+    OVERLAP_HEIGHT: 1,
     ARROW_SIZE: 20,
     PX: "px",
 

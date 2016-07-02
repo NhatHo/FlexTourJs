@@ -303,10 +303,13 @@ a.flextour-close:hover {
   color: #4F2F2F;
 }
 /*******************************OVERLAY STYLES***********************************/
+.flextour-overlay-blocks {
+  opacity: 0.3;
+}
 .flextour-overlay-styles {
   position: absolute;
   z-index: 10;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: #000000;
   /*Enough to dim the back ground*/
   -webkit-transition: all 0.5s;
   -moz-transition: all 0.5s;
@@ -325,6 +328,7 @@ a.flextour-close:hover {
   -moz-transition: all 0.5s;
   -o-transition: all 0.5s;
   transition: all 0.5s;
+  z-index: 10;
 }
 .flextour-target-border.interactable {
   pointer-events: none;
