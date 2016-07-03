@@ -4,7 +4,7 @@
  ******************************************************************************/
 
 let Constants = require("./Constants");
-let $ = require("./../../node_modules/jquery/dist/jquery.min");
+let $ = require("./../node_modules/jquery/dist/jquery.min.js");
 
 module.exports = {
     /**

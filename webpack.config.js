@@ -1,8 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2016. MIT License.
+ * NhatHo-nhatminhhoca@gmail.com
+ ******************************************************************************/
+
 module.exports = {
-    entry: "./main/scripts/FlexTour.js",
+    entry: "./main/FlexTour.js",
     output: {
         path: __dirname,
-        filename: "framework.js",
+        filename: "./dist/flextour.js",
         libraryTarget: "var",
         library: "FlexTour"
     },

@@ -5,7 +5,7 @@
 
 let Constants = require("./Constants");
 let Utils = require("./Utilities");
-let $ = require("./../../node_modules/jquery/dist/jquery.min");
+let $ = require("./../node_modules/jquery/dist/jquery.min.js");
 
 function Components(stepDescription) {
     Components.stepDescription = $.extend({}, stepDescription);
@@ -562,17 +562,17 @@ function _scrollMethod() {
  */
 Components.prototype.createComponents = function (noButtons, showBack, showNext, disableNext, skipButtonText, backButtonText, nextButtonText, doneButtonText) {
     if (!Utils.isFloatStep(Components.stepDescription)) {
-        _addOverlays();
         _addBorderAroundTarget();
         _createContentBubble(noButtons, showBack, showNext, disableNext, skipButtonText, backButtonText, nextButtonText, doneButtonText);
+        _addOverlays();
         // Note to self: must append every to the body here so that we can modify the location of the bubble later
         $(document.body).append(Components.ui);
         _placeBubbleLocation();
         _scrollMethod();
     } else {
         // The target element cannot be found which mean this is a floating step
-        _addOverlay();
         _createContentBubble(noButtons, showBack, showNext, disableNext, skipButtonText, backButtonText, nextButtonText, doneButtonText);
+        _addOverlay();
         // Note to self: must append every to the body here so that we can modify the location of the bubble later
         $(document.body).append(Components.ui);
         _placeFloatBubble();
@@ -596,16 +596,16 @@ Components.prototype.modifyComponents = function (noButtons, showBack, showNext,
     Components.ui = Utils.getEleFromClassName(Constants.FLEXTOUR);
 
     if (!Utils.isFloatStep(Components.stepDescription)) {
-        _modifyOverlays();
         _modifyBorderAroundTarget();
         _modifyContentBubble(noButtons, showBack, showNext, disableNext, skipButtonText, backButtonText, nextButtonText, doneButtonText);
+        _modifyOverlays();
         _modifyBubbleLocation();
         _scrollMethod();
     } else {
         // The target element cannot be found which mean this is a floating step
-        _modifyOverlay();
         _modifyContentBubble(noButtons, showBack, showNext, disableNext, skipButtonText, backButtonText, nextButtonText, doneButtonText);
         _modifyFloatBubble();
+        _modifyOverlay();
         Utils.scrollToTop();
     }
 };

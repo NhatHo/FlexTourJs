@@ -6,7 +6,7 @@
 let Components = require("./Components");
 let Constants = require("./Constants");
 let Utils = require("./Utilities");
-let $ = require("./../../node_modules/jquery/dist/jquery.min");
+let $ = require("./../node_modules/jquery/dist/jquery.min.js");
 
 /**
  * Pre-process all information for all tours make sure each step and each tour contains necessary
