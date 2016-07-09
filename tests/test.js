@@ -4,7 +4,8 @@
  ******************************************************************************/
 
 let actionsList = {};
-actionsList.action1 = function () {
+actionsList.action1 = function (currentStep) {
+    currentStep.position = "top";
     return true;
 };
 actionsList.action2 = function () {
@@ -21,6 +22,10 @@ let tourDesc = [{
     endOnOverlayClick: true,
     canInteract: false,
     waitIntervals: 1000,
+    nextButton: "Tiep",
+    backButton: "Quay",
+    skipButton: "Bo",
+    doneButton: "Xong",
     retries: 20,
     steps: [{
         title: "First Step of the thing",
@@ -28,15 +33,19 @@ let tourDesc = [{
         position: "right",
         skip: 5,
         target: "#title",
-        type: "info"
+        type: "info",
+        prerequisites: ["action1"]
     }, {
         title: "Second Step of the thing",
         content: "Header level 2",
         position: "bottom",
-        target: "#title2",
+        target: "#testBlock",
         type: "action",
-        nextOnTargetClick: true,
-        prerequisites: ["action2"]
+        nextStepTrigger: "#nextButtonTest",
+        prerequisites: ["action2"],
+        nextButton: "Next",
+        backButton: "Back",
+        doneButton: "Yay"
     }, {
         content: "Random Header",
         position: "bottom",
@@ -58,7 +67,7 @@ let tourDesc = [{
         content: "Open Modal",
         position: "right",
         target: "#myBtn",
-        nextOnTargetClick: true,
+        nextStepTrigger: "@target@",
         type: "action"
     }, {
         content: "Please wait for Modal",

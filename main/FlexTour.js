@@ -44,9 +44,17 @@ function _initializeTour(tour) {
         currentStep[Constants.NO_BUTTONS] = currentStep[Constants.NO_BUTTONS] || rawTour[Constants.NO_BUTTONS];
         currentStep[Constants.DELAY] = currentStep[Constants.DELAY] || rawTour[Constants.DELAY];
         currentStep[Constants.NO_BACK] = currentStep[Constants.NO_BACK] || rawTour[Constants.NO_BACK];
-        currentStep[Constants.CAN_INTERACT] = currentStep[Constants.CAN_INTERACT] || currentStep[Constants.NEXT_ON_TARGET] || rawTour[Constants.CAN_INTERACT]; // This mean that if target can trigger next step on click, it must be clickable
+        currentStep[Constants.CAN_INTERACT] = currentStep[Constants.CAN_INTERACT] || currentStep[Constants.NEXT_STEP_TRIGGER] || rawTour[Constants.CAN_INTERACT]; // This mean that if target can trigger next step on click, it must be clickable
         currentStep[Constants.WAIT_INTERVALS] = currentStep[Constants.WAIT_INTERVALS] || rawTour[Constants.WAIT_INTERVALS];
         currentStep[Constants.RETRIES] = currentStep[Constants.RETRIES] || rawTour[Constants.RETRIES];
+        currentStep[Constants.NEXT_BUTTON_CUS] = currentStep[Constants.NEXT_BUTTON_CUS] || rawTour[Constants.NEXT_BUTTON_CUS];
+        currentStep[Constants.BACK_BUTTON_CUS] = currentStep[Constants.BACK_BUTTON_CUS] || rawTour[Constants.BACK_BUTTON_CUS];
+        currentStep[Constants.SKIP_BUTTON_CUS] = currentStep[Constants.SKIP_BUTTON_CUS] || rawTour[Constants.SKIP_BUTTON_CUS];
+        currentStep[Constants.DONE_BUTTON_CUS] = currentStep[Constants.DONE_BUTTON_CUS] || rawTour[Constants.DONE_BUTTON_CUS];
+        let currentTarget = currentStep[Constants.NEXT_STEP_TRIGGER];
+        if (currentTarget && currentTarget === Constants.CURRENT_TARGET) {
+            currentStep[Constants.NEXT_STEP_TRIGGER] = currentStep[Constants.TARGET];
+        }
     }
     FlexTour.toursMap.push(rawTour);
 }
@@ -80,7 +88,7 @@ function _centralOrganizer(stepDesc, newStep) {
             showNext = true;
         }
 
-        if (stepDesc[Constants.NEXT_ON_TARGET]) {
+        if (stepDesc[Constants.NEXT_STEP_TRIGGER]) {
             disableNext = true;
         }
 
@@ -88,16 +96,11 @@ function _centralOrganizer(stepDesc, newStep) {
             showBack = true;
         }
 
-        let nextButtonText = FlexTour.currentTour[Constants.NEXT_BUTTON_CUS] || Constants.NEXT_TEXT,
-            backButtonText = FlexTour.currentTour[Constants.BACK_BUTTON_CUS] || Constants.BACK_TEXT,
-            skipButtonText = FlexTour.currentTour[Constants.SKIP_BUTTON_CUS] || Constants.SKIP_TEXT,
-            doneButtonText = FlexTour.currentTour[Constants.DONE_BUTTON_CUS] || Constants.DONE_TEXT;
-
         /**
          * Create components can be only called once when the tour start for the first time.
          */
         if (!FlexTour.running) {
-            FlexTour.Component.createComponents(noButtons, showBack, showNext, disableNext, skipButtonText, backButtonText, nextButtonText, doneButtonText);
+            FlexTour.Component.createComponents(noButtons, showBack, showNext, disableNext);
             FlexTour.running = true;
             _addResizeWindowListener();
             _addKeyBoardListener();
@@ -108,7 +111,7 @@ function _centralOrganizer(stepDesc, newStep) {
             }
 
         } else {
-            FlexTour.Component.modifyComponents(noButtons, showBack, showNext, disableNext, skipButtonText, backButtonText, nextButtonText, doneButtonText);
+            FlexTour.Component.modifyComponents(noButtons, showBack, showNext, disableNext);
         }
 
         // Add event to Skip button if it exist
@@ -124,8 +127,8 @@ function _centralOrganizer(stepDesc, newStep) {
          * When this is a new step, attach event handlers to it. Otherwise skip.
          */
         if (newStep) {
-            if (Utils.isValid(stepDesc[Constants.NEXT_ON_TARGET])) {
-                _addClickEventOnTargetClick(stepDesc);
+            if (Utils.isValid(stepDesc[Constants.NEXT_STEP_TRIGGER])) {
+                _addClickEventOnTargetClick(stepDesc[Constants.NEXT_STEP_TRIGGER]);
             }
             if (Utils.isValid(stepDesc[Constants.MODAL])) {
                 _bindScrollListener();
@@ -161,11 +164,12 @@ function _addClickEvents() {
 
 /**
  * This function get attached only when the step has NextOnTargetClick set to true
+ * @param nextTrigger {String}      QuerySelector string for next Trigger
  */
-function _addClickEventOnTargetClick(currentStep) {
-    let currentTarget = $(currentStep[Constants.TARGET]);
-    if (Utils.hasELement(currentTarget)) {
-        Utils.addEvent(currentTarget, Constants.FLEX_CLICK, _nextStep);
+function _addClickEventOnTargetClick(nextTrigger) {
+    let nextTriggerTarget = $(nextTrigger);
+    if (Utils.hasELement(nextTriggerTarget)) {
+        Utils.addEvent(nextTriggerTarget, Constants.FLEX_CLICK, _nextStep);
     }
 }
 
@@ -187,40 +191,31 @@ function _removeEvents() {
 /**
  * Remove the event listener for nextOnTargetClick
  */
-function _removeClickEventOnTargetClick(currentStep) {
-    let currentTarget = $(currentStep[Constants.TARGET]);
-    if (Utils.hasELement(currentTarget)) {
-        Utils.removeEvent(currentTarget, Constants.FLEX_CLICK); //Remove this event listener
+function _removeClickEventOnTargetClick(nextTrigger) {
+    let nextTriggerTarget = $(nextTrigger);
+    if (Utils.hasELement(nextTriggerTarget)) {
+        Utils.removeEvent(nextTriggerTarget, Constants.FLEX_CLICK); //Remove this event listener
     }
 }
 
 /**
  * THIS PART RIGHT HERE IS WHAT MAKE FLEXTOUR DIFFERENT FROM OTHER ENGINES.
  *
- *
- * IMPORTANT: It's the developer job to know if the previous step can be reached. If the previous step should not be REACHED, set "noBack: true" in step description. Samething for SKIP_INDICATOR Button.
- * Check if the next, previous or skip step is allowed to be executed.
- * The prerequisites array can contain up to 3 types:
- *  -- Prerequisite functions: regular function name. I.e: "getInputString", etc.
- *  -- Wait Conditions: Start with "?" and use ":" to separate DOM element from function nanme. i.e: ?isVisible:#target1", etc.
- *  -- Skip Condition: Start with "!" and follow with function name. i.e: "!checkWhateverYouWant", etc.
- * In order for the transition to happen, all functions in prerequisites must return true. The result of each one will be ANDed together.
- *
- * Whenever a prerequisite function return false, the whole thing will return false.
- *
- * When a Wait Condition return false, it will schedule and execute the function again after a waitInterval.
- * If you want to make sure several DOM elements should be waited for, use Comma separator to indicate.
- * When number of retries = 0 it will go to the next prerequsite.
- * If the next prerequisite doesn't exist then it will return false.
- * Ideally there should be only 1 Wait Condition in the list.
- * So you should check everything in this 1 function.
- * If you want to use isVisible, doesExist condition and your own condition, set Retries entry in the tour so it will be reset to that.
- *
- * When a skip condition should be the last one in the list, this is a fail safe measurement for small branching method.
- * In this function you should check if the next step or 2 step from now should be skipped.
- * However, it's developer job to make sure that the step after skipped should be available, otherwise the engine will stop.
- *
- * NOTE: Each prerequisite will be executed in turn. Except for in waitCondition, which will stay until retries reaches 0 then proceeds to the next prerequisite.
+ * This function resolves "prerequisites": [] attribute in the step description.
+ * There are 3 different functions that will define the flow of the tour:
+ * 1. Prerequisite functions:
+ *      - Syntax: ["Function Name", ...]
+ *      - Logic: Each function name correspond to a function in actionsList. At any point a prerequisite function return false, the flow will be stopped. --> All prerequisites MUST return true to continue.
+ * 2. Wait For Functions:
+ *      - Syntax: ["?FunctionName:params", ...]
+ *      - Logic: Similar to prerequisite, funciton name must be registered in actionsList. The params will be passed into the function.
+ *      There are 2 default functions: isVisible, doesExist which check if given DOM elemnts are visible, or exist respectively. You can also create your own custom functions to do the check.
+ *      When the wait for function returns false, FlexTourJS will retry after a set time interval, until it runs out of retries then it would proceed to the next function on the list.
+ * 3. Proceed If Function:
+ *      - Syntax: ["!FunctionName:params", ...]
+ *      - Logic: This function directly branchese the tour flow when needed. When this function returns false, the next step will not be processed, but it will branch to wherever "skip" attribute defines. If "skip" attribute is not defined, it will skip 2 steps ahead.
+ *      When this function returns true, it will continue the flow as normal.
+ *      This function can be used as a fail-safe measure, when all prerequisites seems to passed, but the target of next step will not be AVAILABLE (server error, etc.) this function will make sure your tour won't fail helplessly.
  *
  * @param possibleStepNumber    Step number to be checked for conditions. This is the future step, could be next 2 steps ahead.
  * @param currPrerequisite      Counter to signal which condition where are checking right now.
@@ -234,7 +229,7 @@ function _isAllowToMove(possibleStepNumber, currPrerequisite) {
         if (prerequisite.indexOf(Constants.WAIT) > -1) {
             let prerequisiteBlock = prerequisite.split(Constants.WAIT)[1].trim();
 
-            let temporaryResult = _executePrerequisiteCondition(possibleStep, prerequisiteBlock);
+            let temporaryResult = _executePrerequisiteCondition(possibleStepNumber, prerequisiteBlock);
 
             if (!temporaryResult) {
                 if (possibleStep[Constants.RETRIES] === 0) {
@@ -259,26 +254,15 @@ function _isAllowToMove(possibleStepNumber, currPrerequisite) {
                 // Move to the next prerequisite when the Wait for condition is met.
                 return _isAllowToMove(possibleStepNumber, ++currPrerequisite);
             }
-        } else if (prerequisite.indexOf(Constants.SKIP_INDICATOR) > -1) {
+        } else if (prerequisite.indexOf(Constants.PROCEED_INDICATOR) > -1) {
             /**
              * The syntax is: "!funcName:params". For sure the 2nd element after split is funcName
              *
-             * IMPORTANT: as mentioned before, this should be the last on the list.
-             * When this is false it will autmatically increment the FlexTour.currentStepNumber to the step indicated in "skip" attribute which effectively skip the current possible step.
-             *
-             * This might be hard to wrap your head around. Skip function has to return false for the step to be skipped, if it return true, the proceed to that next step.
-             * So in order for you to skip the step, your custom function must return false.
-             *
-             * REASONING: Treat this as a prerequisite, the condition must be met (true) for the tour to flow normally, if the condition is NOT met (false), the tour will skipped the step as indicated. Works well with isVisible, and doesExist.
-             * These will check the condition, if condition is true then stay. If condition is false then skip.
-             *
-             * Meaning if you are expecting a list of elements to be visible or at least exist before proceeding, the condition will return true and the engine will proceed to next step.
-             * If any of the elements do not meet the requirement (return false), most likely the UI does not render as expected and proceeding to that step will fail --> skip it.
              */
 
-            let prerequisiteBlock = prerequisite.split(Constants.SKIP_INDICATOR)[1].trim();
+            let prerequisiteBlock = prerequisite.split(Constants.PROCEED_INDICATOR)[1].trim();
 
-            if (!_executePrerequisiteCondition(possibleStep, prerequisiteBlock)) {
+            if (!_executePrerequisiteCondition(possibleStepNumber, prerequisiteBlock)) {
                 let skipNumber = possibleStep[Constants.SKIP];
                 if (possibleStepNumber > FlexTour.currentStepNumber) {
                     // If the tour is going forward then skip it forward
@@ -297,7 +281,7 @@ function _isAllowToMove(possibleStepNumber, currPrerequisite) {
             return true;
         } else {
             // This is the regular prerequisite function
-            if (Utils.executeFunctionWithName(prerequisite, FlexTour.actionsList)) {
+            if (executeFunctionWithName(prerequisite, possibleStepNumber)) {
                 return _isAllowToMove(possibleStepNumber, ++currPrerequisite);
             }
             // Return false immediately if the result is false. The prerequisite condition is not met
@@ -311,12 +295,26 @@ function _isAllowToMove(possibleStepNumber, currPrerequisite) {
 }
 
 /**
+ * Execute the function with given name in a given lists of function.
+ * Make sure that the function exists in the list before executing it.
+ * @param functionName {String}     The name of the given function
+ * @param stepNumber {Number}      The possible step that is being tested
+ */
+function executeFunctionWithName(functionName, stepNumber) {
+    if (typeof FlexTour.actionsList[functionName] === "function") {
+        return FlexTour.actionsList[functionName].call(this, FlexTour.currentTour[Constants.STEPS][stepNumber]);
+    }
+    // If the given function name exist in the list, return false to halt the process. Because this could cause the flow to break.
+    return false;
+}
+
+/**
  * Execute block where wait condition and skip condition. Split things up to condition name and parameters.
  * Execute them accordingly. Either isVisible, doesExist (built-in) functions or custom functions
- * @param stepDesc      Description of the step
+ * @param stepNumber    Index of possible step
  * @param prerequisite  The prerequisite block after removing ! and ? from it.
  */
-function _executePrerequisiteCondition(stepDesc, prerequisite) {
+function _executePrerequisiteCondition(stepNumber, prerequisite) {
     // This is the most complex one in all. There are 3 parts to waitFor: "?condName:el1,el2,el3"
     // First split the COLON Separator.
     let tokens = prerequisite.split(Constants.COLON);
@@ -332,7 +330,7 @@ function _executePrerequisiteCondition(stepDesc, prerequisite) {
 
         let indexOfCurrentTarget = elementsList.indexOf(Constants.CURRENT_TARGET);
         if (indexOfCurrentTarget !== -1) {
-            elementsList[indexOfCurrentTarget] = stepDesc[Constants.TARGET];
+            elementsList[indexOfCurrentTarget] = FlexTour.currentTour[Constants.STEPS][stepNumber][Constants.TARGET];
         }
 
         if (condName === Constants.IS_VISIBLE) {
@@ -346,7 +344,7 @@ function _executePrerequisiteCondition(stepDesc, prerequisite) {
             }
         }
     } else {
-        return Utils.executeFunctionWithName(condName, FlexTour.actionsList);
+        return executeFunctionWithName(condName, stepNumber);
     }
 
     return temporaryResult;
@@ -483,9 +481,9 @@ function _unbindScrollListener() {
  */
 function _cleanUpAfterStep() {
     let currentStep = FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber];
-    if (Utils.isValid(currentStep[Constants.NEXT_ON_TARGET])) {
+    if (Utils.isValid(currentStep[Constants.NEXT_STEP_TRIGGER])) {
         // Clean up next on target click here.
-        _removeClickEventOnTargetClick(currentStep);
+        _removeClickEventOnTargetClick(currentStep[Constants.NEXT_STEP_TRIGGER]);
     }
     if (currentStep[Constants.MODAL]) {
         _unbindScrollListener();
@@ -566,7 +564,7 @@ FlexTour.prototype.run = function () {
     let steps = FlexTour.currentTour[Constants.STEPS];
     if (Utils.isValid(steps)) {
         let firstStep = steps[FlexTour.currentStepNumber];
-        _centralOrganizer(firstStep, true);
+        _precheckForTransition(0, 0);
     }
 };
 

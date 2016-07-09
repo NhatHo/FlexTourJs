@@ -187,12 +187,8 @@ function _modifyOverlay() {
  * @param {boolean} showBack  True to show Back Button
  * @param {boolean} showNext  True to show Next Button, False to show Done Button
  * @param {boolean} disableNext  True to disable either Next or Done button
- * @param {String} skipButtonText   The NLS text for Skip button
- * @param {String} backButtonText   The NLS text for Back button
- * @param {String} nextButtonText   The NLS text for Next button
- * @param {String} doneButtonText   The NLS text for Done button
  */
-function _createContentBubble(noButtons, showBack, showNext, disableNext, skipButtonText, backButtonText, nextButtonText, doneButtonText) {
+function _createContentBubble(noButtons, showBack, showNext, disableNext) {
     let bubble = $(Constants.DIV_COMP, {
         "class": Constants.TOUR_BUBBLE
     });
@@ -225,30 +221,15 @@ function _createContentBubble(noButtons, showBack, showNext, disableNext, skipBu
         });
 
         if (Utils.isValid(Components.stepDescription[Constants.SKIP])) {
-            $(Constants.BUTTON_COMP, {
-                "class": Constants.SKIP_BUTTON,
-                text: skipButtonText
-            }).appendTo(buttonGroup);
+            _createSkipButton(buttonGroup);
         }
 
-        $(Constants.BUTTON_COMP, {
-            "class": Constants.BACK_BUTTON,
-            text: backButtonText,
-            disabled: !showBack
-        }).appendTo(buttonGroup);
+        _createBackButton(buttonGroup, showBack);
 
         if (showNext) {
-            $(Constants.BUTTON_COMP, {
-                "class": Constants.NEXT_BUTTON,
-                text: nextButtonText,
-                disabled: disableNext
-            }).appendTo(buttonGroup);
+            _createNextButton(buttonGroup, disableNext);
         } else {
-            $(Constants.BUTTON_COMP, {
-                "class": Constants.DONE_BUTTON,
-                text: doneButtonText,
-                disabled: disableNext
-            }).appendTo(buttonGroup);
+            _createDoneButton(buttonGroup, disableNext);
         }
 
         bubble.append(buttonGroup);
@@ -260,6 +241,88 @@ function _createContentBubble(noButtons, showBack, showNext, disableNext, skipBu
     }).appendTo(bubble);
 
     Components.ui.append(bubble);
+}
+
+/**
+ * Create skip button, use the customized content first, if it doesn't exist use the default one
+ * @param buttonGroup {Element}     Button group contains skip button
+ */
+function _createSkipButton(buttonGroup) {
+    $(Constants.BUTTON_COMP, {
+        "class": Constants.SKIP_BUTTON,
+        text: _getSkipButtonText()
+    }).appendTo(buttonGroup);
+}
+
+/**
+ * Get the text of skip button in current step. If it's not set, use default one
+ * @returns {*|string}  Skip button NLS text
+ */
+function _getSkipButtonText() {
+    return Components.stepDescription[Constants.SKIP_BUTTON_CUS] || Constants.SKIP_TEXT;
+}
+
+/**
+ * Create back button, put the text that users want to put for NLS. If it doesn't exist, use the default one
+ * @param buttonGroup {Element}     Button group contains back button
+ * @param showBack {Boolean}        Disable back button or not
+ */
+function _createBackButton(buttonGroup, showBack) {
+    $(Constants.BUTTON_COMP, {
+        "class": Constants.BACK_BUTTON,
+        text: _getBackButtonText(),
+        disabled: !showBack
+    }).appendTo(buttonGroup);
+}
+
+/**
+ * Get the text of back button in current step. If it's not set, use default one
+ * @returns {*|string}  Back button NLS text
+ */
+function _getBackButtonText() {
+    return Components.stepDescription[Constants.BACK_BUTTON_CUS] || Constants.BACK_TEXT;
+}
+
+/**
+ * Create next button, and put the text that users want to put for NLS purpose. If it doesn't exist, use the default one
+ * @param buttonGroup {Element}     Button group contains next button
+ * @param disableNext {Boolean}     Disable next button or not
+ */
+function _createNextButton(buttonGroup, disableNext) {
+    $(Constants.BUTTON_COMP, {
+        "class": Constants.NEXT_BUTTON,
+        text: _getNextButtonText(),
+        disabled: disableNext
+    }).appendTo(buttonGroup);
+}
+
+/**
+ * Get the text of next button in current step. If it's not set, use default one
+ * @returns {*|string}  Back button NLS text
+ */
+function _getNextButtonText() {
+    return Components.stepDescription[Constants.NEXT_BUTTON_CUS] || Constants.NEXT_TEXT;
+}
+
+/**
+ * Create done button, and put the text that users want to put for NLS purpose. If it doesn't exist, use the default one
+ * @param buttonGroup {Element}     Button group contains done button
+ * @param disableNext {Boolean}     Disable done button or not
+ */
+function _createDoneButton(buttonGroup, disableNext) {
+    $(Constants.BUTTON_COMP, {
+        "class": Constants.DONE_BUTTON,
+        text: _getDoneButtonText(),
+        disabled: disableNext
+    }).appendTo(buttonGroup);
+}
+
+/**
+ * Get the text of done button in current step. If it's not set, use default one
+ * @returns {*|string}  Back button NLS text
+ */
+function _getDoneButtonText() {
+    return Components.stepDescription[Constants.DONE_BUTTON_CUS] || Constants.DONE_TEXT;
 }
 
 /**
@@ -284,12 +347,8 @@ function _getIconType() {
  * @param {boolean} showBack  True to show Back Button
  * @param {boolean} showNext  True to show Next Button, False to show Done Button
  * @param {boolean} disableNext  True to disable either Next or Done button
- * @param {String} skipButtonText   The NLS text for Skip button
- * @param {String} backButtonText   The NLS text for Back button
- * @param {String} nextButtonText   The NLS text for Next button
- * @param {String} doneButtonText   The NLS text for Done button
  */
-function _modifyContentBubble(noButtons, showBack, showNext, disableNext, skipButtonText, backButtonText, nextButtonText, doneButtonText) {
+function _modifyContentBubble(noButtons, showBack, showNext, disableNext) {
     /*
      * First block try to modify the icon in the bubble
      */
@@ -350,49 +409,38 @@ function _modifyContentBubble(noButtons, showBack, showNext, disableNext, skipBu
         let skipButton = Utils.getEleFromClassName(Constants.SKIP_BUTTON, true);
         if (Utils.isValid(skipRequirement)) {
             if (!Utils.hasELement(skipButton)) {
-                $(Constants.BUTTON_COMP, {
-                    "class": Constants.SKIP_BUTTON,
-                    text: skipButtonText
-                }).appendTo(buttonGroup);
+                _createSkipButton(buttonGroup);
             }
+            skipButton.text(_getSkipButtonText());
         } else {
             if (Utils.hasELement(skipButton)) {
-                Utils.getEleFromClassName(Constants.SKIP_BUTTON, true).remove();
+                skipButton.remove();
             }
         }
 
         let backButton = Utils.getEleFromClassName(Constants.BACK_BUTTON, true);
         if (Utils.hasELement(backButton)) {
             backButton.prop('disabled', !showBack);
+            backButton.text(_getBackButtonText());
         } else {
-            $(Constants.BUTTON_COMP, {
-                "class": Constants.BACK_BUTTON,
-                text: backButtonText,
-                disabled: !showBack
-            }).appendTo(buttonGroup);
+            _createBackButton(buttonGroup, showBack);
         }
 
         if (showNext) {
             let nextButton = Utils.getEleFromClassName(Constants.NEXT_BUTTON, true);
             if (Utils.hasELement(nextButton)) {
                 nextButton.prop('disabled', disableNext);
+                nextButton.text(_getNextButtonText());
             } else {
-                $(Constants.BUTTON_COMP, {
-                    "class": Constants.NEXT_BUTTON,
-                    text: nextButtonText,
-                    disabled: disableNext
-                }).appendTo(buttonGroup);
+                _createNextButton(buttonGroup, disableNext);
             }
         } else {
             let doneButton = Utils.getEleFromClassName(Constants.DONE_BUTTON, true);
             if (Utils.hasELement(doneButton)) {
                 doneButton.prop('disabled', disableNext);
+                doneButton.text(_getDoneButtonText());
             } else {
-                $(Constants.BUTTON_COMP, {
-                    "class": Constants.DONE_BUTTON,
-                    text: doneButtonText,
-                    disabled: disableNext
-                }).appendTo(buttonGroup);
+                _createDoneButton(buttonGroup, disableNext);
             }
         }
         bubble.append(buttonGroup);
@@ -555,15 +603,11 @@ function _scrollMethod() {
  * @param showBack        True to show Back Button
  * @param showNext        True to show Next Button, False to show Done Button
  * @param disableNext     True to disable Next and Done button
- * @param {String} skipButtonText   The NLS text for Skip button
- * @param {String} backButtonText   The NLS text for Back button
- * @param {String} nextButtonText   The NLS text for Next button
- * @param {String} doneButtonText   The NLS text for Done button
  */
-Components.prototype.createComponents = function (noButtons, showBack, showNext, disableNext, skipButtonText, backButtonText, nextButtonText, doneButtonText) {
+Components.prototype.createComponents = function (noButtons, showBack, showNext, disableNext) {
     if (!Utils.isFloatStep(Components.stepDescription)) {
         _addBorderAroundTarget();
-        _createContentBubble(noButtons, showBack, showNext, disableNext, skipButtonText, backButtonText, nextButtonText, doneButtonText);
+        _createContentBubble(noButtons, showBack, showNext, disableNext);
         _addOverlays();
         // Note to self: must append every to the body here so that we can modify the location of the bubble later
         $(document.body).append(Components.ui);
@@ -571,7 +615,7 @@ Components.prototype.createComponents = function (noButtons, showBack, showNext,
         _scrollMethod();
     } else {
         // The target element cannot be found which mean this is a floating step
-        _createContentBubble(noButtons, showBack, showNext, disableNext, skipButtonText, backButtonText, nextButtonText, doneButtonText);
+        _createContentBubble(noButtons, showBack, showNext, disableNext);
         _addOverlay();
         // Note to self: must append every to the body here so that we can modify the location of the bubble later
         $(document.body).append(Components.ui);
@@ -587,23 +631,19 @@ Components.prototype.createComponents = function (noButtons, showBack, showNext,
  * @param showBack        True to show Back Button
  * @param showNext        True to show Next Button, False to show Done Button
  * @param disableNext     True to disable Next and Done button
- * @param {String} skipButtonText   The NLS text for Skip button
- * @param {String} backButtonText   The NLS text for Back button
- * @param {String} nextButtonText   The NLS text for Next button
- * @param {String} doneButtonText   The NLS text for Done button
  */
-Components.prototype.modifyComponents = function (noButtons, showBack, showNext, disableNext, skipButtonText, backButtonText, nextButtonText, doneButtonText) {
+Components.prototype.modifyComponents = function (noButtons, showBack, showNext, disableNext) {
     Components.ui = Utils.getEleFromClassName(Constants.FLEXTOUR);
 
     if (!Utils.isFloatStep(Components.stepDescription)) {
         _modifyBorderAroundTarget();
-        _modifyContentBubble(noButtons, showBack, showNext, disableNext, skipButtonText, backButtonText, nextButtonText, doneButtonText);
+        _modifyContentBubble(noButtons, showBack, showNext, disableNext);
         _modifyOverlays();
         _modifyBubbleLocation();
         _scrollMethod();
     } else {
         // The target element cannot be found which mean this is a floating step
-        _modifyContentBubble(noButtons, showBack, showNext, disableNext, skipButtonText, backButtonText, nextButtonText, doneButtonText);
+        _modifyContentBubble(noButtons, showBack, showNext, disableNext);
         _modifyFloatBubble();
         _modifyOverlay();
         Utils.scrollToTop();

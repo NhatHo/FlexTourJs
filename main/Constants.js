@@ -8,7 +8,7 @@ module.exports = {
     COLON: ":",
     COMMA: ",",
     WAIT: "?",
-    SKIP_INDICATOR: "!",
+    PROCEED_INDICATOR: "!",
     CURRENT_TARGET: "@target@",
     IS_VISIBLE: "isVisible",
     DOES_EXIST: "doesExist",
@@ -51,11 +51,9 @@ module.exports = {
     // Tour Attributes Block
     TOUR_DEFAULT_SETTINGS: {
         transition: {},
-        canInteract: true,
+        canInteract: false,
         noButtons: false,
         noBack: false,
-        noSkip: false,
-        stepNumber: true,
         endOnOverlayClick: true,
         endOnEsc: true
     },
@@ -71,7 +69,7 @@ module.exports = {
     PREREQUISITES: "prerequisites",
     TARGET: "target",
     POSITION: "position",
-    NEXT_ON_TARGET: "nextOnTargetClick",
+    NEXT_STEP_TRIGGER: "nextStepTrigger",
     WAIT_INTERVALS: "waitIntervals",
     RETRIES: "retries",
     END_ON_ESC: "endOnEsc",

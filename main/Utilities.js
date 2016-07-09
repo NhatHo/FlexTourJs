@@ -172,20 +172,6 @@ module.exports = {
     },
 
     /**
-     * Execute the function with given name in a given lists of function.
-     * Make sure that the function exists in the list before executing it.
-     * @param functionName      The name of the given function
-     * @param functionsList      The list that SHOULD contain the given function
-     */
-    executeFunctionWithName: function (functionName, functionsList) {
-        if (typeof functionsList[functionName] === "function") {
-            return functionsList[functionName].call();
-        }
-        // If the given function name exist in the list, return false to halt the process. Because this could cause the flow to break.
-        return false;
-    },
-
-    /**
      * Get max of Window height or document height
      * @returns {Number|number}     window width through 1 of 3 methods
      */
