@@ -15,6 +15,12 @@ actionsList.skipWhenElementIsNotShowed = function () {
     let isShowed = document.querySelector("#randomEle");
     return isShowed.style.display === "block";
 };
+actionsList.showAlert = function () {
+    alert("Hello you're stuck here.");
+};
+actionsList.showAlert2 = function () {
+    alert("Hello Alert 2 here, are you stuck again?");
+};
 
 let tourDesc = [{
     id: "test",
@@ -22,10 +28,6 @@ let tourDesc = [{
     endOnOverlayClick: true,
     canInteract: false,
     waitIntervals: 1000,
-    nextButton: "Tiep",
-    backButton: "Quay",
-    skipButton: "Bo",
-    doneButton: "Xong",
     retries: 20,
     steps: [{
         title: "First Step of the thing",
@@ -35,6 +37,14 @@ let tourDesc = [{
         target: "#title",
         type: "info",
         prerequisites: ["action1"]
+    }, {
+        title: "Drag and Drop Test",
+        content: "You must drag this thing",
+        position: "right",
+        target: "#draggable",
+        dragAndDrop: true,
+        type: "action",
+        noButtons: true
     }, {
         title: "Second Step of the thing",
         content: "Header level 2",
@@ -54,15 +64,29 @@ let tourDesc = [{
         type: "info",
         prerequisites: ["!skipWhenElementIsNotShowed"]
     }, {
+        content: "Standard block inside scroll",
+        target: "#ite1",
+        position: "right"
+    }, {
         content: "Header level 2 again",
         position: "left",
+        skip: 6,
         target: "#title3",
         type: "info",
         prerequisites: ["action1"]
     }, {
         content: "Big box of nothing",
         position: "top",
-        target: "#testbox"
+        target: "#testbox",
+        buttons: [{
+            name: "Alert",
+            buttonStyle: "flextour-next-button",
+            onclick: "showAlert"
+        }, {
+            name: "Alert 2",
+            buttonStyle: "flextour-back-button",
+            onclick: "showAlert2"
+        }]
     }, {
         content: "Open Modal",
         position: "right",
@@ -82,6 +106,12 @@ let tourDesc = [{
         delay: 600,
         noBack: true,
         prerequisites: ["action1", "?isVisible:@target@"]
+    }, {
+        content: "Child Element",
+        position: "left",
+        scrollLock: true,
+        target: "#item3",
+        modal: true
     }]
 }];
 
@@ -127,3 +157,16 @@ if (randomNum % 2 === 0) {
     random.style.display = "none";
 }
 
+function drag(event) {
+    localStorage.setItem("text", event.target.id);
+}
+
+function drop(event) {
+    event.preventDefault();
+    var data = localStorage.getItem("text");
+    event.target.appendChild(document.getElementById(data));
+}
+
+function allowDrop(event) {
+    event.preventDefault();
+}

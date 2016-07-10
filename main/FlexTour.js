@@ -30,7 +30,6 @@ function _preprocessingTours(tourDesc) {
 function _initializeTour(tour) {
     let rawTour = $.extend(true, {}, tour);
     // Fill in information for each tour in case any important information is missing
-    rawTour[Constants.ID] = rawTour[Constants.ID] || Constants.TOUR + i;
     rawTour = $.extend({}, Constants.TOUR_DEFAULT_SETTINGS, rawTour);
 
     // Fill in information for each step in case anything important is missing
@@ -44,7 +43,7 @@ function _initializeTour(tour) {
         currentStep[Constants.NO_BUTTONS] = currentStep[Constants.NO_BUTTONS] || rawTour[Constants.NO_BUTTONS];
         currentStep[Constants.DELAY] = currentStep[Constants.DELAY] || rawTour[Constants.DELAY];
         currentStep[Constants.NO_BACK] = currentStep[Constants.NO_BACK] || rawTour[Constants.NO_BACK];
-        currentStep[Constants.CAN_INTERACT] = currentStep[Constants.CAN_INTERACT] || currentStep[Constants.NEXT_STEP_TRIGGER] || rawTour[Constants.CAN_INTERACT]; // This mean that if target can trigger next step on click, it must be clickable
+        currentStep[Constants.CAN_INTERACT] = currentStep[Constants.CAN_INTERACT] || currentStep[Constants.NEXT_STEP_TRIGGER] || currentStep[Constants.DND] || rawTour[Constants.CAN_INTERACT]; // This mean that if target can trigger next step on click, it must be clickable
         currentStep[Constants.WAIT_INTERVALS] = currentStep[Constants.WAIT_INTERVALS] || rawTour[Constants.WAIT_INTERVALS];
         currentStep[Constants.RETRIES] = currentStep[Constants.RETRIES] || rawTour[Constants.RETRIES];
         currentStep[Constants.NEXT_BUTTON_CUS] = currentStep[Constants.NEXT_BUTTON_CUS] || rawTour[Constants.NEXT_BUTTON_CUS];
@@ -54,6 +53,20 @@ function _initializeTour(tour) {
         let currentTarget = currentStep[Constants.NEXT_STEP_TRIGGER];
         if (currentTarget && currentTarget === Constants.CURRENT_TARGET) {
             currentStep[Constants.NEXT_STEP_TRIGGER] = currentStep[Constants.TARGET];
+        }
+
+        /**
+         * Get the functions correspond to the onClick function name describe in customized buttons
+         */
+        let currentStepCustomizedButtons = currentStep[Constants.BUTTONS_CUS] || rawTour[Constants.BUTTONS_CUS];
+        if (Utils.isValid(currentStepCustomizedButtons)) {
+            for (let i = 0; i < currentStepCustomizedButtons.length; i++) {
+                let onClickFunctionName = currentStepCustomizedButtons[i][Constants.ONCLICK_NAME];
+                if (FlexTour.actionsList.hasOwnProperty(onClickFunctionName)) {
+                    currentStepCustomizedButtons[i][Constants.ONCLICK_NAME] = FlexTour.actionsList[onClickFunctionName];
+                }
+            }
+            currentStep[Constants.BUTTONS_CUS] = currentStepCustomizedButtons;
         }
     }
     FlexTour.toursMap.push(rawTour);
@@ -138,6 +151,10 @@ function _centralOrganizer(stepDesc, newStep) {
 
             if (Utils.isValid(stepDesc[Constants.SCROLL_LOCK])) {
                 _blockScrolling();
+            }
+
+            if (Utils.isDnDStep(stepDesc)) {
+                _dragStartPause(stepDesc[Constants.TARGET]);
             }
         }
     } else {
@@ -255,11 +272,6 @@ function _isAllowToMove(possibleStepNumber, currPrerequisite) {
                 return _isAllowToMove(possibleStepNumber, ++currPrerequisite);
             }
         } else if (prerequisite.indexOf(Constants.PROCEED_INDICATOR) > -1) {
-            /**
-             * The syntax is: "!funcName:params". For sure the 2nd element after split is funcName
-             *
-             */
-
             let prerequisiteBlock = prerequisite.split(Constants.PROCEED_INDICATOR)[1].trim();
 
             if (!_executePrerequisiteCondition(possibleStepNumber, prerequisiteBlock)) {
@@ -493,6 +505,13 @@ function _cleanUpAfterStep() {
     if (Utils.isValid(currentStep[Constants.SCROLL_LOCK])) {
         _unblockScrolling();
     }
+
+    if (Utils.isValid(currentStep[Constants.BUTTONS_CUS])) {
+        let buttons = currentStep[Constants.BUTTONS_CUS];
+        for (let i = 0; i < buttons.length; i++) {
+            Utils.removeEvent(Utils.getEleFromClassName(buttons[i][Constants.BUTTON_STYLE], true), Constants.FLEX_CLICK);
+        }
+    }
 }
 
 /**
@@ -521,16 +540,46 @@ function _unblockScrolling() {
 }
 
 /**
- * Clean up everything when the tour is exited. This is to prevent memory leaks for attached events in DOM elements.
- * Remove all components and set the running flag to false, and set currentStepNumber to false
+ * Attach event to pause the tour engine when users start dragging something.
+ * Syntax: {Boolean}. If it's set to true, it will temporarily remove all overlays and let users drag at will.
+ * @param stepTarget {String}     DOM Selector string for current step target
  */
-function _exit() {
+function _dragStartPause(stepTarget) {
+    Utils.addEvent($(stepTarget), Constants.DRAG_START, _removeAndUnbind);
+    Utils.addEvent($(stepTarget), Constants.DRAG_END, function __moveOnDropTarget(stepTarget) {
+        _precheckForTransition(FlexTour.currentStepNumber + 1, 0);
+        _dragEndResume(stepTarget);
+    });
+}
+
+/**
+ * Resume the tour engine when users drop the element into whereever they want.
+ * onDrop event, the tour will resume to the next step and resume all overlays.
+ * @param stepTarget {String}     DOM Selector string for current step target
+ */
+function _dragEndResume(stepTarget) {
+    Utils.removeEvent($(stepTarget), Constants.DRAG_START);
+    Utils.removeEvent($(stepTarget), Constants.DRAG_END);
+}
+
+/**
+ * Function to remove everything and unbind all events. However, this doesn't stop the tour. This function will be reused for DnD, pause tour on request.
+ */
+function _removeAndUnbind() {
     _unbindResizeWindowListener();
     _unbindKeyboardListener();
     _cleanUpAfterStep();
 
     FlexTour.Component.removeComponents();
     FlexTour.running = false; // Reset this flag when users quit the tour
+}
+
+/**
+ * Clean up everything when the tour is exited. This is to prevent memory leaks for attached events in DOM elements.
+ * Remove all components and set the running flag to false, and set currentStepNumber to false
+ */
+function _exit() {
+    _removeAndUnbind();
     FlexTour.currentStepNumber = 0;
 }
 

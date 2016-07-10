@@ -215,24 +215,26 @@ function _createContentBubble(noButtons, showBack, showNext, disableNext) {
 
     bubble.append(contentBlock);
 
-    if (!noButtons) {
-        let buttonGroup = $(Constants.DIV_COMP, {
-            "class": Constants.BUTTON_GROUP
-        });
+    let buttonGroup = $(Constants.DIV_COMP, {
+        "class": Constants.BUTTON_GROUP
+    });
+    bubble.append(buttonGroup);
 
+    if (Utils.isValid(Components.stepDescription[Constants.BUTTONS_CUS])) {
+        let customizedButtons = Components.stepDescription[Constants.BUTTONS_CUS];
+        for (let i = 0; i < customizedButtons.length; i++) {
+            _createCustomButton(customizedButtons[i], buttonGroup);
+        }
+    } else if (!noButtons) {
         if (Utils.isValid(Components.stepDescription[Constants.SKIP])) {
-            _createSkipButton(buttonGroup);
+            _createSkipButton(buttonGroup).appendTo(buttonGroup);
         }
-
-        _createBackButton(buttonGroup, showBack);
-
+        _createBackButton(showBack).appendTo(buttonGroup);
         if (showNext) {
-            _createNextButton(buttonGroup, disableNext);
+            _createNextButton(disableNext).appendTo(buttonGroup);
         } else {
-            _createDoneButton(buttonGroup, disableNext);
+            _createDoneButton(disableNext).appendTo(buttonGroup);
         }
-
-        bubble.append(buttonGroup);
     }
 
     $(Constants.A_COMP, {
@@ -244,14 +246,28 @@ function _createContentBubble(noButtons, showBack, showNext, disableNext) {
 }
 
 /**
- * Create skip button, use the customized content first, if it doesn't exist use the default one
- * @param buttonGroup {Element}     Button group contains skip button
+ * Create a button with given text, style and onclick handler
+ * @param buttonDesc {Object}       Contains buttonName, buttonStyle, and buttonOnClick function
+ * @param buttonGroup {Element}     DOM Element of the button group
+ * @returns {jQuery|HTMLElement}        The button DOM Node with all of those given things
  */
-function _createSkipButton(buttonGroup) {
-    $(Constants.BUTTON_COMP, {
+function _createCustomButton(buttonDesc, buttonGroup) {
+    let customizedButton = $(Constants.BUTTON_COMP, {
+        "class": buttonDesc[Constants.BUTTON_STYLE],
+        text: buttonDesc[Constants.BUTTON_NAME]
+    }).appendTo(buttonGroup);
+    Utils.addEvent(customizedButton, Constants.FLEX_CLICK, buttonDesc[Constants.ONCLICK_NAME]);
+    return customizedButton;
+}
+
+/**
+ * Create skip button, use the customized content first, if it doesn't exist use the default one
+ */
+function _createSkipButton() {
+    return $(Constants.BUTTON_COMP, {
         "class": Constants.SKIP_BUTTON,
         text: _getSkipButtonText()
-    }).appendTo(buttonGroup);
+    });
 }
 
 /**
@@ -267,12 +283,12 @@ function _getSkipButtonText() {
  * @param buttonGroup {Element}     Button group contains back button
  * @param showBack {Boolean}        Disable back button or not
  */
-function _createBackButton(buttonGroup, showBack) {
-    $(Constants.BUTTON_COMP, {
+function _createBackButton(showBack) {
+    return $(Constants.BUTTON_COMP, {
         "class": Constants.BACK_BUTTON,
         text: _getBackButtonText(),
         disabled: !showBack
-    }).appendTo(buttonGroup);
+    });
 }
 
 /**
@@ -288,12 +304,12 @@ function _getBackButtonText() {
  * @param buttonGroup {Element}     Button group contains next button
  * @param disableNext {Boolean}     Disable next button or not
  */
-function _createNextButton(buttonGroup, disableNext) {
-    $(Constants.BUTTON_COMP, {
+function _createNextButton(disableNext) {
+    return $(Constants.BUTTON_COMP, {
         "class": Constants.NEXT_BUTTON,
         text: _getNextButtonText(),
         disabled: disableNext
-    }).appendTo(buttonGroup);
+    });
 }
 
 /**
@@ -309,12 +325,12 @@ function _getNextButtonText() {
  * @param buttonGroup {Element}     Button group contains done button
  * @param disableNext {Boolean}     Disable done button or not
  */
-function _createDoneButton(buttonGroup, disableNext) {
-    $(Constants.BUTTON_COMP, {
+function _createDoneButton(disableNext) {
+    return $(Constants.BUTTON_COMP, {
         "class": Constants.DONE_BUTTON,
         text: _getDoneButtonText(),
         disabled: disableNext
-    }).appendTo(buttonGroup);
+    });
 }
 
 /**
@@ -355,7 +371,10 @@ function _modifyContentBubble(noButtons, showBack, showNext, disableNext) {
     let currentIconType = _getIconType();
     let currentIcon = Utils.getEleFromClassName(Constants.ICON_STYLE, true);
     if (!currentIcon.hasClass(currentIconType)) {
-        let classTokens = currentIcon.attr("class").split(/\s+/g);
+        let classTokens = currentIcon.attr("class");
+        if (classTokens.length > 0) {
+            classTokens = classTokens.split(/\s+/g);
+        }
         $.each(classTokens, function (index, item) {
             if (item.indexOf(Constants.ICON_REGEXP) > -1) {
                 currentIcon.removeClass(item);
@@ -395,26 +414,59 @@ function _modifyContentBubble(noButtons, showBack, showNext, disableNext) {
      * 2. Modify the other buttons accordingly.
      */
     let bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE, true);
+    let buttonGroup = Utils.getEleFromClassName(Constants.BUTTON_GROUP, true);
     if (noButtons) {
-        let buttonGroup = Utils.getEleFromClassName(Constants.BUTTON_GROUP, true);
         if (Utils.hasELement(buttonGroup)) {
             buttonGroup.remove();
         }
-    } else {
-        let buttonGroup = $(Constants.DIV_COMP, {
+    } else if (Utils.isValid(Components.stepDescription[Constants.BUTTONS_CUS])) {
+        if (Utils.hasELement(buttonGroup)) {
+            buttonGroup.remove();
+        }
+        buttonGroup = $(Constants.DIV_COMP, {
             "class": Constants.BUTTON_GROUP
         });
+        bubble.append(buttonGroup);
 
-        let skipRequirement = Components.stepDescription[Constants.SKIP];
-        let skipButton = Utils.getEleFromClassName(Constants.SKIP_BUTTON, true);
-        if (Utils.isValid(skipRequirement)) {
-            if (!Utils.hasELement(skipButton)) {
-                _createSkipButton(buttonGroup);
+        let customizedButtons = Components.stepDescription[Constants.BUTTONS_CUS];
+        for (let i = 0; i < customizedButtons.length; i++) {
+            _createCustomButton(customizedButtons[i], buttonGroup);
+        }
+    } else {
+        if (!Utils.hasELement(buttonGroup)) {
+            buttonGroup = $(Constants.DIV_COMP, {
+                "class": Constants.BUTTON_GROUP
+            });
+            bubble.append(buttonGroup);
+        }
+
+        let nextButton = Utils.getEleFromClassName(Constants.NEXT_BUTTON, true);
+        let doneButton = Utils.getEleFromClassName(Constants.DONE_BUTTON, true);
+        if (showNext) {
+            // For the case where user go back from last step --> replace Done button with Next button
+            if (Utils.hasELement(doneButton)) {
+                doneButton.removeClass(Constants.DONE_BUTTON);
+                doneButton.addClass(Constants.NEXT_BUTTON);
+                doneButton.text(_getNextButtonText());
+                doneButton.prop('disabled', disableNext);
+            } else if (Utils.hasELement(nextButton)) {
+                nextButton.prop('disabled', disableNext);
+                nextButton.text(_getNextButtonText());
+            } else {
+                _createNextButton(disableNext).appendTo(buttonGroup);
             }
-            skipButton.text(_getSkipButtonText());
         } else {
-            if (Utils.hasELement(skipButton)) {
-                skipButton.remove();
+            // For last step, replace Next with Done button.
+            if (Utils.hasELement(nextButton)) {
+                nextButton.removeClass(Constants.NEXT_BUTTON);
+                nextButton.addClass(Constants.DONE_BUTTON);
+                nextButton.prop('disabled', disableNext);
+                nextButton.text(_getDoneButtonText());
+            } else if (Utils.hasELement(doneButton)) {
+                doneButton.prop('disabled', disableNext);
+                doneButton.text(_getDoneButtonText());
+            } else {
+                _createDoneButton(disableNext).appendTo(buttonGroup);
             }
         }
 
@@ -423,27 +475,26 @@ function _modifyContentBubble(noButtons, showBack, showNext, disableNext) {
             backButton.prop('disabled', !showBack);
             backButton.text(_getBackButtonText());
         } else {
-            _createBackButton(buttonGroup, showBack);
+            let backButton = _createBackButton(showBack);
+            if (Utils.hasELement(nextButton)) {
+                backButton.insertBefore(nextButton);
+            } else if (Utils.hasELement(doneButton)) {
+                backButton.insertBefore(doneButton);
+            }
         }
 
-        if (showNext) {
-            let nextButton = Utils.getEleFromClassName(Constants.NEXT_BUTTON, true);
-            if (Utils.hasELement(nextButton)) {
-                nextButton.prop('disabled', disableNext);
-                nextButton.text(_getNextButtonText());
-            } else {
-                _createNextButton(buttonGroup, disableNext);
+        let skipRequirement = Components.stepDescription[Constants.SKIP];
+        let skipButton = Utils.getEleFromClassName(Constants.SKIP_BUTTON, true);
+        if (Utils.isValid(skipRequirement)) {
+            if (!Utils.hasELement(skipButton)) {
+                _createSkipButton().prependTo(buttonGroup);
             }
+            skipButton.text(_getSkipButtonText());
         } else {
-            let doneButton = Utils.getEleFromClassName(Constants.DONE_BUTTON, true);
-            if (Utils.hasELement(doneButton)) {
-                doneButton.prop('disabled', disableNext);
-                doneButton.text(_getDoneButtonText());
-            } else {
-                _createDoneButton(buttonGroup, disableNext);
+            if (Utils.hasELement(skipButton)) {
+                skipButton.remove();
             }
         }
-        bubble.append(buttonGroup);
     }
 }
 
@@ -546,13 +597,13 @@ function _modifyFloatBubble() {
 function _addBorderAroundTarget() {
     if (Utils.isValid(Components.rect)) {
         let borderOverlay = $(Constants.DIV_COMP, {
-            "class": Constants.TARGET_BORDER,
-            "width": Components.rect.width + Constants.BORDER_WIDTH * 2 + Constants.PX,
-            "height": Components.rect.height + Constants.BORDER_WIDTH * 2 + Constants.PX
+            "class": Constants.TARGET_BORDER
         });
         borderOverlay.css({
-            top: Components.rect.top - Constants.BORDER_WIDTH * 2 + Constants.PX,
-            left: Components.rect.left - Constants.BORDER_WIDTH * 2 + Constants.PX
+            width: Components.rect.width + Constants.PX,
+            height: Components.rect.height + Constants.PX,
+            top: Components.rect.top - Constants.BORDER_WIDTH + Constants.PX,
+            left: Components.rect.left - Constants.BORDER_WIDTH + Constants.PX
         });
 
         if (Components.stepDescription[Constants.CAN_INTERACT]) {
@@ -571,10 +622,10 @@ function _modifyBorderAroundTarget() {
     if (Utils.isValid(Components.rect)) {
         let borderOverlay = Utils.getEleFromClassName(Constants.TARGET_BORDER, true);
         borderOverlay.css({
-            width: Components.rect.width + Constants.BORDER_WIDTH * 2 + Constants.PX,
-            height: Components.rect.height + Constants.BORDER_WIDTH * 2 + Constants.PX,
-            top: Components.rect.top - Constants.BORDER_WIDTH * 2 + Constants.PX,
-            left: Components.rect.left - Constants.BORDER_WIDTH * 2 + Constants.PX
+            width: Components.rect.width + Constants.PX,
+            height: Components.rect.height + Constants.PX,
+            top: Components.rect.top - Constants.BORDER_WIDTH + Constants.PX,
+            left: Components.rect.left - Constants.BORDER_WIDTH + Constants.PX
         });
 
         if (Components.stepDescription[Constants.CAN_INTERACT]) {

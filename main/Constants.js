@@ -47,6 +47,8 @@ module.exports = {
     FLEX_RESIZE: "resize.flextour",
     KEY_UP: "keyup.flextour",
     SCROLL: "scroll.flextour",
+    DRAG_START: "dragstart.flextour",
+    DRAG_END: "dragend.flextour",
 
     // Tour Attributes Block
     TOUR_DEFAULT_SETTINGS: {
@@ -84,6 +86,11 @@ module.exports = {
     BACK_BUTTON_CUS: "backButton",
     SKIP_BUTTON_CUS: "skipButton",
     DONE_BUTTON_CUS: "doneButton",
+    DND: "dragAndDrop",
+    BUTTONS_CUS: "buttons",
+    BUTTON_NAME: "name",
+    BUTTON_STYLE: "style",
+    ONCLICK_NAME: "onclick",
 
     DEFAULT_TYPE: "info",
     ACTION_TYPE: "action",

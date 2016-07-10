@@ -305,10 +305,10 @@ a.flextour-close:hover {
 /*******************************OVERLAY STYLES***********************************/
 .flextour-overlay-blocks {
   opacity: 0.3;
+  z-index: 100000;
 }
 .flextour-overlay-styles {
   position: absolute;
-  z-index: 10;
   background-color: #000000;
   /*Enough to dim the back ground*/
   -webkit-transition: all 0.5s;

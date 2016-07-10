@@ -148,6 +148,14 @@ module.exports = {
     },
 
     /**
+     * Check to see if current step is a valid drag and drop step, the DND flag must be set, and there must be a target to attach event to.
+     * @param stepDesc {Object}     The object that contains the description of the current step
+     */
+    isDnDStep: function (stepDesc) {
+        return (stepDesc[Constants.DND] && stepDesc.hasOwnProperty(Constants.TARGET));
+    },
+
+    /**
      * Get the element list from the given classname.
      * Run through each element and attach event and callback function to it
      * @param className     The className of element (without the DOT)
