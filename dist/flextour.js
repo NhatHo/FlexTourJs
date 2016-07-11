@@ -80,12 +80,14 @@ var FlexTour =
 		 * @param tourDesc      JSON description file that has all information needed
 		 */
 		function _preprocessingTours(tourDesc) {
-			if ($.isArray(tourDesc)) {
+			if ($.isArray(tourDesc) && tourDesc.length > 0) {
+				FlexTour.currentTourId = tourDesc[0][Constants.ID];
 				for (let i = 0; i < tourDesc.length; i++) {
 					_initializeTour(tourDesc[i]);
 				}
 			} else {
 				_initializeTour(tourDesc);
+				FlexTour.currentTourId = tourDesc[Constants.ID];
 			}
 		}
 
@@ -121,6 +123,11 @@ var FlexTour =
 					currentStep[Constants.NEXT_STEP_TRIGGER] = currentStep[Constants.TARGET];
 				}
 
+				let flashTarget = currentStep[Constants.FLASH_TARGET];
+				if (flashTarget && flashTarget === Constants.CURRENT_TARGET) {
+					currentStep[Constants.FLASH_TARGET] = currentStep[Constants.TARGET];
+				}
+
 				/**
 				 * Get the functions correspond to the onClick function name describe in customized buttons
 				 */
@@ -135,7 +142,7 @@ var FlexTour =
 					currentStep[Constants.BUTTONS_CUS] = currentStepCustomizedButtons;
 				}
 			}
-			FlexTour.toursMap.push(rawTour);
+			FlexTour.toursMap[rawTour[Constants.ID]] = rawTour;
 		}
 
 		/**
@@ -221,6 +228,22 @@ var FlexTour =
 
 					if (Utils.isDnDStep(stepDesc)) {
 						_dragStartPause(stepDesc[Constants.TARGET]);
+					}
+
+					if (Utils.isValid(stepDesc[Constants.MULTIPAGE])) {
+						let multipageInfo = {
+							currentTour: FlexTour.currentTour[Constants.ID],
+							currentStep: FlexTour.currentStepNumber
+						};
+						Utils.setKeyValuePairLS(Constants.MULTIPAGE_KEY, multipageInfo);
+						// We assume that the URL will be changed after this step, so we attach cleanup step on hashchange in case that happens.
+						Utils.addEvent($(window), FlexTour.HASH_CHANGE, __cleanUpAfterHashChange);
+
+						// Clean up everything and de-attach hashchange event in window.
+						function __cleanUpAfterHashChange() {
+							_exit();
+							Utils.removeEvent($(window), FlexTour.HASH_CHANGE);
+						}
 					}
 				}
 			} else {
@@ -656,8 +679,8 @@ var FlexTour =
 		 * @constructor
 		 */
 		function FlexTour(tourDesc, actionsList) {
-			FlexTour.toursMap = [];
-			FlexTour.currentTourIndex = 0;
+			FlexTour.toursMap = {};
+			FlexTour.currentTourId = "";
 			FlexTour.currentStepNumber = 0;
 			FlexTour.currentTour = {};
 			FlexTour.actionsList = actionsList;
@@ -669,20 +692,36 @@ var FlexTour =
 		 * Run the first step of the tour
 		 */
 		FlexTour.prototype.run = function () {
-			if (FlexTour.toursMap.length === 0) {
+			if ($.isEmptyObject(FlexTour.toursMap)) {
 				return;
 			}
+			let multipageObject = Utils.getValueWithKeyInLS(Constants.MULTIPAGE);
+			if (!$.isEmptyObject(multipageObject)) {
+				// Multipage tour flag is set --> resume the previously run tour.
+				FlexTour.currentTour = $.extend(true, {}, FlexTour.toursMap[multipageObject[Constants.CURRENT_TOUR]]);
+				FlexTour.currentStepNumber = multipageObject[Constants.CURRENT_STEP] + 1;
 
-			FlexTour.currentTour = $.extend(true, {}, FlexTour.toursMap[FlexTour.currentTourIndex]);
-			FlexTour.currentStepNumber = 0;
+				let steps = FlexTour.currentTour[Constants.STEPS];
+				if (Utils.isValid(steps)) {
+					_precheckForTransition(FlexTour.currentStepNumber, 0);
+				}
 
-			let steps = FlexTour.currentTour[Constants.STEPS];
-			if (Utils.isValid(steps)) {
-				let firstStep = steps[FlexTour.currentStepNumber];
-				_precheckForTransition(0, 0);
+				Utils.removeKeyValuePairLS(Constants.MULTIPAGE_KEY);
+			} else {
+				// You started a new tour --> just run the first step of new tour.
+				FlexTour.currentTour = $.extend(true, {}, FlexTour.toursMap[FlexTour.currentTourId]);
+				FlexTour.currentStepNumber = 0;
+
+				let steps = FlexTour.currentTour[Constants.STEPS];
+				if (Utils.isValid(steps)) {
+					_precheckForTransition(0, 0);
+				}
 			}
 		};
 
+		/**
+		 * User can trigger this function to end tour premature
+		 */
 		FlexTour.prototype.exit = function () {
 			_exit();
 		};
@@ -976,7 +1015,6 @@ var FlexTour =
 
 		/**
 		 * Create back button, put the text that users want to put for NLS. If it doesn't exist, use the default one
-		 * @param buttonGroup {Element}     Button group contains back button
 		 * @param showBack {Boolean}        Disable back button or not
 		 */
 		function _createBackButton(showBack) {
@@ -997,7 +1035,6 @@ var FlexTour =
 
 		/**
 		 * Create next button, and put the text that users want to put for NLS purpose. If it doesn't exist, use the default one
-		 * @param buttonGroup {Element}     Button group contains next button
 		 * @param disableNext {Boolean}     Disable next button or not
 		 */
 		function _createNextButton(disableNext) {
@@ -1018,7 +1055,6 @@ var FlexTour =
 
 		/**
 		 * Create done button, and put the text that users want to put for NLS purpose. If it doesn't exist, use the default one
-		 * @param buttonGroup {Element}     Button group contains done button
 		 * @param disableNext {Boolean}     Disable done button or not
 		 */
 		function _createDoneButton(disableNext) {
@@ -1345,6 +1381,51 @@ var FlexTour =
 		}
 
 		/**
+		 * Add a flashing border around flashTarget to indicate user where to click to proceed.
+		 * This should be used with nextStepTrigger attribute --> so that user knows where to click.
+		 */
+		function _addFlashBorder() {
+			let flashTarget = Components.stepDescription[Constants.FLASH_TARGET];
+			if (Utils.isValid(flashTarget)) {
+				let flashTargetLocation = $(flashTarget);
+				let flashOverlay = $(Constants.DIV_COMP, {
+					"class": Constants.FLASH_BORDER
+				});
+				flashOverlay.css({
+					width: flashTargetLocation.outerWidth() + Constants.PX,
+					height: flashTargetLocation.outerHeight() + Constants.PX,
+					top: flashTargetLocation.offset().top - Constants.FLASH_BORDER_WIDTH + Constants.PX,
+					left: flashTargetLocation.offset().left - Constants.FLASH_BORDER_WIDTH + Constants.PX
+				});
+				$(Components.ui).append(flashOverlay);
+			}
+		}
+
+		/**
+		 * Modify the border to a newer target if it is required by the new step
+		 * If the new step doesn't require, and old step has the flashTarget --> remove it
+		 */
+		function _modifyFlashBorder() {
+			let flashTarget = Components.stepDescription[Constants.FLASH_TARGET];
+			let flashOverlay = Utils.getEleFromClassName(Constants.FLASH_BORDER, true);
+			if (Utils.isValid(flashTarget)) {
+				if (Utils.hasELement(flashOverlay)) {
+					let flashTargetLocation = $(flashTarget);
+					flashOverlay.css({
+						width: flashTargetLocation.outerWidth() + Constants.PX,
+						height: flashTargetLocation.outerHeight() + Constants.PX,
+						top: flashTargetLocation.offset().top - Constants.FLASH_BORDER_WIDTH + Constants.PX,
+						left: flashTargetLocation.offset().left - Constants.FLASH_BORDER_WIDTH + Constants.PX
+					});
+				} else {
+					_addFlashBorder();
+				}
+			} else if (Utils.hasELement(flashOverlay)) {
+				flashOverlay.remove();
+			}
+		}
+
+		/**
 		 * Main function to create overlays, border around target and the content bubble next to target
 		 * @param noButtons        True to hide all buttons
 		 * @param showBack        True to show Back Button
@@ -1354,6 +1435,7 @@ var FlexTour =
 		Components.prototype.createComponents = function (noButtons, showBack, showNext, disableNext) {
 			if (!Utils.isFloatStep(Components.stepDescription)) {
 				_addBorderAroundTarget();
+				_addFlashBorder();
 				_createContentBubble(noButtons, showBack, showNext, disableNext);
 				_addOverlays();
 				// Note to self: must append every to the body here so that we can modify the location of the bubble later
@@ -1384,6 +1466,7 @@ var FlexTour =
 
 			if (!Utils.isFloatStep(Components.stepDescription)) {
 				_modifyBorderAroundTarget();
+				_modifyFlashBorder();
 				_modifyContentBubble(noButtons, showBack, showNext, disableNext);
 				_modifyOverlays();
 				_modifyBubbleLocation();
@@ -1432,6 +1515,7 @@ var FlexTour =
 
 			// Bubble Block
 			TARGET_BORDER: "flextour-target-border",
+			FLASH_BORDER: "flextour-flash-border",
 			TARGET_INTERACTABLE: "interactable",
 			TOUR_BUBBLE: "flextour-tour-bubble",
 			ARROW_LOCATION: "arrow-location",
@@ -1462,6 +1546,13 @@ var FlexTour =
 			SCROLL: "scroll.flextour",
 			DRAG_START: "dragstart.flextour",
 			DRAG_END: "dragend.flextour",
+			HASH_CHANGE: "hashchange.flextour",
+
+			// Local storage Block
+			LOCALSTORAGE_KEY: "flextour.storage",
+			MULTIPAGE_KEY: "multipage",
+			CURRENT_TOUR: "currentTour",
+			CURRENT_STEP: "currentStep",
 
 			// Tour Attributes Block
 			TOUR_DEFAULT_SETTINGS: {
@@ -1485,6 +1576,7 @@ var FlexTour =
 			TARGET: "target",
 			POSITION: "position",
 			NEXT_STEP_TRIGGER: "nextStepTrigger",
+			FLASH_TARGET: "flashTarget",
 			WAIT_INTERVALS: "waitIntervals",
 			RETRIES: "retries",
 			END_ON_ESC: "endOnEsc",
@@ -1504,15 +1596,15 @@ var FlexTour =
 			BUTTON_NAME: "name",
 			BUTTON_STYLE: "style",
 			ONCLICK_NAME: "onclick",
+			MULTIPAGE: "multipage",
 
 			DEFAULT_TYPE: "info",
 			ACTION_TYPE: "action",
 			DEFAULT_POSITION: "bottom",
 
-			TOUR: "tour",
-
 			TIMES: "&times;",
 			BORDER_WIDTH: 3,
+			FLASH_BORDER_WIDTH: 2,
 			OVERLAP_HEIGHT: 1,
 			ARROW_SIZE: 20,
 			PX: "px",
@@ -1531,7 +1623,10 @@ var FlexTour =
 			DIV_COMP: "<div></div>",
 			SPAN_COMP: "<span></span>",
 			BUTTON_COMP: "<button></button>",
-			A_COMP: "<a></a>"
+			A_COMP: "<a></a>",
+
+			// Utilities
+			TOUR: "tour"
 		};
 
 		/***/
@@ -1799,6 +1894,55 @@ var FlexTour =
 				$('html, body').animate({
 					scrollTop: 0
 				}, 700);
+			},
+
+			/**
+			 * Store the give key, value pair to localstorage
+			 * Flextour uses flextour.localstorage key in localstorage for storing data.
+			 * @param key {String}      The key of the data piece that you want to store
+			 * @param value {String|Object|Number}    The value that you want to store
+			 */
+			setKeyValuePairLS: function (key, value) {
+				try {
+					let storageValue = JSON.parse(localStorage.getItem(Constants.LOCALSTORAGE_KEY));
+					// Initialize the storageValue object if it was not previously set
+					if (!this.isValid(storageValue)) {
+						storageValue = {};
+					}
+					storageValue[key] = value;
+					localStorage.setItem(Constants.LOCALSTORAGE_KEY, JSON.stringify(storageValue));
+				} catch (e) {
+					// Ignore the error message, print to console that multipage features are not supported
+					console.log("Multipage feature cannot be supported in this browser version");
+				}
+			},
+
+			/**
+			 * Get the value that is currently stored in localstorage corresponds to the given key
+			 * @param key {String}      The key of the data piece that we want to retrieve
+			 * @returns {Object}        The content of given key, if it doesn't exist, return empty object
+			 */
+			getValueWithKeyInLS: function (key) {
+				try {
+					return JSON.parse(localStorage.getItem(Constants.LOCALSTORAGE_KEY))[key];
+				} catch (e) {
+					// Ignore the error if the key doesn't exist
+					return {};
+				}
+			},
+
+			/**
+			 * Remove the key and value pair in localstorage with given key. This is to cleanup everything properly after used.
+			 * @param key {String}      The key of data that we want to remove from LS
+			 */
+			removeKeyValuePairLS: function (key) {
+				try {
+					let flexTourLS = JSON.parse(localStorage.getItem(Constants.LOCALSTORAGE_KEY));
+					delete flexTourLS[key];
+					localStorage.setItem(Constants.LOCALSTORAGE_KEY, JSON.stringify(flexTourLS));
+				} catch (e) {
+					// Ignore the error message
+				}
 			}
 		};
 

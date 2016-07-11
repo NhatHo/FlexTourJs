@@ -305,7 +305,7 @@ a.flextour-close:hover {
 /*******************************OVERLAY STYLES***********************************/
 .flextour-overlay-blocks {
   opacity: 0.3;
-  z-index: 100000;
+  z-index: 10000;
 }
 .flextour-overlay-styles {
   position: absolute;
@@ -332,4 +332,38 @@ a.flextour-close:hover {
 }
 .flextour-target-border.interactable {
   pointer-events: none;
+}
+
+@-webkit-keyframes borderBlink {
+  from,
+  to {
+    border-color: transparent;
+  }
+  50% {
+    border-color: red;
+  }
+}
+
+@keyframes borderBlink {
+  from,
+  to {
+    border-color: transparent;
+  }
+  50% {
+    border-color: red;
+  }
+}
+
+.flextour-flash-border {
+  background: none !important;
+  border: red solid 2px;
+  position: absolute;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  -o-transition: all 0.3s;
+  transition: all 0.3s;
+  z-index: 11;
+  pointer-events: none;
+  -webkit-animation: borderBlink 1s step-end infinite;
+  animation: borderBlink 1s step-end infinite;
 }

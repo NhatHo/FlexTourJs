@@ -14,12 +14,14 @@ let $ = require("./../node_modules/jquery/dist/jquery.min.js");
  * @param tourDesc      JSON description file that has all information needed
  */
 function _preprocessingTours(tourDesc) {
-    if ($.isArray(tourDesc)) {
+    if ($.isArray(tourDesc) && tourDesc.length > 0) {
+        FlexTour.currentTourId = tourDesc[0][Constants.ID];
         for (let i = 0; i < tourDesc.length; i++) {
             _initializeTour(tourDesc[i]);
         }
     } else {
         _initializeTour(tourDesc);
+        FlexTour.currentTourId = tourDesc[Constants.ID];
     }
 }
 
@@ -55,6 +57,11 @@ function _initializeTour(tour) {
             currentStep[Constants.NEXT_STEP_TRIGGER] = currentStep[Constants.TARGET];
         }
 
+        let flashTarget = currentStep[Constants.FLASH_TARGET];
+        if (flashTarget && flashTarget === Constants.CURRENT_TARGET) {
+            currentStep[Constants.FLASH_TARGET] = currentStep[Constants.TARGET];
+        }
+
         /**
          * Get the functions correspond to the onClick function name describe in customized buttons
          */
@@ -69,7 +76,7 @@ function _initializeTour(tour) {
             currentStep[Constants.BUTTONS_CUS] = currentStepCustomizedButtons;
         }
     }
-    FlexTour.toursMap.push(rawTour);
+    FlexTour.toursMap[rawTour[Constants.ID]] = rawTour;
 }
 
 /**
@@ -155,6 +162,22 @@ function _centralOrganizer(stepDesc, newStep) {
 
             if (Utils.isDnDStep(stepDesc)) {
                 _dragStartPause(stepDesc[Constants.TARGET]);
+            }
+
+            if (Utils.isValid(stepDesc[Constants.MULTIPAGE])) {
+                let multipageInfo = {
+                    currentTour: FlexTour.currentTour[Constants.ID],
+                    currentStep: FlexTour.currentStepNumber
+                };
+                Utils.setKeyValuePairLS(Constants.MULTIPAGE_KEY, multipageInfo);
+                // We assume that the URL will be changed after this step, so we attach cleanup step on hashchange in case that happens.
+                Utils.addEvent($(window), FlexTour.HASH_CHANGE, __cleanUpAfterHashChange);
+
+                // Clean up everything and de-attach hashchange event in window.
+                function __cleanUpAfterHashChange() {
+                    _exit();
+                    Utils.removeEvent($(window), FlexTour.HASH_CHANGE);
+                }
             }
         }
     } else {
@@ -590,8 +613,8 @@ function _exit() {
  * @constructor
  */
 function FlexTour(tourDesc, actionsList) {
-    FlexTour.toursMap = [];
-    FlexTour.currentTourIndex = 0;
+    FlexTour.toursMap = {};
+    FlexTour.currentTourId = "";
     FlexTour.currentStepNumber = 0;
     FlexTour.currentTour = {};
     FlexTour.actionsList = actionsList;
@@ -603,20 +626,36 @@ function FlexTour(tourDesc, actionsList) {
  * Run the first step of the tour
  */
 FlexTour.prototype.run = function () {
-    if (FlexTour.toursMap.length === 0) {
+    if ($.isEmptyObject(FlexTour.toursMap)) {
         return;
     }
+    let multipageObject = Utils.getValueWithKeyInLS(Constants.MULTIPAGE);
+    if (!$.isEmptyObject(multipageObject)) {
+        // Multipage tour flag is set --> resume the previously run tour.
+        FlexTour.currentTour = $.extend(true, {}, FlexTour.toursMap[multipageObject[Constants.CURRENT_TOUR]]);
+        FlexTour.currentStepNumber = multipageObject[Constants.CURRENT_STEP] + 1;
 
-    FlexTour.currentTour = $.extend(true, {}, FlexTour.toursMap[FlexTour.currentTourIndex]);
-    FlexTour.currentStepNumber = 0;
+        let steps = FlexTour.currentTour[Constants.STEPS];
+        if (Utils.isValid(steps)) {
+            _precheckForTransition(FlexTour.currentStepNumber, 0);
+        }
 
-    let steps = FlexTour.currentTour[Constants.STEPS];
-    if (Utils.isValid(steps)) {
-        let firstStep = steps[FlexTour.currentStepNumber];
-        _precheckForTransition(0, 0);
+        Utils.removeKeyValuePairLS(Constants.MULTIPAGE_KEY);
+    } else {
+        // You started a new tour --> just run the first step of new tour.
+        FlexTour.currentTour = $.extend(true, {}, FlexTour.toursMap[FlexTour.currentTourId]);
+        FlexTour.currentStepNumber = 0;
+
+        let steps = FlexTour.currentTour[Constants.STEPS];
+        if (Utils.isValid(steps)) {
+            _precheckForTransition(0, 0);
+        }
     }
 };
 
+/**
+ * User can trigger this function to end tour premature
+ */
 FlexTour.prototype.exit = function () {
     _exit();
 };

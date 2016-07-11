@@ -280,7 +280,6 @@ function _getSkipButtonText() {
 
 /**
  * Create back button, put the text that users want to put for NLS. If it doesn't exist, use the default one
- * @param buttonGroup {Element}     Button group contains back button
  * @param showBack {Boolean}        Disable back button or not
  */
 function _createBackButton(showBack) {
@@ -301,7 +300,6 @@ function _getBackButtonText() {
 
 /**
  * Create next button, and put the text that users want to put for NLS purpose. If it doesn't exist, use the default one
- * @param buttonGroup {Element}     Button group contains next button
  * @param disableNext {Boolean}     Disable next button or not
  */
 function _createNextButton(disableNext) {
@@ -322,7 +320,6 @@ function _getNextButtonText() {
 
 /**
  * Create done button, and put the text that users want to put for NLS purpose. If it doesn't exist, use the default one
- * @param buttonGroup {Element}     Button group contains done button
  * @param disableNext {Boolean}     Disable done button or not
  */
 function _createDoneButton(disableNext) {
@@ -649,6 +646,51 @@ function _scrollMethod() {
 }
 
 /**
+ * Add a flashing border around flashTarget to indicate user where to click to proceed.
+ * This should be used with nextStepTrigger attribute --> so that user knows where to click.
+ */
+function _addFlashBorder() {
+    let flashTarget = Components.stepDescription[Constants.FLASH_TARGET];
+    if (Utils.isValid(flashTarget)) {
+        let flashTargetLocation = $(flashTarget);
+        let flashOverlay = $(Constants.DIV_COMP, {
+            "class": Constants.FLASH_BORDER
+        });
+        flashOverlay.css({
+            width: flashTargetLocation.outerWidth() + Constants.PX,
+            height: flashTargetLocation.outerHeight() + Constants.PX,
+            top: flashTargetLocation.offset().top - Constants.FLASH_BORDER_WIDTH + Constants.PX,
+            left: flashTargetLocation.offset().left - Constants.FLASH_BORDER_WIDTH + Constants.PX
+        });
+        $(Components.ui).append(flashOverlay);
+    }
+}
+
+/**
+ * Modify the border to a newer target if it is required by the new step
+ * If the new step doesn't require, and old step has the flashTarget --> remove it
+ */
+function _modifyFlashBorder() {
+    let flashTarget = Components.stepDescription[Constants.FLASH_TARGET];
+    let flashOverlay = Utils.getEleFromClassName(Constants.FLASH_BORDER, true);
+    if (Utils.isValid(flashTarget)) {
+        if (Utils.hasELement(flashOverlay)) {
+            let flashTargetLocation = $(flashTarget);
+            flashOverlay.css({
+                width: flashTargetLocation.outerWidth() + Constants.PX,
+                height: flashTargetLocation.outerHeight() + Constants.PX,
+                top: flashTargetLocation.offset().top - Constants.FLASH_BORDER_WIDTH + Constants.PX,
+                left: flashTargetLocation.offset().left - Constants.FLASH_BORDER_WIDTH + Constants.PX
+            });
+        } else {
+            _addFlashBorder();
+        }
+    } else if (Utils.hasELement(flashOverlay)) {
+        flashOverlay.remove();
+    }
+}
+
+/**
  * Main function to create overlays, border around target and the content bubble next to target
  * @param noButtons        True to hide all buttons
  * @param showBack        True to show Back Button
@@ -658,6 +700,7 @@ function _scrollMethod() {
 Components.prototype.createComponents = function (noButtons, showBack, showNext, disableNext) {
     if (!Utils.isFloatStep(Components.stepDescription)) {
         _addBorderAroundTarget();
+        _addFlashBorder();
         _createContentBubble(noButtons, showBack, showNext, disableNext);
         _addOverlays();
         // Note to self: must append every to the body here so that we can modify the location of the bubble later
@@ -688,6 +731,7 @@ Components.prototype.modifyComponents = function (noButtons, showBack, showNext,
 
     if (!Utils.isFloatStep(Components.stepDescription)) {
         _modifyBorderAroundTarget();
+        _modifyFlashBorder();
         _modifyContentBubble(noButtons, showBack, showNext, disableNext);
         _modifyOverlays();
         _modifyBubbleLocation();

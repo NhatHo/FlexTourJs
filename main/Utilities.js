@@ -258,5 +258,54 @@ module.exports = {
         $('html, body').animate({
             scrollTop: 0
         }, 700);
+    },
+
+    /**
+     * Store the give key, value pair to localstorage
+     * Flextour uses flextour.localstorage key in localstorage for storing data.
+     * @param key {String}      The key of the data piece that you want to store
+     * @param value {String|Object|Number}    The value that you want to store
+     */
+    setKeyValuePairLS: function (key, value) {
+        try {
+            let storageValue = JSON.parse(localStorage.getItem(Constants.LOCALSTORAGE_KEY));
+            // Initialize the storageValue object if it was not previously set
+            if (!this.isValid(storageValue)) {
+                storageValue = {};
+            }
+            storageValue[key] = value;
+            localStorage.setItem(Constants.LOCALSTORAGE_KEY, JSON.stringify(storageValue));
+        } catch (e) {
+            // Ignore the error message, print to console that multipage features are not supported
+            console.log("Multipage feature cannot be supported in this browser version");
+        }
+    },
+
+    /**
+     * Get the value that is currently stored in localstorage corresponds to the given key
+     * @param key {String}      The key of the data piece that we want to retrieve
+     * @returns {Object}        The content of given key, if it doesn't exist, return empty object
+     */
+    getValueWithKeyInLS: function (key) {
+        try {
+            return JSON.parse(localStorage.getItem(Constants.LOCALSTORAGE_KEY))[key];
+        } catch (e) {
+            // Ignore the error if the key doesn't exist
+            return {};
+        }
+    },
+
+    /**
+     * Remove the key and value pair in localstorage with given key. This is to cleanup everything properly after used.
+     * @param key {String}      The key of data that we want to remove from LS
+     */
+    removeKeyValuePairLS: function (key) {
+        try {
+            let flexTourLS = JSON.parse(localStorage.getItem(Constants.LOCALSTORAGE_KEY));
+            delete flexTourLS[key];
+            localStorage.setItem(Constants.LOCALSTORAGE_KEY, JSON.stringify(flexTourLS));
+        } catch (e) {
+            // Ignore the error message
+        }
     }
 };

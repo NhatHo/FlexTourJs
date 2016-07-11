@@ -4,6 +4,7 @@
 @OverlayBackground: rgb(0, 0, 0, 0.5);
 @Opacity: 0.3;
 @BorderColor: #666;
+@FlashBorderColor: red;
 @ShadowColor: #888;
 @BubbleBackground: #FFFFFF;
 @HoverColor: #4F2F2F;
@@ -353,4 +354,36 @@ a.flextour-close {
   &.interactable {
     pointer-events: none;
   }
+}
+
+@-webkit-keyframes borderBlink {
+  from, to {
+    border-color: transparent
+  }
+  50% {
+    border-color: @FlashBorderColor
+  }
+}
+
+@keyframes borderBlink {
+  from, to {
+    border-color: transparent
+  }
+  50% {
+    border-color: @FlashBorderColor
+  }
+}
+
+.flextour-flash-border {
+  background: none !important;
+  border: @FlashBorderColor solid 2px;
+  position: absolute;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  -o-transition: all 0.3s;
+  transition: all 0.3s;
+  z-index: 11;
+  pointer-events: none;
+  -webkit-animation: borderBlink 1s step-end infinite;
+  animation: borderBlink 1s step-end infinite;
 }

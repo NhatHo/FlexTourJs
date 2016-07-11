@@ -44,7 +44,8 @@ let tourDesc = [{
         target: "#draggable",
         dragAndDrop: true,
         type: "action",
-        noButtons: true
+        noButtons: true,
+        multipage: true
     }, {
         title: "Second Step of the thing",
         content: "Header level 2",
@@ -52,6 +53,7 @@ let tourDesc = [{
         target: "#testBlock",
         type: "action",
         nextStepTrigger: "#nextButtonTest",
+        flashTarget: "#nextButtonTest",
         prerequisites: ["action2"],
         nextButton: "Next",
         backButton: "Back",
@@ -77,21 +79,13 @@ let tourDesc = [{
     }, {
         content: "Big box of nothing",
         position: "top",
-        target: "#testbox",
-        buttons: [{
-            name: "Alert",
-            buttonStyle: "flextour-next-button",
-            onclick: "showAlert"
-        }, {
-            name: "Alert 2",
-            buttonStyle: "flextour-back-button",
-            onclick: "showAlert2"
-        }]
+        target: "#testbox"
     }, {
         content: "Open Modal",
         position: "right",
         target: "#myBtn",
         nextStepTrigger: "@target@",
+        flashTarget: "@target",
         type: "action"
     }, {
         content: "Please wait for Modal",

@@ -19,6 +19,7 @@ module.exports = {
 
     // Bubble Block
     TARGET_BORDER: "flextour-target-border",
+    FLASH_BORDER: "flextour-flash-border",
     TARGET_INTERACTABLE: "interactable",
     TOUR_BUBBLE: "flextour-tour-bubble",
     ARROW_LOCATION: "arrow-location",
@@ -49,6 +50,13 @@ module.exports = {
     SCROLL: "scroll.flextour",
     DRAG_START: "dragstart.flextour",
     DRAG_END: "dragend.flextour",
+    HASH_CHANGE: "hashchange.flextour",
+
+    // Local storage Block
+    LOCALSTORAGE_KEY: "flextour.storage",
+    MULTIPAGE_KEY: "multipage",
+    CURRENT_TOUR: "currentTour",
+    CURRENT_STEP: "currentStep",
 
     // Tour Attributes Block
     TOUR_DEFAULT_SETTINGS: {
@@ -72,6 +80,7 @@ module.exports = {
     TARGET: "target",
     POSITION: "position",
     NEXT_STEP_TRIGGER: "nextStepTrigger",
+    FLASH_TARGET: "flashTarget",
     WAIT_INTERVALS: "waitIntervals",
     RETRIES: "retries",
     END_ON_ESC: "endOnEsc",
@@ -91,15 +100,15 @@ module.exports = {
     BUTTON_NAME: "name",
     BUTTON_STYLE: "style",
     ONCLICK_NAME: "onclick",
+    MULTIPAGE: "multipage",
 
     DEFAULT_TYPE: "info",
     ACTION_TYPE: "action",
     DEFAULT_POSITION: "bottom",
 
-    TOUR: "tour",
-
     TIMES: "&times;",
     BORDER_WIDTH: 3,
+    FLASH_BORDER_WIDTH: 2,
     OVERLAP_HEIGHT: 1,
     ARROW_SIZE: 20,
     PX: "px",
@@ -118,5 +127,8 @@ module.exports = {
     DIV_COMP: "<div></div>",
     SPAN_COMP: "<span></span>",
     BUTTON_COMP: "<button></button>",
-    A_COMP: "<a></a>"
+    A_COMP: "<a></a>",
+
+    // Utilities
+    TOUR: "tour"
 };
