@@ -15,12 +15,17 @@ module.exports = {
      */
     isVisible: function (targets) {
         let result = true;
-        for (let i = 0; i < targets.length; i++) {
-            let element = $(targets[i]);
-            if (this.isValid(element)) {
+        let targetsArray = this.convertToArray(targets);
+        for (let i = 0; i < targetsArray.length; i++) {
+            let element = $(targetsArray[i]);
+            if (this.hasELement(element)) {
                 result = result && element.is(":visible");
+            } else {
+                // If any element doesn't exist --> return false immediately
+                return false;
             }
         }
+
         return result;
     },
 
@@ -31,10 +36,25 @@ module.exports = {
      */
     doesExist: function (targets) {
         let result = true;
-        for (let i = 0; i < targets.length; i++) {
-            result = result && this.isValid($(targets[i]));
+        // Make sure the input becomes an array event if it's a single target
+        let targetsArray = this.convertToArray(targets);
+        for (let i = 0; i < targetsArray.length; i++) {
+            result = result && this.hasELement($(targetsArray[i]));
         }
         return result;
+    },
+
+    /**
+     * Check if the input is an array, convert it to an array when it is NOT
+     * @param elements {String|Array}   Input elements
+     * @returns {*}     An array contains elements
+     */
+    convertToArray: function (elements) {
+        if ($.isArray(elements)) {
+            return elements;
+        } else {
+            return [elements];
+        }
     },
 
     /**
@@ -252,15 +272,6 @@ module.exports = {
     },
 
     /**
-     * Just scroll to the top of the page.
-     */
-    scrollToTop: function () {
-        $('html, body').animate({
-            scrollTop: 0
-        }, 700);
-    },
-
-    /**
      * Store the give key, value pair to localstorage
      * Flextour uses flextour.localstorage key in localstorage for storing data.
      * @param key {String}      The key of the data piece that you want to store
@@ -286,7 +297,7 @@ module.exports = {
      * @param key {String}      The key of the data piece that we want to retrieve
      * @returns {Object}        The content of given key, if it doesn't exist, return empty object
      */
-    getValueWithKeyInLS: function (key) {
+    getKeyValuePairLS: function (key) {
         try {
             return JSON.parse(localStorage.getItem(Constants.LOCALSTORAGE_KEY))[key];
         } catch (e) {
@@ -306,6 +317,17 @@ module.exports = {
             localStorage.setItem(Constants.LOCALSTORAGE_KEY, JSON.stringify(flexTourLS));
         } catch (e) {
             // Ignore the error message
+        }
+    },
+
+    /**
+     * Check if the flag exists, if it exist, is it true or false?
+     */
+    checkFlag: function (flag) {
+        if (typeof flag === 'object' && $.isEmptyObject(flag)) {
+            return false;
+        } else {
+            return flag;
         }
     }
 };

@@ -57,6 +57,10 @@ module.exports = {
     MULTIPAGE_KEY: "multipage",
     CURRENT_TOUR: "currentTour",
     CURRENT_STEP: "currentStep",
+    PAUSED_KEY: "paused",
+    STEP_STATUS: "stepStatus",
+    PAUSED_TOUR: "pausedTour",
+    PAUSED_STEP: "pausedStep",
 
     // Tour Attributes Block
     TOUR_DEFAULT_SETTINGS: {
@@ -65,7 +69,8 @@ module.exports = {
         noButtons: false,
         noBack: false,
         endOnOverlayClick: true,
-        endOnEsc: true
+        endOnEsc: true,
+        pauseOnExit: false
     },
 
     ID: "id",
@@ -101,6 +106,8 @@ module.exports = {
     BUTTON_STYLE: "style",
     ONCLICK_NAME: "onclick",
     MULTIPAGE: "multipage",
+    SAVE_POINT: "savePoint",
+    PAUSE_ON_EXIT: "pauseOnExit",
 
     DEFAULT_TYPE: "info",
     ACTION_TYPE: "action",
@@ -130,5 +137,11 @@ module.exports = {
     A_COMP: "<a></a>",
 
     // Utilities
-    TOUR: "tour"
+    TOUR: "tour",
+
+    // Customized event
+    ON_EXIT: "onExit",
+    ON_START: "onStart",
+    BEFORE_STEP: "beforeStepRender",
+    AFTER_STEP: "afterStepRender"
 };

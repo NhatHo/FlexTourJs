@@ -662,7 +662,7 @@ function _addFlashBorder() {
             top: flashTargetLocation.offset().top - Constants.FLASH_BORDER_WIDTH + Constants.PX,
             left: flashTargetLocation.offset().left - Constants.FLASH_BORDER_WIDTH + Constants.PX
         });
-        $(Components.ui).append(flashOverlay);
+        Components.ui.append(flashOverlay);
     }
 }
 
@@ -706,7 +706,9 @@ Components.prototype.createComponents = function (noButtons, showBack, showNext,
         // Note to self: must append every to the body here so that we can modify the location of the bubble later
         $(document.body).append(Components.ui);
         _placeBubbleLocation();
-        _scrollMethod();
+        if (!Components.stepDescription[Constants.SCROLL_LOCK]) {
+            _scrollMethod();
+        }
     } else {
         // The target element cannot be found which mean this is a floating step
         _createContentBubble(noButtons, showBack, showNext, disableNext);
@@ -714,7 +716,6 @@ Components.prototype.createComponents = function (noButtons, showBack, showNext,
         // Note to self: must append every to the body here so that we can modify the location of the bubble later
         $(document.body).append(Components.ui);
         _placeFloatBubble();
-        Utils.scrollToTop();
     }
 };
 
@@ -727,7 +728,7 @@ Components.prototype.createComponents = function (noButtons, showBack, showNext,
  * @param disableNext     True to disable Next and Done button
  */
 Components.prototype.modifyComponents = function (noButtons, showBack, showNext, disableNext) {
-    Components.ui = Utils.getEleFromClassName(Constants.FLEXTOUR);
+    Components.ui = Utils.getEleFromClassName(Constants.FLEXTOUR, true);
 
     if (!Utils.isFloatStep(Components.stepDescription)) {
         _modifyBorderAroundTarget();
@@ -735,13 +736,14 @@ Components.prototype.modifyComponents = function (noButtons, showBack, showNext,
         _modifyContentBubble(noButtons, showBack, showNext, disableNext);
         _modifyOverlays();
         _modifyBubbleLocation();
-        _scrollMethod();
+        if (!Components.stepDescription[Constants.SCROLL_LOCK]) {
+            _scrollMethod();
+        }
     } else {
         // The target element cannot be found which mean this is a floating step
         _modifyContentBubble(noButtons, showBack, showNext, disableNext);
         _modifyFloatBubble();
         _modifyOverlay();
-        Utils.scrollToTop();
     }
 };
 

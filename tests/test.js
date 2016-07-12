@@ -21,6 +21,20 @@ actionsList.showAlert = function () {
 actionsList.showAlert2 = function () {
     alert("Hello Alert 2 here, are you stuck again?");
 };
+actionsList.onStart = function () {
+    console.log("Preparing everything for your start!!!");
+};
+
+actionsList.onExit = function () {
+    console.log("Cleaning up everything for you here");
+};
+actionsList.beforeStepRender = function () {
+    console.log("Before step render");
+};
+actionsList.afterStepRender = function () {
+    console.log("After step render");
+};
+
 
 let tourDesc = [{
     id: "test",
@@ -29,11 +43,12 @@ let tourDesc = [{
     canInteract: false,
     waitIntervals: 1000,
     retries: 20,
+    pauseOnExit: true,
     steps: [{
         title: "First Step of the thing",
         content: "Header level 1<br />Testing level again<br /><br />Line 3",
         position: "right",
-        skip: 5,
+        skip: 7,
         target: "#title",
         type: "info",
         prerequisites: ["action1"]
@@ -85,8 +100,9 @@ let tourDesc = [{
         position: "right",
         target: "#myBtn",
         nextStepTrigger: "@target@",
-        flashTarget: "@target",
-        type: "action"
+        flashTarget: "@target@",
+        type: "action",
+        savePoint: true
     }, {
         content: "Please wait for Modal",
         position: "float",

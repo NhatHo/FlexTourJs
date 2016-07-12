@@ -182,6 +182,8 @@ var FlexTour =
 					showBack = true;
 				}
 
+				_executeGeneralFunction(Constants.BEFORE_STEP);
+
 				/**
 				 * Create components can be only called once when the tour start for the first time.
 				 */
@@ -231,11 +233,8 @@ var FlexTour =
 					}
 
 					if (Utils.isValid(stepDesc[Constants.MULTIPAGE])) {
-						let multipageInfo = {
-							currentTour: FlexTour.currentTour[Constants.ID],
-							currentStep: FlexTour.currentStepNumber
-						};
-						Utils.setKeyValuePairLS(Constants.MULTIPAGE_KEY, multipageInfo);
+						_saveCurrentTourState();
+						Utils.setKeyValuePairLS(Constants.MULTIPAGE_KEY, true);
 						// We assume that the URL will be changed after this step, so we attach cleanup step on hashchange in case that happens.
 						Utils.addEvent($(window), FlexTour.HASH_CHANGE, __cleanUpAfterHashChange);
 
@@ -246,6 +245,8 @@ var FlexTour =
 						}
 					}
 				}
+
+				_executeGeneralFunction(Constants.AFTER_STEP);
 			} else {
 				console.log("Target of step: " + JSON.stringify(stepDesc) + " is not found.");
 			}
@@ -382,7 +383,7 @@ var FlexTour =
 					return true;
 				} else {
 					// This is the regular prerequisite function
-					if (executeFunctionWithName(prerequisite, possibleStepNumber)) {
+					if (_executeFunctionWithName(prerequisite, possibleStepNumber)) {
 						return _isAllowToMove(possibleStepNumber, ++currPrerequisite);
 					}
 					// Return false immediately if the result is false. The prerequisite condition is not met
@@ -401,12 +402,22 @@ var FlexTour =
 		 * @param functionName {String}     The name of the given function
 		 * @param stepNumber {Number}      The possible step that is being tested
 		 */
-		function executeFunctionWithName(functionName, stepNumber) {
+		function _executeFunctionWithName(functionName, stepNumber) {
 			if (typeof FlexTour.actionsList[functionName] === "function") {
 				return FlexTour.actionsList[functionName].call(this, FlexTour.currentTour[Constants.STEPS][stepNumber]);
 			}
 			// If the given function name exist in the list, return false to halt the process. Because this could cause the flow to break.
 			return false;
+		}
+
+		/**
+		 * This is used to execute general functions in the framework: onStart, onExit, beforeStepRender, afterStepRender
+		 * @param functionName {String}     Given function name to execute from actionsList
+		 */
+		function _executeGeneralFunction(functionName) {
+			if (typeof FlexTour.actionsList[functionName] === "function") {
+				FlexTour.actionsList[functionName].call(this);
+			}
 		}
 
 		/**
@@ -445,7 +456,7 @@ var FlexTour =
 					}
 				}
 			} else {
-				return executeFunctionWithName(condName, stepNumber);
+				return _executeFunctionWithName(condName, stepNumber);
 			}
 
 			return temporaryResult;
@@ -668,8 +679,72 @@ var FlexTour =
 		 * Remove all components and set the running flag to false, and set currentStepNumber to false
 		 */
 		function _exit() {
+			if (FlexTour.currentTour[Constants.PAUSE_ON_EXIT]) {
+				_saveCurrentTourState();
+				Utils.setKeyValuePairLS(Constants.PAUSED_KEY, true);
+			}
 			_removeAndUnbind();
 			FlexTour.currentStepNumber = 0;
+			_executeGeneralFunction(Constants.ON_EXIT);
+		}
+
+		/**
+		 * Run the tour starting with the given step number.
+		 */
+		function _runTourWithGivenSteps() {
+			let steps = FlexTour.currentTour[Constants.STEPS];
+			if (Utils.isValid(steps)) {
+				_precheckForTransition(FlexTour.currentStepNumber, 0);
+			}
+		}
+
+		/**
+		 * Update the tour infor from LS. This is used for multipage and pause/resume feature for now
+		 */
+		function _updateTourInfoFromLS() {
+			let previouslyRunTour = Utils.getKeyValuePairLS(Constants.STEP_STATUS);
+			if (!$.isEmptyObject(previouslyRunTour)) {
+				FlexTour.currentTourId = previouslyRunTour[Constants.PAUSED_TOUR];
+				FlexTour.currentTour = $.extend(true, {}, FlexTour.toursMap[FlexTour.currentTourId]);
+				FlexTour.currentStepNumber = previouslyRunTour[Constants.PAUSED_STEP];
+				Utils.removeKeyValuePairLS(Constants.STEP_STATUS);
+			}
+		}
+
+		/**
+		 * Save current state into local storage
+		 */
+		function _saveCurrentTourState() {
+			let currentInfo = {
+				pausedTour: FlexTour.currentTourId,
+				pausedStep: FlexTour.currentStepNumber
+			};
+			Utils.setKeyValuePairLS(Constants.STEP_STATUS, currentInfo);
+		}
+
+		/**
+		 * This function will loop back until it finds a savePoint. This is to avoid executing every single step to find the available step.
+		 * Instead, what's going to happen is that the framework will try to find the current target. If it doesn't exist, it will loop back till it finds the closest save point.
+		 * When no save point is set, it will run from the beginning.
+		 *
+		 * Why? Since this framework is supposed to support dynamic tours which at some points the target only shows when a previous step triggers something (i.e: Click on a button to open a modal, or dropdown, etc.). In this example, you should set that button as savePoint because it is where you trigger your target.
+		 */
+		function _findSavePoint() {
+			let steps = FlexTour.currentTour[Constants.STEPS];
+			if (Utils.isValid(steps)) {
+				let currentStepTarget = steps[FlexTour.currentStepNumber][Constants.TARGET];
+				// If current step target cannot be found, loops back till you find the closest save point
+				if (!(Utils.hasELement($(currentStepTarget)) && Utils.isVisible(currentStepTarget))) {
+					--FlexTour.currentStepNumber;
+					while (FlexTour.currentStepNumber > -1) {
+						if (Utils.checkFlag(steps[FlexTour.currentStepNumber][Constants.SAVE_POINT])) {
+							break;
+						}
+						--FlexTour.currentStepNumber;
+					}
+				}
+				_precheckForTransition(FlexTour.currentStepNumber, 0);
+			}
 		}
 
 		/**
@@ -689,33 +764,36 @@ var FlexTour =
 		}
 
 		/**
-		 * Run the first step of the tour
+		 * Run the tour, if it is multipage --> run the previously set step. This is ensured by dev that the next step will be successful.
+		 * If this is the first time you run the tour --> it will just run from step 1.
 		 */
 		FlexTour.prototype.run = function () {
 			if ($.isEmptyObject(FlexTour.toursMap)) {
 				return;
 			}
-			let multipageObject = Utils.getValueWithKeyInLS(Constants.MULTIPAGE);
-			if (!$.isEmptyObject(multipageObject)) {
-				// Multipage tour flag is set --> resume the previously run tour.
-				FlexTour.currentTour = $.extend(true, {}, FlexTour.toursMap[multipageObject[Constants.CURRENT_TOUR]]);
-				FlexTour.currentStepNumber = multipageObject[Constants.CURRENT_STEP] + 1;
 
-				let steps = FlexTour.currentTour[Constants.STEPS];
-				if (Utils.isValid(steps)) {
-					_precheckForTransition(FlexTour.currentStepNumber, 0);
-				}
+			_executeGeneralFunction(Constants.ON_START);
 
+			let multipageFlag = Utils.getKeyValuePairLS(Constants.MULTIPAGE);
+			let pausedFlag = Utils.getKeyValuePairLS(Constants.PAUSED_KEY);
+			if (Utils.checkFlag(pausedFlag)) {
+				_updateTourInfoFromLS();
+				Utils.removeKeyValuePairLS(Constants.PAUSED_KEY);
+				// In case the step is both multipage trigger and paused on --> remove multipage trigger for now because it will be set later on.
 				Utils.removeKeyValuePairLS(Constants.MULTIPAGE_KEY);
+				_findSavePoint();
+			} else if (Utils.checkFlag(multipageFlag)) {
+				_updateTourInfoFromLS();
+				Utils.removeKeyValuePairLS(Constants.MULTIPAGE_KEY);
+				++FlexTour.currentStepNumber;
+
+				_runTourWithGivenSteps();
 			} else {
 				// You started a new tour --> just run the first step of new tour.
 				FlexTour.currentTour = $.extend(true, {}, FlexTour.toursMap[FlexTour.currentTourId]);
 				FlexTour.currentStepNumber = 0;
 
-				let steps = FlexTour.currentTour[Constants.STEPS];
-				if (Utils.isValid(steps)) {
-					_precheckForTransition(0, 0);
-				}
+				_runTourWithGivenSteps();
 			}
 		};
 
@@ -724,6 +802,25 @@ var FlexTour =
 		 */
 		FlexTour.prototype.exit = function () {
 			_exit();
+		};
+
+		/**
+		 * Store the current value of tour id and current step number. The terminate the framework
+		 */
+		FlexTour.prototype.pause = function () {
+			_saveCurrentTourState();
+			Utils.setKeyValuePairLS(Constants.PAUSED_KEY, true);
+			this.exit();
+		};
+
+		/**
+		 * Resume the previously run tour with given id and the step number.
+		 * Resume to the previously run step ... not the step after it.
+		 */
+		FlexTour.prototype.resume = function () {
+			_updateTourInfoFromLS();
+			Utils.removeKeyValuePairLS(Constants.PAUSED_KEY);
+			_findSavePoint();
 		};
 
 		module.exports = FlexTour;
@@ -1397,7 +1494,7 @@ var FlexTour =
 					top: flashTargetLocation.offset().top - Constants.FLASH_BORDER_WIDTH + Constants.PX,
 					left: flashTargetLocation.offset().left - Constants.FLASH_BORDER_WIDTH + Constants.PX
 				});
-				$(Components.ui).append(flashOverlay);
+				Components.ui.append(flashOverlay);
 			}
 		}
 
@@ -1441,7 +1538,9 @@ var FlexTour =
 				// Note to self: must append every to the body here so that we can modify the location of the bubble later
 				$(document.body).append(Components.ui);
 				_placeBubbleLocation();
-				_scrollMethod();
+				if (!Components.stepDescription[Constants.SCROLL_LOCK]) {
+					_scrollMethod();
+				}
 			} else {
 				// The target element cannot be found which mean this is a floating step
 				_createContentBubble(noButtons, showBack, showNext, disableNext);
@@ -1449,7 +1548,6 @@ var FlexTour =
 				// Note to self: must append every to the body here so that we can modify the location of the bubble later
 				$(document.body).append(Components.ui);
 				_placeFloatBubble();
-				Utils.scrollToTop();
 			}
 		};
 
@@ -1462,7 +1560,7 @@ var FlexTour =
 		 * @param disableNext     True to disable Next and Done button
 		 */
 		Components.prototype.modifyComponents = function (noButtons, showBack, showNext, disableNext) {
-			Components.ui = Utils.getEleFromClassName(Constants.FLEXTOUR);
+			Components.ui = Utils.getEleFromClassName(Constants.FLEXTOUR, true);
 
 			if (!Utils.isFloatStep(Components.stepDescription)) {
 				_modifyBorderAroundTarget();
@@ -1470,13 +1568,14 @@ var FlexTour =
 				_modifyContentBubble(noButtons, showBack, showNext, disableNext);
 				_modifyOverlays();
 				_modifyBubbleLocation();
-				_scrollMethod();
+				if (!Components.stepDescription[Constants.SCROLL_LOCK]) {
+					_scrollMethod();
+				}
 			} else {
 				// The target element cannot be found which mean this is a floating step
 				_modifyContentBubble(noButtons, showBack, showNext, disableNext);
 				_modifyFloatBubble();
 				_modifyOverlay();
-				Utils.scrollToTop();
 			}
 		};
 
@@ -1553,6 +1652,10 @@ var FlexTour =
 			MULTIPAGE_KEY: "multipage",
 			CURRENT_TOUR: "currentTour",
 			CURRENT_STEP: "currentStep",
+			PAUSED_KEY: "paused",
+			STEP_STATUS: "stepStatus",
+			PAUSED_TOUR: "pausedTour",
+			PAUSED_STEP: "pausedStep",
 
 			// Tour Attributes Block
 			TOUR_DEFAULT_SETTINGS: {
@@ -1561,7 +1664,8 @@ var FlexTour =
 				noButtons: false,
 				noBack: false,
 				endOnOverlayClick: true,
-				endOnEsc: true
+				endOnEsc: true,
+				pauseOnExit: false
 			},
 
 			ID: "id",
@@ -1597,6 +1701,8 @@ var FlexTour =
 			BUTTON_STYLE: "style",
 			ONCLICK_NAME: "onclick",
 			MULTIPAGE: "multipage",
+			SAVE_POINT: "savePoint",
+			PAUSE_ON_EXIT: "pauseOnExit",
 
 			DEFAULT_TYPE: "info",
 			ACTION_TYPE: "action",
@@ -1626,7 +1732,13 @@ var FlexTour =
 			A_COMP: "<a></a>",
 
 			// Utilities
-			TOUR: "tour"
+			TOUR: "tour",
+
+			// Customized event
+			ON_EXIT: "onExit",
+			ON_START: "onStart",
+			BEFORE_STEP: "beforeStepRender",
+			AFTER_STEP: "afterStepRender"
 		};
 
 		/***/
@@ -1651,12 +1763,17 @@ var FlexTour =
 			 */
 			isVisible: function (targets) {
 				let result = true;
-				for (let i = 0; i < targets.length; i++) {
-					let element = $(targets[i]);
-					if (this.isValid(element)) {
+				let targetsArray = this.convertToArray(targets);
+				for (let i = 0; i < targetsArray.length; i++) {
+					let element = $(targetsArray[i]);
+					if (this.hasELement(element)) {
 						result = result && element.is(":visible");
+					} else {
+						// If any element doesn't exist --> return false immediately
+						return false;
 					}
 				}
+
 				return result;
 			},
 
@@ -1667,10 +1784,25 @@ var FlexTour =
 			 */
 			doesExist: function (targets) {
 				let result = true;
-				for (let i = 0; i < targets.length; i++) {
-					result = result && this.isValid($(targets[i]));
+				// Make sure the input becomes an array event if it's a single target
+				let targetsArray = this.convertToArray(targets);
+				for (let i = 0; i < targetsArray.length; i++) {
+					result = result && this.hasELement($(targetsArray[i]));
 				}
 				return result;
+			},
+
+			/**
+			 * Check if the input is an array, convert it to an array when it is NOT
+			 * @param elements {String|Array}   Input elements
+			 * @returns {*}     An array contains elements
+			 */
+			convertToArray: function (elements) {
+				if ($.isArray(elements)) {
+					return elements;
+				} else {
+					return [elements];
+				}
 			},
 
 			/**
@@ -1888,15 +2020,6 @@ var FlexTour =
 			},
 
 			/**
-			 * Just scroll to the top of the page.
-			 */
-			scrollToTop: function () {
-				$('html, body').animate({
-					scrollTop: 0
-				}, 700);
-			},
-
-			/**
 			 * Store the give key, value pair to localstorage
 			 * Flextour uses flextour.localstorage key in localstorage for storing data.
 			 * @param key {String}      The key of the data piece that you want to store
@@ -1922,7 +2045,7 @@ var FlexTour =
 			 * @param key {String}      The key of the data piece that we want to retrieve
 			 * @returns {Object}        The content of given key, if it doesn't exist, return empty object
 			 */
-			getValueWithKeyInLS: function (key) {
+			getKeyValuePairLS: function (key) {
 				try {
 					return JSON.parse(localStorage.getItem(Constants.LOCALSTORAGE_KEY))[key];
 				} catch (e) {
@@ -1942,6 +2065,17 @@ var FlexTour =
 					localStorage.setItem(Constants.LOCALSTORAGE_KEY, JSON.stringify(flexTourLS));
 				} catch (e) {
 					// Ignore the error message
+				}
+			},
+
+			/**
+			 * Check if the flag exists, if it exist, is it true or false?
+			 */
+			checkFlag: function (flag) {
+				if (typeof flag === 'object' && $.isEmptyObject(flag)) {
+					return false;
+				} else {
+					return flag;
 				}
 			}
 		};

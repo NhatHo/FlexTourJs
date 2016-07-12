@@ -62,6 +62,7 @@
   font-size: 12pt;
 }
 .flextour-float-bubble {
+  position: fixed;
   left: 50%;
   top: 50%;
   margin: auto;
@@ -333,7 +334,6 @@ a.flextour-close:hover {
 .flextour-target-border.interactable {
   pointer-events: none;
 }
-
 @-webkit-keyframes borderBlink {
   from,
   to {
@@ -343,7 +343,6 @@ a.flextour-close:hover {
     border-color: red;
   }
 }
-
 @keyframes borderBlink {
   from,
   to {
@@ -353,7 +352,6 @@ a.flextour-close:hover {
     border-color: red;
   }
 }
-
 .flextour-flash-border {
   background: none !important;
   border: red solid 2px;
