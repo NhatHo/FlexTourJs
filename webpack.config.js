@@ -15,5 +15,10 @@ module.exports = {
         loaders: [
             {test: /\.less$/, loader: "style!less"}
         ]
+    },
+    externals: {
+        // require("jquery") is external and available
+        //  on the global var jQuery
+        "jquery": "jQuery"
     }
 };

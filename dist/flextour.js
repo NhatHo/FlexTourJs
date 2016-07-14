@@ -69,10 +69,10 @@ var FlexTour =
 		 * NhatHo-nhatminhhoca@gmail.com
 		 ******************************************************************************/
 
-		let Components = __webpack_require__(1);
-		let Constants = __webpack_require__(2);
-		let Utils = __webpack_require__(3);
-		let $ = __webpack_require__(4);
+		var Components = __webpack_require__(1);
+		var Constants = __webpack_require__(2);
+		var Utils = __webpack_require__(3);
+		var $ = __webpack_require__(4);
 
 		/**
 		 * Pre-process all information for all tours make sure each step and each tour contains necessary
@@ -82,7 +82,7 @@ var FlexTour =
 		function _preprocessingTours(tourDesc) {
 			if ($.isArray(tourDesc) && tourDesc.length > 0) {
 				FlexTour.currentTourId = tourDesc[0][Constants.ID];
-				for (let i = 0; i < tourDesc.length; i++) {
+				for (var i = 0; i < tourDesc.length; i++) {
 					_initializeTour(tourDesc[i]);
 				}
 			} else {
@@ -96,15 +96,15 @@ var FlexTour =
 		 * @param tour      The tour object ---> Must be an object
 		 */
 		function _initializeTour(tour) {
-			let rawTour = $.extend(true, {}, tour);
+			var rawTour = $.extend(true, {}, tour);
 			// Fill in information for each tour in case any important information is missing
 			rawTour = $.extend({}, Constants.TOUR_DEFAULT_SETTINGS, rawTour);
 
 			// Fill in information for each step in case anything important is missing
-			let numOfSteps = rawTour[Constants.STEPS].length;
+			var numOfSteps = rawTour[Constants.STEPS].length;
 
-			for (let i = 0; i < numOfSteps; i++) {
-				let currentStep = rawTour[Constants.STEPS][i];
+			for (var i = 0; i < numOfSteps; i++) {
+				var currentStep = rawTour[Constants.STEPS][i];
 
 				currentStep[Constants.TYPE] = currentStep[Constants.TYPE] || Constants.DEFAULT_TYPE;
 				currentStep[Constants.POSITION] = currentStep[Constants.POSITION] || Constants.DEFAULT_POSITION;
@@ -118,12 +118,12 @@ var FlexTour =
 				currentStep[Constants.BACK_BUTTON_CUS] = currentStep[Constants.BACK_BUTTON_CUS] || rawTour[Constants.BACK_BUTTON_CUS];
 				currentStep[Constants.SKIP_BUTTON_CUS] = currentStep[Constants.SKIP_BUTTON_CUS] || rawTour[Constants.SKIP_BUTTON_CUS];
 				currentStep[Constants.DONE_BUTTON_CUS] = currentStep[Constants.DONE_BUTTON_CUS] || rawTour[Constants.DONE_BUTTON_CUS];
-				let currentTarget = currentStep[Constants.NEXT_STEP_TRIGGER];
+				var currentTarget = currentStep[Constants.NEXT_STEP_TRIGGER];
 				if (currentTarget && currentTarget === Constants.CURRENT_TARGET) {
 					currentStep[Constants.NEXT_STEP_TRIGGER] = currentStep[Constants.TARGET];
 				}
 
-				let flashTarget = currentStep[Constants.FLASH_TARGET];
+				var flashTarget = currentStep[Constants.FLASH_TARGET];
 				if (flashTarget && flashTarget === Constants.CURRENT_TARGET) {
 					currentStep[Constants.FLASH_TARGET] = currentStep[Constants.TARGET];
 				}
@@ -131,10 +131,10 @@ var FlexTour =
 				/**
 				 * Get the functions correspond to the onClick function name describe in customized buttons
 				 */
-				let currentStepCustomizedButtons = currentStep[Constants.BUTTONS_CUS] || rawTour[Constants.BUTTONS_CUS];
+				var currentStepCustomizedButtons = currentStep[Constants.BUTTONS_CUS] || rawTour[Constants.BUTTONS_CUS];
 				if (Utils.isValid(currentStepCustomizedButtons)) {
-					for (let i = 0; i < currentStepCustomizedButtons.length; i++) {
-						let onClickFunctionName = currentStepCustomizedButtons[i][Constants.ONCLICK_NAME];
+					for (var i = 0; i < currentStepCustomizedButtons.length; i++) {
+						var onClickFunctionName = currentStepCustomizedButtons[i][Constants.ONCLICK_NAME];
 						if (FlexTour.actionsList.hasOwnProperty(onClickFunctionName)) {
 							currentStepCustomizedButtons[i][Constants.ONCLICK_NAME] = FlexTour.actionsList[onClickFunctionName];
 						}
@@ -153,10 +153,10 @@ var FlexTour =
 		 */
 		function _centralOrganizer(stepDesc, newStep) {
 			FlexTour.Component = new Components(stepDesc);
-			let currentStepNumber = FlexTour.currentStepNumber;
+			var currentStepNumber = FlexTour.currentStepNumber;
 
 			if (Utils.isValid(FlexTour.Component)) {
-				let showBack = false,
+				var showBack = false,
 					showNext = false,
 					disableNext = false,
 					noButtons = false;
@@ -168,7 +168,7 @@ var FlexTour =
 					noButtons = true;
 				}
 
-				let numberOfStep = FlexTour.currentTour[Constants.STEPS].length;
+				var numberOfStep = FlexTour.currentTour[Constants.STEPS].length;
 
 				if (currentStepNumber < numberOfStep - 1) {
 					showNext = true;
@@ -193,7 +193,7 @@ var FlexTour =
 					_addResizeWindowListener();
 					_addKeyBoardListener();
 
-					let bubbleStyles = FlexTour.currentTour[Constants.STYLES];
+					var bubbleStyles = FlexTour.currentTour[Constants.STYLES];
 					if (Utils.isValid(bubbleStyles)) {
 						Utils.getEleFromClassName(Constants.TOUR_BUBBLE, true).addClass(bubbleStyles);
 					}
@@ -274,7 +274,7 @@ var FlexTour =
 		 * @param nextTrigger {String}      QuerySelector string for next Trigger
 		 */
 		function _addClickEventOnTargetClick(nextTrigger) {
-			let nextTriggerTarget = $(nextTrigger);
+			var nextTriggerTarget = $(nextTrigger);
 			if (Utils.hasELement(nextTriggerTarget)) {
 				Utils.addEvent(nextTriggerTarget, Constants.FLEX_CLICK, _nextStep);
 			}
@@ -299,7 +299,7 @@ var FlexTour =
 		 * Remove the event listener for nextOnTargetClick
 		 */
 		function _removeClickEventOnTargetClick(nextTrigger) {
-			let nextTriggerTarget = $(nextTrigger);
+			var nextTriggerTarget = $(nextTrigger);
 			if (Utils.hasELement(nextTriggerTarget)) {
 				Utils.removeEvent(nextTriggerTarget, Constants.FLEX_CLICK); //Remove this event listener
 			}
@@ -326,17 +326,18 @@ var FlexTour =
 		 *
 		 * @param possibleStepNumber    Step number to be checked for conditions. This is the future step, could be next 2 steps ahead.
 		 * @param currPrerequisite      Counter to signal which condition where are checking right now.
-		 * @returns {boolean}   True will let the transition happens, false will make it stay at the current step until the conditions are met
+		 * @returns {boolean}   True will var the transition happens, false will make it stay at the current step until the conditions are met
 		 */
 		function _isAllowToMove(possibleStepNumber, currPrerequisite) {
-			let prerequisites = FlexTour.currentTour[Constants.STEPS][possibleStepNumber][Constants.PREREQUISITES];
-			let possibleStep = FlexTour.currentTour[Constants.STEPS][possibleStepNumber];
+			var prerequisites = FlexTour.currentTour[Constants.STEPS][possibleStepNumber][Constants.PREREQUISITES];
+			var possibleStep = FlexTour.currentTour[Constants.STEPS][possibleStepNumber];
+			var prerequisiteBlock;
 			if (Utils.isValid(prerequisites) && currPrerequisite < prerequisites.length) {
-				let prerequisite = prerequisites[currPrerequisite].trim();
+				var prerequisite = prerequisites[currPrerequisite].trim();
 				if (prerequisite.indexOf(Constants.WAIT) > -1) {
-					let prerequisiteBlock = prerequisite.split(Constants.WAIT)[1].trim();
+					prerequisiteBlock = prerequisite.split(Constants.WAIT)[1].trim();
 
-					let temporaryResult = _executePrerequisiteCondition(possibleStepNumber, prerequisiteBlock);
+					var temporaryResult = _executePrerequisiteCondition(possibleStepNumber, prerequisiteBlock);
 
 					if (!temporaryResult) {
 						if (possibleStep[Constants.RETRIES] === 0) {
@@ -362,10 +363,10 @@ var FlexTour =
 						return _isAllowToMove(possibleStepNumber, ++currPrerequisite);
 					}
 				} else if (prerequisite.indexOf(Constants.PROCEED_INDICATOR) > -1) {
-					let prerequisiteBlock = prerequisite.split(Constants.PROCEED_INDICATOR)[1].trim();
+					prerequisiteBlock = prerequisite.split(Constants.PROCEED_INDICATOR)[1].trim();
 
 					if (!_executePrerequisiteCondition(possibleStepNumber, prerequisiteBlock)) {
-						let skipNumber = possibleStep[Constants.SKIP];
+						var skipNumber = possibleStep[Constants.SKIP];
 						if (possibleStepNumber > FlexTour.currentStepNumber) {
 							// If the tour is going forward then skip it forward
 							if (Utils.isValid(skipNumber)) {
@@ -429,18 +430,18 @@ var FlexTour =
 		function _executePrerequisiteCondition(stepNumber, prerequisite) {
 			// This is the most complex one in all. There are 3 parts to waitFor: "?condName:el1,el2,el3"
 			// First split the COLON Separator.
-			let tokens = prerequisite.split(Constants.COLON);
+			var tokens = prerequisite.split(Constants.COLON);
 
 			// Split "condName" must be in the 1st slot after splitting at colon
-			let condName = tokens[0];
+			var condName = tokens[0];
 
-			let temporaryResult = true;
+			var temporaryResult = true;
 
 			if (tokens.length > 1) {
 				// Split the DOM elements list if exist "el1,el2,el3".
-				let elementsList = tokens[1].split(Constants.COMMA);
+				var elementsList = tokens[1].split(Constants.COMMA);
 
-				let indexOfCurrentTarget = elementsList.indexOf(Constants.CURRENT_TARGET);
+				var indexOfCurrentTarget = elementsList.indexOf(Constants.CURRENT_TARGET);
 				if (indexOfCurrentTarget !== -1) {
 					elementsList[indexOfCurrentTarget] = FlexTour.currentTour[Constants.STEPS][stepNumber][Constants.TARGET];
 				}
@@ -481,7 +482,7 @@ var FlexTour =
 			_cleanUpAfterStep();
 			Utils.removeELementsAndAttachedEvent(Constants.SKIP_BUTTON, Constants.FLEX_CLICK);
 
-			let skipToStep = FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber][Constants.SKIP];
+			var skipToStep = FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber][Constants.SKIP];
 			if (Utils.isValid(skipToStep)) {
 				_precheckForTransition(skipToStep, 0);
 			}
@@ -512,7 +513,7 @@ var FlexTour =
 		 * @param stepNumber
 		 */
 		function _transitionToNextStep(stepNumber) {
-			let stepDelay = FlexTour.currentTour[Constants.STEPS][stepNumber][Constants.DELAY];
+			var stepDelay = FlexTour.currentTour[Constants.STEPS][stepNumber][Constants.DELAY];
 
 			function __transitionFunction(stepNumber) {
 				FlexTour.currentStepNumber = stepNumber;
@@ -592,7 +593,7 @@ var FlexTour =
 		 * Clean things up after each step. Unbind the event listeners to avoid memory leaks
 		 */
 		function _cleanUpAfterStep() {
-			let currentStep = FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber];
+			var currentStep = FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber];
 			if (Utils.isValid(currentStep[Constants.NEXT_STEP_TRIGGER])) {
 				// Clean up next on target click here.
 				_removeClickEventOnTargetClick(currentStep[Constants.NEXT_STEP_TRIGGER]);
@@ -607,8 +608,8 @@ var FlexTour =
 			}
 
 			if (Utils.isValid(currentStep[Constants.BUTTONS_CUS])) {
-				let buttons = currentStep[Constants.BUTTONS_CUS];
-				for (let i = 0; i < buttons.length; i++) {
+				var buttons = currentStep[Constants.BUTTONS_CUS];
+				for (var i = 0; i < buttons.length; i++) {
 					Utils.removeEvent(Utils.getEleFromClassName(buttons[i][Constants.BUTTON_STYLE], true), Constants.FLEX_CLICK);
 				}
 			}
@@ -620,8 +621,8 @@ var FlexTour =
 		 * @private
 		 */
 		function _blockScrolling() {
-			let top = $(window).scrollTop();
-			let left = $(window).scrollLeft();
+			var top = $(window).scrollTop();
+			var left = $(window).scrollLeft();
 
 			$('body').css('overflow', 'hidden');
 			Utils.addEvent($(window), Constants.SCROLL, function () {
@@ -641,7 +642,7 @@ var FlexTour =
 
 		/**
 		 * Attach event to pause the tour engine when users start dragging something.
-		 * Syntax: {Boolean}. If it's set to true, it will temporarily remove all overlays and let users drag at will.
+		 * Syntax: {Boolean}. If it's set to true, it will temporarily remove all overlays and var users drag at will.
 		 * @param stepTarget {String}     DOM Selector string for current step target
 		 */
 		function _dragStartPause(stepTarget) {
@@ -692,7 +693,7 @@ var FlexTour =
 		 * Run the tour starting with the given step number.
 		 */
 		function _runTourWithGivenSteps() {
-			let steps = FlexTour.currentTour[Constants.STEPS];
+			var steps = FlexTour.currentTour[Constants.STEPS];
 			if (Utils.isValid(steps)) {
 				_precheckForTransition(FlexTour.currentStepNumber, 0);
 			}
@@ -702,7 +703,7 @@ var FlexTour =
 		 * Update the tour infor from LS. This is used for multipage and pause/resume feature for now
 		 */
 		function _updateTourInfoFromLS() {
-			let previouslyRunTour = Utils.getKeyValuePairLS(Constants.STEP_STATUS);
+			var previouslyRunTour = Utils.getKeyValuePairLS(Constants.STEP_STATUS);
 			if (!$.isEmptyObject(previouslyRunTour)) {
 				FlexTour.currentTourId = previouslyRunTour[Constants.PAUSED_TOUR];
 				FlexTour.currentTour = $.extend(true, {}, FlexTour.toursMap[FlexTour.currentTourId]);
@@ -715,7 +716,7 @@ var FlexTour =
 		 * Save current state into local storage
 		 */
 		function _saveCurrentTourState() {
-			let currentInfo = {
+			var currentInfo = {
 				pausedTour: FlexTour.currentTourId,
 				pausedStep: FlexTour.currentStepNumber
 			};
@@ -730,9 +731,9 @@ var FlexTour =
 		 * Why? Since this framework is supposed to support dynamic tours which at some points the target only shows when a previous step triggers something (i.e: Click on a button to open a modal, or dropdown, etc.). In this example, you should set that button as savePoint because it is where you trigger your target.
 		 */
 		function _findSavePoint() {
-			let steps = FlexTour.currentTour[Constants.STEPS];
+			var steps = FlexTour.currentTour[Constants.STEPS];
 			if (Utils.isValid(steps)) {
-				let currentStepTarget = steps[FlexTour.currentStepNumber][Constants.TARGET];
+				var currentStepTarget = steps[FlexTour.currentStepNumber][Constants.TARGET];
 				// If current step target cannot be found, loops back till you find the closest save point
 				if (!(Utils.hasELement($(currentStepTarget)) && Utils.isVisible(currentStepTarget))) {
 					--FlexTour.currentStepNumber;
@@ -759,7 +760,7 @@ var FlexTour =
 			FlexTour.currentStepNumber = 0;
 			FlexTour.currentTour = {};
 			FlexTour.actionsList = actionsList;
-			FlexTour.running = false; // A flag that let the system know that a tour is being run
+			FlexTour.running = false; // A flag that var the system know that a tour is being run
 			_preprocessingTours(tourDesc);
 		}
 
@@ -774,8 +775,8 @@ var FlexTour =
 
 			_executeGeneralFunction(Constants.ON_START);
 
-			let multipageFlag = Utils.getKeyValuePairLS(Constants.MULTIPAGE);
-			let pausedFlag = Utils.getKeyValuePairLS(Constants.PAUSED_KEY);
+			var multipageFlag = Utils.getKeyValuePairLS(Constants.MULTIPAGE);
+			var pausedFlag = Utils.getKeyValuePairLS(Constants.PAUSED_KEY);
 			if (Utils.checkFlag(pausedFlag)) {
 				_updateTourInfoFromLS();
 				Utils.removeKeyValuePairLS(Constants.PAUSED_KEY);
@@ -835,17 +836,17 @@ var FlexTour =
 		 * NhatHo-nhatminhhoca@gmail.com
 		 ******************************************************************************/
 
-		let Constants = __webpack_require__(2);
-		let Utils = __webpack_require__(3);
-		let $ = __webpack_require__(4);
+		var Constants = __webpack_require__(2);
+		var Utils = __webpack_require__(3);
+		var $ = __webpack_require__(4);
 
 		function Components(stepDescription) {
 			Components.stepDescription = $.extend({}, stepDescription);
 			Components.ui = $(Constants.DIV_COMP);
 			Components.ui.addClass(Constants.FLEXTOUR);
 			if (Utils.isStepWithTarget(stepDescription)) {
-				let target = $(stepDescription[Constants.TARGET]);
-				let actualLocation = {};
+				var target = $(stepDescription[Constants.TARGET]);
+				var actualLocation = {};
 				actualLocation.top = target.offset().top;
 				actualLocation.left = target.offset().left;
 				actualLocation.width = target.outerWidth();
@@ -918,7 +919,7 @@ var FlexTour =
 		 * @return {object|*}       The DOM block that contains all overlays
 		 */
 		function _createOverlayNode(locationObj) {
-			let overlay = $(Constants.DIV_COMP, {
+			var overlay = $(Constants.DIV_COMP, {
 				"class": Constants.OVERLAY_STYLE,
 				"width": locationObj.width,
 				"height": locationObj.height
@@ -932,7 +933,7 @@ var FlexTour =
 		 * Keep the same pattern as the padding. Top->Right->Bottom->Left
 		 */
 		function _addOverlays() {
-			let overlayDiv = Utils.getEleFromClassName(Constants.OVERLAY_BLOCK, true);
+			var overlayDiv = Utils.getEleFromClassName(Constants.OVERLAY_BLOCK, true);
 			if (!Utils.hasELement(overlayDiv)) {
 				overlayDiv = $(Constants.DIV_COMP, {
 					"class": Constants.OVERLAY_BLOCK
@@ -964,7 +965,7 @@ var FlexTour =
 		 * This function assumes that there are 4 different overlays around the target to modify for the transition.
 		 */
 		function _modifyOverlays() {
-			let overlays = Utils.getElesFromClassName(Constants.OVERLAY_STYLE);
+			var overlays = Utils.getElesFromClassName(Constants.OVERLAY_STYLE);
 			if (Utils.hasELement(overlays) && overlays.length === 4) {
 				_modifyOverlayNode(overlays[0], _getTopOverlay());
 				_modifyOverlayNode(overlays[1], _getRightOverlay());
@@ -981,7 +982,7 @@ var FlexTour =
 		 * Check if already there is a UNIQUE Overlay in the DOM, if yes don't do anyway, if not create 1 and add to the DOM
 		 */
 		function _addOverlay() {
-			let overlayDiv = $(Constants.DIV_COMP, {
+			var overlayDiv = $(Constants.DIV_COMP, {
 				"class": Constants.OVERLAY_BLOCK
 			});
 			overlayDiv(_createOverlayNode({
@@ -998,8 +999,8 @@ var FlexTour =
 		 * If there is exactly 1 overlay, leave it be because it already covers the whole screen.
 		 */
 		function _modifyOverlay() {
-			let overlays = Utils.getElesFromClassName(Constants.OVERLAY_STYLE);
-			let overlayDiv = Utils.getEleFromClassName(Constants.OVERLAY_BLOCK, true);
+			var overlays = Utils.getElesFromClassName(Constants.OVERLAY_STYLE);
+			var overlayDiv = Utils.getEleFromClassName(Constants.OVERLAY_BLOCK, true);
 			if (Utils.hasELement(overlays)) {
 				if (overlays.length !== 1) {
 					overlays.remove();
@@ -1021,7 +1022,7 @@ var FlexTour =
 		 * @param {boolean} disableNext  True to disable either Next or Done button
 		 */
 		function _createContentBubble(noButtons, showBack, showNext, disableNext) {
-			let bubble = $(Constants.DIV_COMP, {
+			var bubble = $(Constants.DIV_COMP, {
 				"class": Constants.TOUR_BUBBLE
 			});
 
@@ -1029,7 +1030,7 @@ var FlexTour =
 				"class": Constants.ICON_STYLE + " " + _getIconType()
 			}).appendTo(bubble);
 
-			let contentBlock = $(Constants.DIV_COMP, {
+			var contentBlock = $(Constants.DIV_COMP, {
 				"class": Constants.BUBBLE_CONTENT
 			});
 
@@ -1047,14 +1048,14 @@ var FlexTour =
 
 			bubble.append(contentBlock);
 
-			let buttonGroup = $(Constants.DIV_COMP, {
+			var buttonGroup = $(Constants.DIV_COMP, {
 				"class": Constants.BUTTON_GROUP
 			});
 			bubble.append(buttonGroup);
 
 			if (Utils.isValid(Components.stepDescription[Constants.BUTTONS_CUS])) {
-				let customizedButtons = Components.stepDescription[Constants.BUTTONS_CUS];
-				for (let i = 0; i < customizedButtons.length; i++) {
+				var customizedButtons = Components.stepDescription[Constants.BUTTONS_CUS];
+				for (var i = 0; i < customizedButtons.length; i++) {
 					_createCustomButton(customizedButtons[i], buttonGroup);
 				}
 			} else if (!noButtons) {
@@ -1084,7 +1085,7 @@ var FlexTour =
 		 * @returns {jQuery|HTMLElement}        The button DOM Node with all of those given things
 		 */
 		function _createCustomButton(buttonDesc, buttonGroup) {
-			let customizedButton = $(Constants.BUTTON_COMP, {
+			var customizedButton = $(Constants.BUTTON_COMP, {
 				"class": buttonDesc[Constants.BUTTON_STYLE],
 				text: buttonDesc[Constants.BUTTON_NAME]
 			}).appendTo(buttonGroup);
@@ -1175,7 +1176,7 @@ var FlexTour =
 		 * @returns {*}     String that describe the class that should represent the icon
 		 */
 		function _getIconType() {
-			let currentStepType = Components.stepDescription[Constants.TYPE];
+			var currentStepType = Components.stepDescription[Constants.TYPE];
 			if (Components.stepDescription[Constants.TRANSITION]) {
 				return Constants.LOADING_ICON;
 			} else if (currentStepType === Constants.ACTION_TYPE) {
@@ -1197,10 +1198,10 @@ var FlexTour =
 			/*
 			 * First block try to modify the icon in the bubble
 			 */
-			let currentIconType = _getIconType();
-			let currentIcon = Utils.getEleFromClassName(Constants.ICON_STYLE, true);
+			var currentIconType = _getIconType();
+			var currentIcon = Utils.getEleFromClassName(Constants.ICON_STYLE, true);
 			if (!currentIcon.hasClass(currentIconType)) {
-				let classTokens = currentIcon.attr("class");
+				var classTokens = currentIcon.attr("class");
 				if (classTokens.length > 0) {
 					classTokens = classTokens.split(/\s+/g);
 				}
@@ -1215,8 +1216,8 @@ var FlexTour =
 			/*
 			 * Modify title of the bubble to the new one
 			 */
-			let contentBlock = Utils.getEleFromClassName(Constants.BUBBLE_CONTENT, true);
-			let contentTitle = Utils.getEleFromClassName(Constants.BUBBLE_TITLE, true);
+			var contentBlock = Utils.getEleFromClassName(Constants.BUBBLE_CONTENT, true);
+			var contentTitle = Utils.getEleFromClassName(Constants.BUBBLE_TITLE, true);
 			if (Utils.isValid(Components.stepDescription[Constants.TITLE])) {
 				if (Utils.hasELement(contentTitle)) {
 					contentTitle.html(Components.stepDescription[Constants.TITLE]);
@@ -1234,7 +1235,7 @@ var FlexTour =
 			/*
 			 * Modify the step description of the bubble to the new one
 			 */
-			let contentBody = Utils.getEleFromClassName(Constants.BUBBLE_CONTENT_BODY, true);
+			var contentBody = Utils.getEleFromClassName(Constants.BUBBLE_CONTENT_BODY, true);
 			contentBody.html(Components.stepDescription[Constants.CONTENT]);
 
 			/**
@@ -1242,8 +1243,8 @@ var FlexTour =
 			 * 1. If the new step doesn't have buttons but the previous one has ... remove button-group.
 			 * 2. Modify the other buttons accordingly.
 			 */
-			let bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE, true);
-			let buttonGroup = Utils.getEleFromClassName(Constants.BUTTON_GROUP, true);
+			var bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE, true);
+			var buttonGroup = Utils.getEleFromClassName(Constants.BUTTON_GROUP, true);
 			if (noButtons) {
 				if (Utils.hasELement(buttonGroup)) {
 					buttonGroup.remove();
@@ -1257,8 +1258,8 @@ var FlexTour =
 				});
 				bubble.append(buttonGroup);
 
-				let customizedButtons = Components.stepDescription[Constants.BUTTONS_CUS];
-				for (let i = 0; i < customizedButtons.length; i++) {
+				var customizedButtons = Components.stepDescription[Constants.BUTTONS_CUS];
+				for (var i = 0; i < customizedButtons.length; i++) {
 					_createCustomButton(customizedButtons[i], buttonGroup);
 				}
 			} else {
@@ -1269,8 +1270,8 @@ var FlexTour =
 					bubble.append(buttonGroup);
 				}
 
-				let nextButton = Utils.getEleFromClassName(Constants.NEXT_BUTTON, true);
-				let doneButton = Utils.getEleFromClassName(Constants.DONE_BUTTON, true);
+				var nextButton = Utils.getEleFromClassName(Constants.NEXT_BUTTON, true);
+				var doneButton = Utils.getEleFromClassName(Constants.DONE_BUTTON, true);
 				if (showNext) {
 					// For the case where user go back from last step --> replace Done button with Next button
 					if (Utils.hasELement(doneButton)) {
@@ -1299,12 +1300,12 @@ var FlexTour =
 					}
 				}
 
-				let backButton = Utils.getEleFromClassName(Constants.BACK_BUTTON, true);
+				var backButton = Utils.getEleFromClassName(Constants.BACK_BUTTON, true);
 				if (Utils.hasELement(backButton)) {
 					backButton.prop('disabled', !showBack);
 					backButton.text(_getBackButtonText());
 				} else {
-					let backButton = _createBackButton(showBack);
+					backButton = _createBackButton(showBack);
 					if (Utils.hasELement(nextButton)) {
 						backButton.insertBefore(nextButton);
 					} else if (Utils.hasELement(doneButton)) {
@@ -1312,8 +1313,8 @@ var FlexTour =
 					}
 				}
 
-				let skipRequirement = Components.stepDescription[Constants.SKIP];
-				let skipButton = Utils.getEleFromClassName(Constants.SKIP_BUTTON, true);
+				var skipRequirement = Components.stepDescription[Constants.SKIP];
+				var skipButton = Utils.getEleFromClassName(Constants.SKIP_BUTTON, true);
 				if (Utils.isValid(skipRequirement)) {
 					if (!Utils.hasELement(skipButton)) {
 						_createSkipButton().prependTo(buttonGroup);
@@ -1332,18 +1333,18 @@ var FlexTour =
 		 * Also, create the arrow according to the position defined by user
 		 */
 		function _placeBubbleLocation() {
-			let targetPosition = Components.rect;
-			let bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE, true);
+			var targetPosition = Components.rect;
+			var bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE, true);
 
 			if (Utils.hasELement(bubble)) {
-				let bubbleRect = bubble[0].getBoundingClientRect();
-				let halfBubbleHeight = bubbleRect.height / 2;
-				let halfBubbleWidth = bubbleRect.width / 2;
+				var bubbleRect = bubble[0].getBoundingClientRect();
+				var halfBubbleHeight = bubbleRect.height / 2;
+				var halfBubbleWidth = bubbleRect.width / 2;
 
-				let halfTargetHeight = Components.rect.height / 2;
-				let halfTargetWidth = Components.rect.width / 2;
+				var halfTargetHeight = Components.rect.height / 2;
+				var halfTargetWidth = Components.rect.width / 2;
 
-				let arrow = $(Constants.SPAN_COMP, {
+				var arrow = $(Constants.SPAN_COMP, {
 					"class": Constants.ARROW_LOCATION
 				});
 
@@ -1383,7 +1384,7 @@ var FlexTour =
 		 * This will automatically trigger the
 		 */
 		function _modifyBubbleLocation() {
-			let bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE, true);
+			var bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE, true);
 			Utils.getEleFromClassName(Constants.ARROW_LOCATION, true).remove();
 			/**
 			 * Remove the floating style if exist. In here we modify it so it will be concrete style
@@ -1398,7 +1399,7 @@ var FlexTour =
 		 * Find the location of the bubble and put it in the middle of the screen.
 		 */
 		function _placeFloatBubble() {
-			let bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE, true);
+			var bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE, true);
 			bubble.addClass(Constants.FLOAT_STYLE);
 		}
 
@@ -1408,9 +1409,9 @@ var FlexTour =
 		 * Because Styles have higher priority than CSS styles.
 		 */
 		function _modifyFloatBubble() {
-			let bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE, true);
+			var bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE, true);
 			bubble.addClass(Constants.FLOAT_STYLE);
-			let arrow = Utils.getEleFromClassName(Constants.ARROW_LOCATION, true);
+			var arrow = Utils.getEleFromClassName(Constants.ARROW_LOCATION, true);
 			if (Utils.hasELement(arrow)) {
 				arrow.remove();
 				bubble.css({
@@ -1425,7 +1426,7 @@ var FlexTour =
 		 */
 		function _addBorderAroundTarget() {
 			if (Utils.isValid(Components.rect)) {
-				let borderOverlay = $(Constants.DIV_COMP, {
+				var borderOverlay = $(Constants.DIV_COMP, {
 					"class": Constants.TARGET_BORDER
 				});
 				borderOverlay.css({
@@ -1449,7 +1450,7 @@ var FlexTour =
 		 */
 		function _modifyBorderAroundTarget() {
 			if (Utils.isValid(Components.rect)) {
-				let borderOverlay = Utils.getEleFromClassName(Constants.TARGET_BORDER, true);
+				var borderOverlay = Utils.getEleFromClassName(Constants.TARGET_BORDER, true);
 				borderOverlay.css({
 					width: Components.rect.width + Constants.PX,
 					height: Components.rect.height + Constants.PX,
@@ -1471,7 +1472,7 @@ var FlexTour =
 		 * Alternatively, set scrollLock: true, so that user cannot scroll around unnecessary
 		 */
 		function _scrollMethod() {
-			let modal = Components.stepDescription[Constants.MODAL];
+			var modal = Components.stepDescription[Constants.MODAL];
 			if (!Utils.isValid(modal)) {
 				Utils.smoothScroll(Components.rect);
 			}
@@ -1482,10 +1483,10 @@ var FlexTour =
 		 * This should be used with nextStepTrigger attribute --> so that user knows where to click.
 		 */
 		function _addFlashBorder() {
-			let flashTarget = Components.stepDescription[Constants.FLASH_TARGET];
+			var flashTarget = Components.stepDescription[Constants.FLASH_TARGET];
 			if (Utils.isValid(flashTarget)) {
-				let flashTargetLocation = $(flashTarget);
-				let flashOverlay = $(Constants.DIV_COMP, {
+				var flashTargetLocation = $(flashTarget);
+				var flashOverlay = $(Constants.DIV_COMP, {
 					"class": Constants.FLASH_BORDER
 				});
 				flashOverlay.css({
@@ -1503,11 +1504,11 @@ var FlexTour =
 		 * If the new step doesn't require, and old step has the flashTarget --> remove it
 		 */
 		function _modifyFlashBorder() {
-			let flashTarget = Components.stepDescription[Constants.FLASH_TARGET];
-			let flashOverlay = Utils.getEleFromClassName(Constants.FLASH_BORDER, true);
+			var flashTarget = Components.stepDescription[Constants.FLASH_TARGET];
+			var flashOverlay = Utils.getEleFromClassName(Constants.FLASH_BORDER, true);
 			if (Utils.isValid(flashTarget)) {
 				if (Utils.hasELement(flashOverlay)) {
-					let flashTargetLocation = $(flashTarget);
+					var flashTargetLocation = $(flashTarget);
 					flashOverlay.css({
 						width: flashTargetLocation.outerWidth() + Constants.PX,
 						height: flashTargetLocation.outerHeight() + Constants.PX,
@@ -1667,7 +1668,7 @@ var FlexTour =
 				endOnEsc: true,
 				pauseOnExit: false
 			},
-
+			// Attributes Block
 			ID: "id",
 			TITLE: "title",
 			STEPS: "steps",
@@ -1708,6 +1709,7 @@ var FlexTour =
 			ACTION_TYPE: "action",
 			DEFAULT_POSITION: "bottom",
 
+			// Utilities
 			TIMES: "&times;",
 			BORDER_WIDTH: 3,
 			FLASH_BORDER_WIDTH: 2,
@@ -1751,8 +1753,8 @@ var FlexTour =
 		 * NhatHo-nhatminhhoca@gmail.com
 		 ******************************************************************************/
 
-		let Constants = __webpack_require__(2);
-		let $ = __webpack_require__(4);
+		var Constants = __webpack_require__(2);
+		var $ = __webpack_require__(4);
 
 		module.exports = {
 			/**
@@ -1762,10 +1764,10 @@ var FlexTour =
 			 * @return {boolean}    True if target takes up a rectangle in the DOM, false otherwise
 			 */
 			isVisible: function (targets) {
-				let result = true;
-				let targetsArray = this.convertToArray(targets);
-				for (let i = 0; i < targetsArray.length; i++) {
-					let element = $(targetsArray[i]);
+				var result = true;
+				var targetsArray = this.convertToArray(targets);
+				for (var i = 0; i < targetsArray.length; i++) {
+					var element = $(targetsArray[i]);
 					if (this.hasELement(element)) {
 						result = result && element.is(":visible");
 					} else {
@@ -1783,10 +1785,10 @@ var FlexTour =
 			 * @returns {boolean}       True if target exists in DOM, false otherwise
 			 */
 			doesExist: function (targets) {
-				let result = true;
+				var result = true;
 				// Make sure the input becomes an array event if it's a single target
-				let targetsArray = this.convertToArray(targets);
-				for (let i = 0; i < targetsArray.length; i++) {
+				var targetsArray = this.convertToArray(targets);
+				for (var i = 0; i < targetsArray.length; i++) {
 					result = result && this.hasELement($(targetsArray[i]));
 				}
 				return result;
@@ -1876,7 +1878,7 @@ var FlexTour =
 			 * @returns {*}     The first element or nothing
 			 */
 			getEleFromClassName: function (className, jquerySelector) {
-				let $el = $(this.getClassName(className));
+				var $el = $(this.getClassName(className));
 
 				if (jquerySelector) {
 					return $el;
@@ -1931,7 +1933,7 @@ var FlexTour =
 			 * @param callback      The callback function that will be triggered when event is triggered
 			 */
 			getElementsAndAttachEvent: function (className, event, callback) {
-				let els = this.getElesFromClassName(className);
+				var els = this.getElesFromClassName(className);
 				this.addEvent(els, event, callback);
 			},
 
@@ -1943,7 +1945,7 @@ var FlexTour =
 			 * @param callback      The callback function that will be triggered when event is triggered
 			 */
 			removeELementsAndAttachedEvent: function (className, event, callback) {
-				let els = this.getElesFromClassName(className);
+				var els = this.getElesFromClassName(className);
 				this.removeEvent(els, event, callback);
 			},
 
@@ -1952,7 +1954,7 @@ var FlexTour =
 			 * @returns {Number|number}     window width through 1 of 3 methods
 			 */
 			getFullWindowWidth: function () {
-				let width = 0;
+				var width = 0;
 				if (typeof(window.innerWidth) == 'number') {
 					//Non-IE
 					width = window.innerWidth;
@@ -1968,7 +1970,7 @@ var FlexTour =
 			 * @returns {Number|number}     window height through 1 of 3 methods
 			 */
 			getFullWindowHeight: function () {
-				let height = 0;
+				var height = 0;
 				if (typeof(window.innerHeight ) == 'number') {
 					height = window.innerHeight;
 				} else if (document.documentElement && document.documentElement.clientHeight) {
@@ -1986,14 +1988,14 @@ var FlexTour =
 			 * Taken from Underscore.js
 			 */
 			debounce: function (func, wait, immediate) {
-				let timeout;
+				var timeout;
 				return function () {
-					let context = this, args = arguments;
-					let later = function () {
+					var context = this, args = arguments;
+					var later = function () {
 						timeout = null;
 						if (!immediate) func.apply(context, args);
 					};
-					let callNow = immediate && !timeout;
+					var callNow = immediate && !timeout;
 					clearTimeout(timeout);
 					timeout = setTimeout(later, wait);
 					if (callNow) func.apply(context, args);
@@ -2005,10 +2007,10 @@ var FlexTour =
 			 * @param rect    The target of the step that needs to be scrolled to
 			 */
 			smoothScroll: function (rect) {
-				let $elTop = rect.top;
-				let $elHeight = rect.height;
-				let windowHeight = $(window).height();
-				let offset;
+				var $elTop = rect.top;
+				var $elHeight = rect.height;
+				var windowHeight = $(window).height();
+				var offset;
 				if ($elHeight < windowHeight) {
 					offset = $elTop - ((windowHeight / 2) - ($elHeight / 2));
 				} else {
@@ -2027,7 +2029,7 @@ var FlexTour =
 			 */
 			setKeyValuePairLS: function (key, value) {
 				try {
-					let storageValue = JSON.parse(localStorage.getItem(Constants.LOCALSTORAGE_KEY));
+					var storageValue = JSON.parse(localStorage.getItem(Constants.LOCALSTORAGE_KEY));
 					// Initialize the storageValue object if it was not previously set
 					if (!this.isValid(storageValue)) {
 						storageValue = {};
@@ -2060,7 +2062,7 @@ var FlexTour =
 			 */
 			removeKeyValuePairLS: function (key) {
 				try {
-					let flexTourLS = JSON.parse(localStorage.getItem(Constants.LOCALSTORAGE_KEY));
+					var flexTourLS = JSON.parse(localStorage.getItem(Constants.LOCALSTORAGE_KEY));
 					delete flexTourLS[key];
 					localStorage.setItem(Constants.LOCALSTORAGE_KEY, JSON.stringify(flexTourLS));
 				} catch (e) {
@@ -2087,12 +2089,7 @@ var FlexTour =
 	/***/ function (module, exports, __webpack_require__) {
 
 		var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-		/*******************************************************************************
-		 * Copyright (c) 2016. MIT License.
-		 * NhatHo-nhatminhhoca@gmail.com
-		 ******************************************************************************/
-
-		/*! jQuery v3.0.0 | (c) jQuery Foundation | jquery.org/license */
+		/*! jQuery v3.1.0 | (c) jQuery Foundation | jquery.org/license */
 		!function (a, b) {
 			"use strict";
 			"object" == typeof module && "object" == typeof module.exports ? module.exports = a.document ? b(a, !0) : function (a) {
@@ -2109,7 +2106,7 @@ var FlexTour =
 				c.text = a, b.head.appendChild(c).parentNode.removeChild(c)
 			}
 
-			var q = "3.0.0", r = function (a, b) {
+			var q = "3.1.0", r = function (a, b) {
 				return new r.fn.init(a, b)
 			}, s = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, t = /^-ms-/, u = /-([a-z])/g, v = function (a, b) {
 				return b.toUpperCase()
@@ -2118,7 +2115,7 @@ var FlexTour =
 				jquery: q, constructor: r, length: 0, toArray: function () {
 					return f.call(this)
 				}, get: function (a) {
-					return null != a ? 0 > a ? this[a + this.length] : this[a] : f.call(this)
+					return null != a ? a < 0 ? this[a + this.length] : this[a] : f.call(this)
 				}, pushStack: function (a) {
 					var b = r.merge(this.constructor(), a);
 					return b.prevObject = this, b
@@ -2135,14 +2132,14 @@ var FlexTour =
 				}, last: function () {
 					return this.eq(-1)
 				}, eq: function (a) {
-					var b = this.length, c = +a + (0 > a ? b : 0);
-					return this.pushStack(c >= 0 && b > c ? [this[c]] : [])
+					var b = this.length, c = +a + (a < 0 ? b : 0);
+					return this.pushStack(c >= 0 && c < b ? [this[c]] : [])
 				}, end: function () {
 					return this.prevObject || this.constructor()
 				}, push: h, sort: c.sort, splice: c.splice
 			}, r.extend = r.fn.extend = function () {
 				var a, b, c, d, e, f, g = arguments[0] || {}, h = 1, i = arguments.length, j = !1;
-				for ("boolean" == typeof g && (j = g, g = arguments[h] || {}, h++), "object" == typeof g || r.isFunction(g) || (g = {}), h === i && (g = this, h--); i > h; h++)if (null != (a = arguments[h]))for (b in a)c = g[b], d = a[b], g !== d && (j && d && (r.isPlainObject(d) || (e = r.isArray(d))) ? (e ? (e = !1, f = c && r.isArray(c) ? c : []) : f = c && r.isPlainObject(c) ? c : {}, g[b] = r.extend(j, f, d)) : void 0 !== d && (g[b] = d));
+				for ("boolean" == typeof g && (j = g, g = arguments[h] || {}, h++), "object" == typeof g || r.isFunction(g) || (g = {}), h === i && (g = this, h--); h < i; h++)if (null != (a = arguments[h]))for (b in a)c = g[b], d = a[b], g !== d && (j && d && (r.isPlainObject(d) || (e = r.isArray(d))) ? (e ? (e = !1, f = c && r.isArray(c) ? c : []) : f = c && r.isPlainObject(c) ? c : {}, g[b] = r.extend(j, f, d)) : void 0 !== d && (g[b] = d));
 				return g
 			}, r.extend({
 				expando: "jQuery" + (q + Math.random()).replace(/\D/g, ""), isReady: !0, error: function (a) {
@@ -2157,7 +2154,7 @@ var FlexTour =
 					return ("number" === b || "string" === b) && !isNaN(a - parseFloat(a))
 				}, isPlainObject: function (a) {
 					var b, c;
-					return a && "[object Object]" === k.call(a) ? (b = e(a)) ? (c = l.call(b, "constructor") && b.constructor, "function" == typeof c && m.call(c) === n) : !0 : !1
+					return !(!a || "[object Object]" !== k.call(a)) && (!(b = e(a)) || (c = l.call(b, "constructor") && b.constructor, "function" == typeof c && m.call(c) === n))
 				}, isEmptyObject: function (a) {
 					var b;
 					for (b in a)return !1;
@@ -2173,7 +2170,7 @@ var FlexTour =
 				}, each: function (a, b) {
 					var c, d = 0;
 					if (w(a)) {
-						for (c = a.length; c > d; d++)if (b.call(a[d], d, a[d]) === !1)break
+						for (c = a.length; d < c; d++)if (b.call(a[d], d, a[d]) === !1)break
 					} else for (d in a)if (b.call(a[d], d, a[d]) === !1)break;
 					return a
 				}, trim: function (a) {
@@ -2184,36 +2181,36 @@ var FlexTour =
 				}, inArray: function (a, b, c) {
 					return null == b ? -1 : i.call(b, a, c)
 				}, merge: function (a, b) {
-					for (var c = +b.length, d = 0, e = a.length; c > d; d++)a[e++] = b[d];
+					for (var c = +b.length, d = 0, e = a.length; d < c; d++)a[e++] = b[d];
 					return a.length = e, a
 				}, grep: function (a, b, c) {
-					for (var d, e = [], f = 0, g = a.length, h = !c; g > f; f++)d = !b(a[f], f), d !== h && e.push(a[f]);
+					for (var d, e = [], f = 0, g = a.length, h = !c; f < g; f++)d = !b(a[f], f), d !== h && e.push(a[f]);
 					return e
 				}, map: function (a, b, c) {
 					var d, e, f = 0, h = [];
-					if (w(a))for (d = a.length; d > f; f++)e = b(a[f], f, c), null != e && h.push(e); else for (f in a)e = b(a[f], f, c), null != e && h.push(e);
+					if (w(a))for (d = a.length; f < d; f++)e = b(a[f], f, c), null != e && h.push(e); else for (f in a)e = b(a[f], f, c), null != e && h.push(e);
 					return g.apply([], h)
 				}, guid: 1, proxy: function (a, b) {
 					var c, d, e;
-					return "string" == typeof b && (c = a[b], b = a, a = c), r.isFunction(a) ? (d = f.call(arguments, 2), e = function () {
+					if ("string" == typeof b && (c = a[b], b = a, a = c), r.isFunction(a))return d = f.call(arguments, 2), e = function () {
 						return a.apply(b || this, d.concat(f.call(arguments)))
-					}, e.guid = a.guid = a.guid || r.guid++, e) : void 0
+					}, e.guid = a.guid = a.guid || r.guid++, e
 				}, now: Date.now, support: o
 			}), "function" == typeof Symbol && (r.fn[Symbol.iterator] = c[Symbol.iterator]), r.each("Boolean Number String Function Array Date RegExp Object Error Symbol".split(" "), function (a, b) {
 				j["[object " + b + "]"] = b.toLowerCase()
 			});
 			function w(a) {
 				var b = !!a && "length" in a && a.length, c = r.type(a);
-				return "function" === c || r.isWindow(a) ? !1 : "array" === c || 0 === b || "number" == typeof b && b > 0 && b - 1 in a
+				return "function" !== c && !r.isWindow(a) && ("array" === c || 0 === b || "number" == typeof b && b > 0 && b - 1 in a)
 			}
 
 			var x = function (a) {
 				var b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u = "sizzle" + 1 * new Date, v = a.document, w = 0, x = 0, y = ha(), z = ha(), A = ha(), B = function (a, b) {
 					return a === b && (l = !0), 0
 				}, C = {}.hasOwnProperty, D = [], E = D.pop, F = D.push, G = D.push, H = D.slice, I = function (a, b) {
-					for (var c = 0, d = a.length; d > c; c++)if (a[c] === b)return c;
+					for (var c = 0, d = a.length; c < d; c++)if (a[c] === b)return c;
 					return -1
-				}, J = "checked|selected|async|autofocus|autoplay|controls|defer|disabled|hidden|ismap|loop|multiple|open|readonly|required|scoped", K = "[\\x20\\t\\r\\n\\f]", L = "(?:\\\\.|[\\w-]|[^\x00-\\xa0])+", M = "\\[" + K + "*(" + L + ")(?:" + K + "*([*^$|!~]?=)" + K + "*(?:'((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\"|(" + L + "))|)" + K + "*\\]", N = ":(" + L + ")(?:\\((('((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\")|((?:\\\\.|[^\\\\()[\\]]|" + M + ")*)|.*)\\)|)", O = new RegExp(K + "+", "g"), P = new RegExp("^" + K + "+|((?:^|[^\\\\])(?:\\\\.)*)" + K + "+$", "g"), Q = new RegExp("^" + K + "*," + K + "*"), R = new RegExp("^" + K + "*([>+~]|" + K + ")" + K + "*"), S = new RegExp("=" + K + "*([^\\]'\"]*?)" + K + "*\\]", "g"), T = new RegExp(N), U = new RegExp("^" + L + "$"), V = {
+				}, J = "checked|selected|async|autofocus|autoplay|controls|defer|disabled|hidden|ismap|loop|multiple|open|readonly|required|scoped", K = "[\\x20\\t\\r\\n\\f]", L = "(?:\\\\.|[\\w-]|[^\0-\\xa0])+", M = "\\[" + K + "*(" + L + ")(?:" + K + "*([*^$|!~]?=)" + K + "*(?:'((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\"|(" + L + "))|)" + K + "*\\]", N = ":(" + L + ")(?:\\((('((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\")|((?:\\\\.|[^\\\\()[\\]]|" + M + ")*)|.*)\\)|)", O = new RegExp(K + "+", "g"), P = new RegExp("^" + K + "+|((?:^|[^\\\\])(?:\\\\.)*)" + K + "+$", "g"), Q = new RegExp("^" + K + "*," + K + "*"), R = new RegExp("^" + K + "*([>+~]|" + K + ")" + K + "*"), S = new RegExp("=" + K + "*([^\\]'\"]*?)" + K + "*\\]", "g"), T = new RegExp(N), U = new RegExp("^" + L + "$"), V = {
 					ID: new RegExp("^#(" + L + ")"),
 					CLASS: new RegExp("^\\.(" + L + ")"),
 					TAG: new RegExp("^(" + L + "|[*])"),
@@ -2224,9 +2221,9 @@ var FlexTour =
 					needsContext: new RegExp("^" + K + "*[>+~]|:(even|odd|eq|gt|lt|nth|first|last)(?:\\(" + K + "*((?:-\\d)?\\d*)" + K + "*\\)|)(?=[^-]|$)", "i")
 				}, W = /^(?:input|select|textarea|button)$/i, X = /^h\d$/i, Y = /^[^{]+\{\s*\[native \w/, Z = /^(?:#([\w-]+)|(\w+)|\.([\w-]+))$/, $ = /[+~]/, _ = new RegExp("\\\\([\\da-f]{1,6}" + K + "?|(" + K + ")|.)", "ig"), aa = function (a, b, c) {
 					var d = "0x" + b - 65536;
-					return d !== d || c ? b : 0 > d ? String.fromCharCode(d + 65536) : String.fromCharCode(d >> 10 | 55296, 1023 & d | 56320)
+					return d !== d || c ? b : d < 0 ? String.fromCharCode(d + 65536) : String.fromCharCode(d >> 10 | 55296, 1023 & d | 56320)
 				}, ba = /([\0-\x1f\x7f]|^-?\d)|^-$|[^\x80-\uFFFF\w-]/g, ca = function (a, b) {
-					return b ? "\x00" === a ? "\ufffd" : a.slice(0, -1) + "\\" + a.charCodeAt(a.length - 1).toString(16) + " " : "\\" + a
+					return b ? "\0" === a ? "\ufffd" : a.slice(0, -1) + "\\" + a.charCodeAt(a.length - 1).toString(16) + " " : "\\" + a
 				}, da = function () {
 					m()
 				}, ea = ta(function (a) {
@@ -2347,7 +2344,7 @@ var FlexTour =
 
 				c = ga.support = {}, f = ga.isXML = function (a) {
 					var b = a && (a.ownerDocument || a).documentElement;
-					return b ? "HTML" !== b.nodeName : !1
+					return !!b && "HTML" !== b.nodeName
 				}, m = ga.setDocument = function (a) {
 					var b, e, g = a ? a.ownerDocument || a : v;
 					return g !== n && 9 === g.nodeType && g.documentElement ? (n = g, o = n.documentElement, p = !f(n), v !== n && (e = n.defaultView) && e.top !== e && (e.addEventListener ? e.addEventListener("unload", da, !1) : e.attachEvent && e.attachEvent("onunload", da)), c.attributes = ja(function (a) {
@@ -2382,7 +2379,7 @@ var FlexTour =
 						}
 						return f
 					}, d.find.CLASS = c.getElementsByClassName && function (a, b) {
-							return "undefined" != typeof b.getElementsByClassName && p ? b.getElementsByClassName(a) : void 0
+							if ("undefined" != typeof b.getElementsByClassName && p)return b.getElementsByClassName(a)
 						}, r = [], q = [], (c.qsa = Y.test(n.querySelectorAll)) && (ja(function (a) {
 						o.appendChild(a).innerHTML = "<a id='" + u + "'></a><select id='" + u + "-\r\\' msallowcapture=''><option selected=''></option></select>", a.querySelectorAll("[msallowcapture^='']").length && q.push("[*^$]=" + K + "*(?:''|\"\")"), a.querySelectorAll("[selected]").length || q.push("\\[" + K + "*(?:value|" + J + ")"), a.querySelectorAll("[id~=" + u + "-]").length || q.push("~="), a.querySelectorAll(":checked").length || q.push(":checked"), a.querySelectorAll("a#" + u + "+*").length || q.push(".#.+[+~]")
 					}), ja(function (a) {
@@ -2486,7 +2483,7 @@ var FlexTour =
 						}, ATTR: function (a, b, c) {
 							return function (d) {
 								var e = ga.attr(d, a);
-								return null == e ? "!=" === b : b ? (e += "", "=" === b ? e === c : "!=" === b ? e !== c : "^=" === b ? c && 0 === e.indexOf(c) : "*=" === b ? c && e.indexOf(c) > -1 : "$=" === b ? c && e.slice(-c.length) === c : "~=" === b ? (" " + e.replace(O, " ") + " ").indexOf(c) > -1 : "|=" === b ? e === c || e.slice(0, c.length + 1) === c + "-" : !1) : !0
+								return null == e ? "!=" === b : !b || (e += "", "=" === b ? e === c : "!=" === b ? e !== c : "^=" === b ? c && 0 === e.indexOf(c) : "*=" === b ? c && e.indexOf(c) > -1 : "$=" === b ? c && e.slice(-c.length) === c : "~=" === b ? (" " + e.replace(O, " ") + " ").indexOf(c) > -1 : "|=" === b && (e === c || e.slice(0, c.length + 1) === c + "-"))
 							}
 						}, CHILD: function (a, b, c, d, e) {
 							var f = "nth" !== a.slice(0, 3), g = "last" !== a.slice(-4), h = "of-type" === b;
@@ -2578,18 +2575,18 @@ var FlexTour =
 						}), last: pa(function (a, b) {
 							return [b - 1]
 						}), eq: pa(function (a, b, c) {
-							return [0 > c ? c + b : c]
+							return [c < 0 ? c + b : c]
 						}), even: pa(function (a, b) {
-							for (var c = 0; b > c; c += 2)a.push(c);
+							for (var c = 0; c < b; c += 2)a.push(c);
 							return a
 						}), odd: pa(function (a, b) {
-							for (var c = 1; b > c; c += 2)a.push(c);
+							for (var c = 1; c < b; c += 2)a.push(c);
 							return a
 						}), lt: pa(function (a, b, c) {
-							for (var d = 0 > c ? c + b : c; --d >= 0;)a.push(d);
+							for (var d = c < 0 ? c + b : c; --d >= 0;)a.push(d);
 							return a
 						}), gt: pa(function (a, b, c) {
-							for (var d = 0 > c ? c + b : c; ++d < b;)a.push(d);
+							for (var d = c < 0 ? c + b : c; ++d < b;)a.push(d);
 							return a
 						})
 					}
@@ -2618,7 +2615,7 @@ var FlexTour =
 					return b ? h.length : h ? ga.error(a) : z(a, i).slice(0)
 				};
 				function sa(a) {
-					for (var b = 0, c = a.length, d = ""; c > b; b++)d += a[b].value;
+					for (var b = 0, c = a.length, d = ""; b < c; b++)d += a[b].value;
 					return d
 				}
 
@@ -2646,12 +2643,12 @@ var FlexTour =
 				}
 
 				function va(a, b, c) {
-					for (var d = 0, e = b.length; e > d; d++)ga(a, b[d], c);
+					for (var d = 0, e = b.length; d < e; d++)ga(a, b[d], c);
 					return c
 				}
 
 				function wa(a, b, c, d, e) {
-					for (var f, g = [], h = 0, i = a.length, j = null != b; i > h; h++)(f = a[h]) && (c && !c(f, d, e) || (g.push(f), j && b.push(h)));
+					for (var f, g = [], h = 0, i = a.length, j = null != b; h < i; h++)(f = a[h]) && (c && !c(f, d, e) || (g.push(f), j && b.push(h)));
 					return g
 				}
 
@@ -2684,10 +2681,10 @@ var FlexTour =
 					}, h, !0), m = [function (a, c, d) {
 						var e = !g && (d || c !== j) || ((b = c).nodeType ? k(a, c, d) : l(a, c, d));
 						return b = null, e
-					}]; f > i; i++)if (c = d.relative[a[i].type])m = [ta(ua(m), c)]; else {
+					}]; i < f; i++)if (c = d.relative[a[i].type])m = [ta(ua(m), c)]; else {
 						if (c = d.filter[a[i].type].apply(null, a[i].matches), c[u]) {
-							for (e = ++i; f > e; e++)if (d.relative[a[e].type])break;
-							return xa(i > 1 && ua(m), i > 1 && sa(a.slice(0, i - 1).concat({value: " " === a[i - 2].type ? "*" : ""})).replace(P, "$1"), c, e > i && ya(a.slice(i, e)), f > e && ya(a = a.slice(e)), f > e && sa(a))
+							for (e = ++i; e < f; e++)if (d.relative[a[e].type])break;
+							return xa(i > 1 && ua(m), i > 1 && sa(a.slice(0, i - 1).concat({value: " " === a[i - 2].type ? "*" : ""})).replace(P, "$1"), c, i < e && ya(a.slice(i, e)), e < f && ya(a = a.slice(e)), e < f && sa(a))
 						}
 						m.push(c)
 					}
@@ -2752,16 +2749,16 @@ var FlexTour =
 				}), ja(function (a) {
 					return a.innerHTML = "<a href='#'></a>", "#" === a.firstChild.getAttribute("href")
 				}) || ka("type|href|height|width", function (a, b, c) {
-					return c ? void 0 : a.getAttribute(b, "type" === b.toLowerCase() ? 1 : 2)
+					if (!c)return a.getAttribute(b, "type" === b.toLowerCase() ? 1 : 2)
 				}), c.attributes && ja(function (a) {
 					return a.innerHTML = "<input/>", a.firstChild.setAttribute("value", ""), "" === a.firstChild.getAttribute("value")
 				}) || ka("value", function (a, b, c) {
-					return c || "input" !== a.nodeName.toLowerCase() ? void 0 : a.defaultValue
+					if (!c && "input" === a.nodeName.toLowerCase())return a.defaultValue
 				}), ja(function (a) {
 					return null == a.getAttribute("disabled")
 				}) || ka(J, function (a, b, c) {
 					var d;
-					return c ? void 0 : a[b] === !0 ? b.toLowerCase() : (d = a.getAttributeNode(b)) && d.specified ? d.value : null
+					if (!c)return a[b] === !0 ? b.toLowerCase() : (d = a.getAttributeNode(b)) && d.specified ? d.value : null
 				}), ga
 			}(a);
 			r.find = x, r.expr = x.selectors, r.expr[":"] = r.expr.pseudos, r.uniqueSort = r.unique = x.uniqueSort, r.text = x.getText, r.isXMLDoc = x.isXML, r.contains = x.contains, r.escapeSelector = x.escape;
@@ -2802,9 +2799,9 @@ var FlexTour =
 				find: function (a) {
 					var b, c, d = this.length, e = this;
 					if ("string" != typeof a)return this.pushStack(r(a).filter(function () {
-						for (b = 0; d > b; b++)if (r.contains(e[b], this))return !0
+						for (b = 0; b < d; b++)if (r.contains(e[b], this))return !0
 					}));
-					for (c = this.pushStack([]), b = 0; d > b; b++)r.find(a, e[b], c);
+					for (c = this.pushStack([]), b = 0; b < d; b++)r.find(a, e[b], c);
 					return d > 1 ? r.uniqueSort(c) : c
 				}, filter: function (a) {
 					return this.pushStack(D(this, a || [], !1))
@@ -2833,11 +2830,11 @@ var FlexTour =
 				has: function (a) {
 					var b = r(a, this), c = b.length;
 					return this.filter(function () {
-						for (var a = 0; c > a; a++)if (r.contains(this, b[a]))return !0
+						for (var a = 0; a < c; a++)if (r.contains(this, b[a]))return !0
 					})
 				}, closest: function (a, b) {
 					var c, d = 0, e = this.length, f = [], g = "string" != typeof a && r(a);
-					if (!A.test(a))for (; e > d; d++)for (c = this[d]; c && c !== b; c = c.parentNode)if (c.nodeType < 11 && (g ? g.index(c) > -1 : 1 === c.nodeType && r.find.matchesSelector(c, a))) {
+					if (!A.test(a))for (; d < e; d++)for (c = this[d]; c && c !== b; c = c.parentNode)if (c.nodeType < 11 && (g ? g.index(c) > -1 : 1 === c.nodeType && r.find.matchesSelector(c, a))) {
 						f.push(c);
 						break
 					}
@@ -2915,7 +2912,7 @@ var FlexTour =
 					}, remove: function () {
 						return r.each(arguments, function (a, b) {
 							var c;
-							while ((c = r.inArray(b, f, c)) > -1)f.splice(c, 1), h >= c && h--
+							while ((c = r.inArray(b, f, c)) > -1)f.splice(c, 1), c <= h && h--
 						}), this
 					}, has: function (a) {
 						return a ? r.inArray(a, f) > -1 : f.length > 0
@@ -2983,7 +2980,7 @@ var FlexTour =
 								return function () {
 									var h = this, i = arguments, j = function () {
 										var a, j;
-										if (!(f > b)) {
+										if (!(b < f)) {
 											if (a = d.apply(h, i), a === c.promise())throw new TypeError("Thenable self-resolution");
 											j = a && ("object" == typeof a || "function" == typeof a) && a.then, r.isFunction(j) ? e ? j.call(a, g(f, c, M, e), g(f, c, N, e)) : (f++, j.call(a, g(f, c, M, e), g(f, c, N, e), g(f, c, M, c.notifyWith))) : (d !== M && (h = void 0, i = [a]), (e || c.resolveWith)(h, i))
 										}
@@ -3019,7 +3016,7 @@ var FlexTour =
 							d[a] = this, e[a] = arguments.length > 1 ? f.call(arguments) : c, --b || g.resolveWith(d, e)
 						}
 					};
-					if (1 >= b && (O(a, g.done(h(c)).resolve, g.reject), "pending" === g.state() || r.isFunction(e[c] && e[c].then)))return g.then();
+					if (b <= 1 && (O(a, g.done(h(c)).resolve, g.reject), "pending" === g.state() || r.isFunction(e[c] && e[c].then)))return g.then();
 					while (c--)O(e[c], h(c), g.reject);
 					return g.promise()
 				}
@@ -3027,10 +3024,16 @@ var FlexTour =
 			var P = /^(Eval|Internal|Range|Reference|Syntax|Type|URI)Error$/;
 			r.Deferred.exceptionHook = function (b, c) {
 				a.console && a.console.warn && b && P.test(b.name) && a.console.warn("jQuery.Deferred exception: " + b.message, b.stack, c)
+			}, r.readyException = function (b) {
+				a.setTimeout(function () {
+					throw b
+				})
 			};
 			var Q = r.Deferred();
 			r.fn.ready = function (a) {
-				return Q.then(a), this
+				return Q.then(a)["catch"](function (a) {
+					r.readyException(a)
+				}), this
 			}, r.extend({
 				isReady: !1, readyWait: 1, holdReady: function (a) {
 					a ? r.readyWait++ : r.ready(!0)
@@ -3048,9 +3051,10 @@ var FlexTour =
 				if ("object" === r.type(c)) {
 					e = !0;
 					for (h in c)S(a, b, h, c[h], !0, f, g)
-				} else if (void 0 !== d && (e = !0, r.isFunction(d) || (g = !0), j && (g ? (b.call(a, d), b = null) : (j = b, b = function (a, b, c) {
+				} else if (void 0 !== d && (e = !0,
+					r.isFunction(d) || (g = !0), j && (g ? (b.call(a, d), b = null) : (j = b, b = function (a, b, c) {
 						return j.call(r(a), c)
-					})), b))for (; i > h; h++)b(a[h], c, g ? d : d.call(a[h], h, b(a[h], c)));
+					})), b))for (; h < i; h++)b(a[h], c, g ? d : d.call(a[h], h, b(a[h], c)));
 				return e ? a : j ? b.call(a) : i ? b(a[0], c) : f
 			}, T = function (a) {
 				return 1 === a.nodeType || 9 === a.nodeType || !+a.nodeType
@@ -3095,7 +3099,7 @@ var FlexTour =
 				var d;
 				if (void 0 === c && 1 === a.nodeType)if (d = "data-" + b.replace(Y, "-$&").toLowerCase(), c = a.getAttribute(d), "string" == typeof c) {
 					try {
-						c = "true" === c ? !0 : "false" === c ? !1 : "null" === c ? null : +c + "" === c ? +c : X.test(c) ? JSON.parse(c) : c
+						c = "true" === c || "false" !== c && ("null" === c ? null : +c + "" === c ? +c : X.test(c) ? JSON.parse(c) : c)
 					} catch (e) {
 					}
 					W.set(a, b, c)
@@ -3145,7 +3149,7 @@ var FlexTour =
 			}), r.extend({
 				queue: function (a, b, c) {
 					var d;
-					return a ? (b = (b || "fx") + "queue", d = V.get(a, b), c && (!d || r.isArray(c) ? d = V.access(a, b, r.makeArray(c)) : d.push(c)), d || []) : void 0
+					if (a)return b = (b || "fx") + "queue", d = V.get(a, b), c && (!d || r.isArray(c) ? d = V.access(a, b, r.makeArray(c)) : d.push(c)), d || []
 				}, dequeue: function (a, b) {
 					b = b || "fx";
 					var c = r.queue(a, b), d = c.length, e = c.shift(), f = r._queueHooks(a, b), g = function () {
@@ -3213,8 +3217,8 @@ var FlexTour =
 			}
 
 			function ga(a, b) {
-				for (var c, d, e = [], f = 0, g = a.length; g > f; f++)d = a[f], d.style && (c = d.style.display, b ? ("none" === c && (e[f] = V.get(d, "display") || null, e[f] || (d.style.display = "")), "" === d.style.display && ba(d) && (e[f] = fa(d))) : "none" !== c && (e[f] = "none", V.set(d, "display", c)));
-				for (f = 0; g > f; f++)null != e[f] && (a[f].style.display = e[f]);
+				for (var c, d, e = [], f = 0, g = a.length; f < g; f++)d = a[f], d.style && (c = d.style.display, b ? ("none" === c && (e[f] = V.get(d, "display") || null, e[f] || (d.style.display = "")), "" === d.style.display && ba(d) && (e[f] = fa(d))) : "none" !== c && (e[f] = "none", V.set(d, "display", c)));
+				for (f = 0; f < g; f++)null != e[f] && (a[f].style.display = e[f]);
 				return a
 			}
 
@@ -3244,13 +3248,13 @@ var FlexTour =
 			}
 
 			function ma(a, b) {
-				for (var c = 0, d = a.length; d > c; c++)V.set(a[c], "globalEval", !b || V.get(b[c], "globalEval"))
+				for (var c = 0, d = a.length; c < d; c++)V.set(a[c], "globalEval", !b || V.get(b[c], "globalEval"))
 			}
 
 			var na = /<|&#?\w+;/;
 
 			function oa(a, b, c, d, e) {
-				for (var f, g, h, i, j, k, l = b.createDocumentFragment(), m = [], n = 0, o = a.length; o > n; n++)if (f = a[n], f || 0 === f)if ("object" === r.type(f))r.merge(m, f.nodeType ? [f] : f); else if (na.test(f)) {
+				for (var f, g, h, i, j, k, l = b.createDocumentFragment(), m = [], n = 0, o = a.length; n < o; n++)if (f = a[n], f || 0 === f)if ("object" === r.type(f))r.merge(m, f.nodeType ? [f] : f); else if (na.test(f)) {
 					g = g || l.appendChild(b.createElement("div")), h = (ia.exec(f) || ["", ""])[1].toLowerCase(), i = ka[h] || ka._default, g.innerHTML = i[1] + r.htmlPrefilter(f) + i[2], k = i[0];
 					while (k--)g = g.lastChild;
 					r.merge(m, g.childNodes), g = l.firstChild, g.textContent = ""
@@ -3342,7 +3346,7 @@ var FlexTour =
 				}, handlers: function (a, b) {
 					var c, d, e, f, g = [], h = b.delegateCount, i = a.target;
 					if (h && i.nodeType && ("click" !== a.type || isNaN(a.button) || a.button < 1))for (; i !== this; i = i.parentNode || this)if (1 === i.nodeType && (i.disabled !== !0 || "click" !== a.type)) {
-						for (d = [], c = 0; h > c; c++)f = b[c], e = f.selector + " ", void 0 === d[e] && (d[e] = f.needsContext ? r(e, this).index(i) > -1 : r.find(e, this, null, [i]).length), d[e] && d.push(f);
+						for (d = [], c = 0; c < h; c++)f = b[c], e = f.selector + " ", void 0 === d[e] && (d[e] = f.needsContext ? r(e, this).index(i) > -1 : r.find(e, this, null, [i]).length), d[e] && d.push(f);
 						d.length && g.push({elem: i, handlers: d})
 					}
 					return h < b.length && g.push({elem: this, handlers: b.slice(h)}), g
@@ -3351,9 +3355,9 @@ var FlexTour =
 						enumerable: !0,
 						configurable: !0,
 						get: r.isFunction(b) ? function () {
-							return this.originalEvent ? b(this.originalEvent) : void 0
+							if (this.originalEvent)return b(this.originalEvent)
 						} : function () {
-							return this.originalEvent ? this.originalEvent[a] : void 0
+							if (this.originalEvent)return this.originalEvent[a]
 						},
 						set: function (b) {
 							Object.defineProperty(this, a, {enumerable: !0, configurable: !0, writable: !0, value: b})
@@ -3364,15 +3368,15 @@ var FlexTour =
 				}, special: {
 					load: {noBubble: !0}, focus: {
 						trigger: function () {
-							return this !== va() && this.focus ? (this.focus(), !1) : void 0
+							if (this !== va() && this.focus)return this.focus(), !1
 						}, delegateType: "focusin"
 					}, blur: {
 						trigger: function () {
-							return this === va() && this.blur ? (this.blur(), !1) : void 0
+							if (this === va() && this.blur)return this.blur(), !1
 						}, delegateType: "focusout"
 					}, click: {
 						trigger: function () {
-							return "checkbox" === this.type && this.click && r.nodeName(this, "input") ? (this.click(), !1) : void 0
+							if ("checkbox" === this.type && this.click && r.nodeName(this, "input"))return this.click(), !1
 						}, _default: function (a) {
 							return r.nodeName(a.target, "a")
 						}
@@ -3487,7 +3491,7 @@ var FlexTour =
 				if (1 === b.nodeType) {
 					if (V.hasData(a) && (f = V.access(a), g = V.set(b, f), j = f.events)) {
 						delete g.handle, g.events = {};
-						for (e in j)for (c = 0, d = j[e].length; d > c; c++)r.event.add(b, e, j[e][c])
+						for (e in j)for (c = 0, d = j[e].length; c < d; c++)r.event.add(b, e, j[e][c])
 					}
 					W.hasData(a) && (h = W.access(a), i = r.extend({}, h), W.set(b, i))
 				}
@@ -3506,8 +3510,8 @@ var FlexTour =
 					s && (b[0] = q.call(this, e, f.html())), Ha(f, b, c, d)
 				});
 				if (m && (e = oa(b, a[0].ownerDocument, !1, a, d), f = e.firstChild, 1 === e.childNodes.length && (e = f), f || d)) {
-					for (h = r.map(la(e, "script"), Da), i = h.length; m > l; l++)j = e, l !== n && (j = r.clone(j, !0, !0), i && r.merge(h, la(j, "script"))), c.call(a[l], j, l);
-					if (i)for (k = h[h.length - 1].ownerDocument, r.map(h, Ea), l = 0; i > l; l++)j = h[l], ja.test(j.type || "") && !V.access(j, "globalEval") && r.contains(k, j) && (j.src ? r._evalUrl && r._evalUrl(j.src) : p(j.textContent.replace(Ba, ""), k))
+					for (h = r.map(la(e, "script"), Da), i = h.length; l < m; l++)j = e, l !== n && (j = r.clone(j, !0, !0), i && r.merge(h, la(j, "script"))), c.call(a[l], j, l);
+					if (i)for (k = h[h.length - 1].ownerDocument, r.map(h, Ea), l = 0; l < i; l++)j = h[l], ja.test(j.type || "") && !V.access(j, "globalEval") && r.contains(k, j) && (j.src ? r._evalUrl && r._evalUrl(j.src) : p(j.textContent.replace(Ba, ""), k))
 				}
 				return a
 			}
@@ -3522,8 +3526,8 @@ var FlexTour =
 					return a.replace(xa, "<$1></$2>")
 				}, clone: function (a, b, c) {
 					var d, e, f, g, h = a.cloneNode(!0), i = r.contains(a.ownerDocument, a);
-					if (!(o.noCloneChecked || 1 !== a.nodeType && 11 !== a.nodeType || r.isXMLDoc(a)))for (g = la(h), f = la(a), d = 0, e = f.length; e > d; d++)Ga(f[d], g[d]);
-					if (b)if (c)for (f = f || la(a), g = g || la(h), d = 0, e = f.length; e > d; d++)Fa(f[d], g[d]); else Fa(a, h);
+					if (!(o.noCloneChecked || 1 !== a.nodeType && 11 !== a.nodeType || r.isXMLDoc(a)))for (g = la(h), f = la(a), d = 0, e = f.length; d < e; d++)Ga(f[d], g[d]);
+					if (b)if (c)for (f = f || la(a), g = g || la(h), d = 0, e = f.length; d < e; d++)Fa(f[d], g[d]); else Fa(a, h);
 					return g = la(h, "script"), g.length > 0 && ma(g, !i && la(a, "script")), h
 				}, cleanData: function (a) {
 					for (var b, c, d, e = r.event.special, f = 0; void 0 !== (c = a[f]); f++)if (T(c)) {
@@ -3571,7 +3575,7 @@ var FlexTour =
 					for (var a, b = 0; null != (a = this[b]); b++)1 === a.nodeType && (r.cleanData(la(a, !1)), a.textContent = "");
 					return this
 				}, clone: function (a, b) {
-					return a = null == a ? !1 : a, b = null == b ? a : b, this.map(function () {
+					return a = null != a && a, b = null == b ? a : b, this.map(function () {
 						return r.clone(this, a, b)
 					})
 				}, html: function (a) {
@@ -3581,7 +3585,7 @@ var FlexTour =
 						if ("string" == typeof a && !ya.test(a) && !ka[(ia.exec(a) || ["", ""])[1].toLowerCase()]) {
 							a = r.htmlPrefilter(a);
 							try {
-								for (; d > c; c++)b = this[c] || {}, 1 === b.nodeType && (r.cleanData(la(b, !1)), b.innerHTML = a);
+								for (; c < d; c++)b = this[c] || {}, 1 === b.nodeType && (r.cleanData(la(b, !1)), b.innerHTML = a);
 								b = 0
 							} catch (e) {
 							}
@@ -3603,7 +3607,7 @@ var FlexTour =
 				replaceAll: "replaceWith"
 			}, function (a, b) {
 				r.fn[a] = function (a) {
-					for (var c, d = [], e = r(a), f = e.length - 1, g = 0; f >= g; g++)c = g === f ? this : this.clone(!0), r(e[g])[b](c), h.apply(d, c.get());
+					for (var c, d = [], e = r(a), f = e.length - 1, g = 0; g <= f; g++)c = g === f ? this : this.clone(!0), r(e[g])[b](c), h.apply(d, c.get());
 					return this.pushStack(d)
 				}
 			});
@@ -3667,14 +3671,14 @@ var FlexTour =
 			}
 
 			function Va(a, b, c, d, e) {
-				for (var f = c === (d ? "border" : "content") ? 4 : "width" === b ? 1 : 0, g = 0; 4 > f; f += 2)"margin" === c && (g += r.css(a, c + aa[f], !0, e)), d ? ("content" === c && (g -= r.css(a, "padding" + aa[f], !0, e)), "margin" !== c && (g -= r.css(a, "border" + aa[f] + "Width", !0, e))) : (g += r.css(a, "padding" + aa[f], !0, e), "padding" !== c && (g += r.css(a, "border" + aa[f] + "Width", !0, e)));
+				for (var f = c === (d ? "border" : "content") ? 4 : "width" === b ? 1 : 0, g = 0; f < 4; f += 2)"margin" === c && (g += r.css(a, c + aa[f], !0, e)), d ? ("content" === c && (g -= r.css(a, "padding" + aa[f], !0, e)), "margin" !== c && (g -= r.css(a, "border" + aa[f] + "Width", !0, e))) : (g += r.css(a, "padding" + aa[f], !0, e), "padding" !== c && (g += r.css(a, "border" + aa[f] + "Width", !0, e)));
 				return g
 			}
 
 			function Wa(a, b, c) {
 				var d, e = !0, f = La(a), g = "border-box" === r.css(a, "boxSizing", !1, f);
-				if (a.getClientRects().length && (d = a.getBoundingClientRect()[b]), 0 >= d || null == d) {
-					if (d = Ma(a, b, f), (0 > d || null == d) && (d = a.style[b]), Ka.test(d))return d;
+				if (a.getClientRects().length && (d = a.getBoundingClientRect()[b]), d <= 0 || null == d) {
+					if (d = Ma(a, b, f), (d < 0 || null == d) && (d = a.style[b]), Ka.test(d))return d;
 					e = g && (o.boxSizingReliable() || d === a.style[b]), d = parseFloat(d) || 0
 				}
 				return d + Va(a, b, c || (g ? "border" : "content"), e, f) + "px"
@@ -3720,22 +3724,22 @@ var FlexTour =
 			}), r.each(["height", "width"], function (a, b) {
 				r.cssHooks[b] = {
 					get: function (a, c, d) {
-						return c ? !Oa.test(r.css(a, "display")) || a.getClientRects().length && a.getBoundingClientRect().width ? Wa(a, b, d) : ca(a, Pa, function () {
+						if (c)return !Oa.test(r.css(a, "display")) || a.getClientRects().length && a.getBoundingClientRect().width ? Wa(a, b, d) : ca(a, Pa, function () {
 							return Wa(a, b, d)
-						}) : void 0
+						})
 					}, set: function (a, c, d) {
 						var e, f = d && La(a), g = d && Va(a, b, d, "border-box" === r.css(a, "boxSizing", !1, f), f);
 						return g && (e = _.exec(c)) && "px" !== (e[3] || "px") && (a.style[b] = c, c = r.css(a, b)), Ua(a, c, g)
 					}
 				}
 			}), r.cssHooks.marginLeft = Na(o.reliableMarginLeft, function (a, b) {
-				return b ? (parseFloat(Ma(a, "marginLeft")) || a.getBoundingClientRect().left - ca(a, {marginLeft: 0}, function () {
-					return a.getBoundingClientRect().left
-				})) + "px" : void 0
+				if (b)return (parseFloat(Ma(a, "marginLeft")) || a.getBoundingClientRect().left - ca(a, {marginLeft: 0}, function () {
+						return a.getBoundingClientRect().left
+					})) + "px"
 			}), r.each({margin: "", padding: "", border: "Width"}, function (a, b) {
 				r.cssHooks[a + b] = {
 					expand: function (c) {
-						for (var d = 0, e = {}, f = "string" == typeof c ? c.split(" ") : [c]; 4 > d; d++)e[a + aa[d] + b] = f[d] || f[d - 2] || f[0];
+						for (var d = 0, e = {}, f = "string" == typeof c ? c.split(" ") : [c]; d < 4; d++)e[a + aa[d] + b] = f[d] || f[d - 2] || f[0];
 						return e
 					}
 				}, Ja.test(a) || (r.cssHooks[a + b].set = Ua)
@@ -3744,7 +3748,7 @@ var FlexTour =
 					return S(this, function (a, b, c) {
 						var d, e, f = {}, g = 0;
 						if (r.isArray(b)) {
-							for (d = La(a), e = b.length; e > g; g++)f[b[g]] = r.css(a, b[g], !1, d);
+							for (d = La(a), e = b.length; g < e; g++)f[b[g]] = r.css(a, b[g], !1, d);
 							return f
 						}
 						return void 0 !== c ? r.style(a, b, c) : r.css(a, b)
@@ -3799,12 +3803,12 @@ var FlexTour =
 
 			function cb(a, b) {
 				var c, d = 0, e = {height: a};
-				for (b = b ? 1 : 0; 4 > d; d += 2 - b)c = aa[d], e["margin" + c] = e["padding" + c] = a;
+				for (b = b ? 1 : 0; d < 4; d += 2 - b)c = aa[d], e["margin" + c] = e["padding" + c] = a;
 				return b && (e.opacity = e.width = a), e
 			}
 
 			function db(a, b, c) {
-				for (var d, e = (gb.tweeners[b] || []).concat(gb.tweeners["*"]), f = 0, g = e.length; g > f; f++)if (d = e[f].call(c, b, a))return d
+				for (var d, e = (gb.tweeners[b] || []).concat(gb.tweeners["*"]), f = 0, g = e.length; f < g; f++)if (d = e[f].call(c, b, a))return d
 			}
 
 			function eb(a, b, c) {
@@ -3849,8 +3853,8 @@ var FlexTour =
 					delete i.elem
 				}), i = function () {
 					if (e)return !1;
-					for (var b = Ya || bb(), c = Math.max(0, j.startTime + j.duration - b), d = c / j.duration || 0, f = 1 - d, g = 0, i = j.tweens.length; i > g; g++)j.tweens[g].run(f);
-					return h.notifyWith(a, [j, f, c]), 1 > f && i ? c : (h.resolveWith(a, [j]), !1)
+					for (var b = Ya || bb(), c = Math.max(0, j.startTime + j.duration - b), d = c / j.duration || 0, f = 1 - d, g = 0, i = j.tweens.length; g < i; g++)j.tweens[g].run(f);
+					return h.notifyWith(a, [j, f, c]), f < 1 && i ? c : (h.resolveWith(a, [j]), !1)
 				}, j = h.promise({
 					elem: a,
 					props: r.extend({}, b),
@@ -3867,11 +3871,11 @@ var FlexTour =
 					stop: function (b) {
 						var c = 0, d = b ? j.tweens.length : 0;
 						if (e)return this;
-						for (e = !0; d > c; c++)j.tweens[c].run(1);
+						for (e = !0; c < d; c++)j.tweens[c].run(1);
 						return b ? (h.notifyWith(a, [j, 1, 0]), h.resolveWith(a, [j, b])) : h.rejectWith(a, [j, b]), this
 					}
 				}), k = j.props;
-				for (fb(k, j.opts.specialEasing); g > f; f++)if (d = gb.prefilters[f].call(j, a, k, j.opts))return r.isFunction(d.stop) && (r._queueHooks(j.elem, j.opts.queue).stop = r.proxy(d.stop, d)), d;
+				for (fb(k, j.opts.specialEasing); f < g; f++)if (d = gb.prefilters[f].call(j, a, k, j.opts))return r.isFunction(d.stop) && (r._queueHooks(j.elem, j.opts.queue).stop = r.proxy(d.stop, d)), d;
 				return r.map(k, db, j), r.isFunction(j.opts.start) && j.opts.start.call(a, j), r.fx.timer(r.extend(i, {
 					elem: a,
 					anim: j,
@@ -3887,7 +3891,7 @@ var FlexTour =
 					}]
 				}, tweener: function (a, b) {
 					r.isFunction(a) ? (b = a, a = ["*"]) : a = a.match(K);
-					for (var c, d = 0, e = a.length; e > d; d++)c = a[d], gb.tweeners[c] = gb.tweeners[c] || [], gb.tweeners[c].unshift(b)
+					for (var c, d = 0, e = a.length; d < e; d++)c = a[d], gb.tweeners[c] = gb.tweeners[c] || [], gb.tweeners[c].unshift(b)
 				}, prefilters: [eb], prefilter: function (a, b) {
 					b ? gb.prefilters.unshift(a) : gb.prefilters.push(a)
 				}
@@ -3924,7 +3928,7 @@ var FlexTour =
 					return a !== !1 && (a = a || "fx"), this.each(function () {
 						var b, c = V.get(this), d = c[a + "queue"], e = c[a + "queueHooks"], f = r.timers, g = d ? d.length : 0;
 						for (c.finish = !0, r.queue(this, a, []), e && e.stop && e.stop.call(this, !0), b = f.length; b--;)f[b].elem === this && f[b].queue === a && (f[b].anim.stop(!0), f.splice(b, 1));
-						for (b = 0; g > b; b++)d[b] && d[b].finish && d[b].finish.call(this);
+						for (b = 0; b < g; b++)d[b] && d[b].finish && d[b].finish.call(this);
 						delete c.finish
 					})
 				}
@@ -3989,7 +3993,7 @@ var FlexTour =
 					}
 				}, removeAttr: function (a, b) {
 					var c, d = 0, e = b && b.match(K);
-					if (e && 1 === a.nodeType)while (c = e[d++])a.removeAttribute(c);
+					if (e && 1 === a.nodeType)while (c = e[d++])a.removeAttribute(c)
 				}
 			}), hb = {
 				set: function (a, b, c) {
@@ -4111,7 +4115,7 @@ var FlexTour =
 						}
 					}, select: {
 						get: function (a) {
-							for (var b, c, d = a.options, e = a.selectedIndex, f = "select-one" === a.type, g = f ? null : [], h = f ? e + 1 : d.length, i = 0 > e ? h : f ? e : 0; h > i; i++)if (c = d[i], (c.selected || i === e) && !c.disabled && (!c.parentNode.disabled || !r.nodeName(c.parentNode, "optgroup"))) {
+							for (var b, c, d = a.options, e = a.selectedIndex, f = "select-one" === a.type, g = f ? null : [], h = f ? e + 1 : d.length, i = e < 0 ? h : f ? e : 0; i < h; i++)if (c = d[i], (c.selected || i === e) && !c.disabled && (!c.parentNode.disabled || !r.nodeName(c.parentNode, "optgroup"))) {
 								if (b = r(c).val(), f)return b;
 								g.push(b)
 							}
@@ -4126,7 +4130,7 @@ var FlexTour =
 			}), r.each(["radio", "checkbox"], function () {
 				r.valHooks[this] = {
 					set: function (a, b) {
-						return r.isArray(b) ? a.checked = r.inArray(r(a).val(), b) > -1 : void 0
+						if (r.isArray(b))return a.checked = r.inArray(r(a).val(), b) > -1
 					}
 				}, o.checkOn || (r.valHooks[this].get = function (a) {
 					return null === a.getAttribute("value") ? "on" : a.value
@@ -4156,7 +4160,7 @@ var FlexTour =
 					})
 				}, triggerHandler: function (a, b) {
 					var c = this[0];
-					return c ? r.event.trigger(a, b, c, !0) : void 0
+					if (c)return r.event.trigger(a, b, c, !0)
 				}
 			}), r.each("blur focus focusin focusout resize scroll click dblclick mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave change select submit keydown keypress keyup contextmenu".split(" "), function (a, b) {
 				r.fn[b] = function (a, c) {
@@ -4277,7 +4281,7 @@ var FlexTour =
 					}
 					f = f || g
 				}
-				return f ? (f !== i[0] && i.unshift(f), c[f]) : void 0
+				if (f)return f !== i[0] && i.unshift(f), c[f]
 			}
 
 			function Nb(a, b, c, d) {
@@ -4387,7 +4391,7 @@ var FlexTour =
 					} else A(-1, "No Transport");
 					function A(b, c, d, h) {
 						var j, m, n, v, w, x = c;
-						k || (k = !0, i && a.clearTimeout(i), e = void 0, g = h || "", y.readyState = b > 0 ? 4 : 0, j = b >= 200 && 300 > b || 304 === b, d && (v = Mb(o, y, d)), v = Nb(o, v, y, j), j ? (o.ifModified && (w = y.getResponseHeader("Last-Modified"), w && (r.lastModified[f] = w), w = y.getResponseHeader("etag"), w && (r.etag[f] = w)), 204 === b || "HEAD" === o.type ? x = "nocontent" : 304 === b ? x = "notmodified" : (x = v.state, m = v.data, n = v.error, j = !n)) : (n = x, !b && x || (x = "error", 0 > b && (b = 0))), y.status = b, y.statusText = (c || x) + "", j ? s.resolveWith(p, [m, x, y]) : s.rejectWith(p, [y, x, n]), y.statusCode(u), u = void 0, l && q.trigger(j ? "ajaxSuccess" : "ajaxError", [y, o, j ? m : n]), t.fireWith(p, [y, x]), l && (q.trigger("ajaxComplete", [y, o]), --r.active || r.event.trigger("ajaxStop")))
+						k || (k = !0, i && a.clearTimeout(i), e = void 0, g = h || "", y.readyState = b > 0 ? 4 : 0, j = b >= 200 && b < 300 || 304 === b, d && (v = Mb(o, y, d)), v = Nb(o, v, y, j), j ? (o.ifModified && (w = y.getResponseHeader("Last-Modified"), w && (r.lastModified[f] = w), w = y.getResponseHeader("etag"), w && (r.etag[f] = w)), 204 === b || "HEAD" === o.type ? x = "nocontent" : 304 === b ? x = "notmodified" : (x = v.state, m = v.data, n = v.error, j = !n)) : (n = x, !b && x || (x = "error", b < 0 && (b = 0))), y.status = b, y.statusText = (c || x) + "", j ? s.resolveWith(p, [m, x, y]) : s.rejectWith(p, [y, x, n]), y.statusCode(u), u = void 0, l && q.trigger(j ? "ajaxSuccess" : "ajaxError", [y, o, j ? m : n]), t.fireWith(p, [y, x]), l && (q.trigger("ajaxComplete", [y, o]), --r.active || r.event.trigger("ajaxStop")))
 					}
 
 					return y
@@ -4448,7 +4452,7 @@ var FlexTour =
 			var Ob = {0: 200, 1223: 204}, Pb = r.ajaxSettings.xhr();
 			o.cors = !!Pb && "withCredentials" in Pb, o.ajax = Pb = !!Pb, r.ajaxTransport(function (b) {
 				var c, d;
-				return o.cors || Pb && !b.crossDomain ? {
+				if (o.cors || Pb && !b.crossDomain)return {
 					send: function (e, f) {
 						var g, h = b.xhr();
 						if (h.open(b.type, b.url, b.async, b.username, b.password), b.xhrFields)for (g in b.xhrFields)h[g] = b.xhrFields[g];
@@ -4471,7 +4475,7 @@ var FlexTour =
 					}, abort: function () {
 						c && c()
 					}
-				} : void 0
+				}
 			}), r.ajaxPrefilter(function (a) {
 				a.crossDomain && (a.contents.script = !1)
 			}), r.ajaxSetup({
@@ -4509,13 +4513,13 @@ var FlexTour =
 				}
 			}), r.ajaxPrefilter("json jsonp", function (b, c, d) {
 				var e, f, g, h = b.jsonp !== !1 && (Rb.test(b.url) ? "url" : "string" == typeof b.data && 0 === (b.contentType || "").indexOf("application/x-www-form-urlencoded") && Rb.test(b.data) && "data");
-				return h || "jsonp" === b.dataTypes[0] ? (e = b.jsonpCallback = r.isFunction(b.jsonpCallback) ? b.jsonpCallback() : b.jsonpCallback, h ? b[h] = b[h].replace(Rb, "$1" + e) : b.jsonp !== !1 && (b.url += (sb.test(b.url) ? "&" : "?") + b.jsonp + "=" + e), b.converters["script json"] = function () {
+				if (h || "jsonp" === b.dataTypes[0])return e = b.jsonpCallback = r.isFunction(b.jsonpCallback) ? b.jsonpCallback() : b.jsonpCallback, h ? b[h] = b[h].replace(Rb, "$1" + e) : b.jsonp !== !1 && (b.url += (sb.test(b.url) ? "&" : "?") + b.jsonp + "=" + e), b.converters["script json"] = function () {
 					return g || r.error(e + " was not called"), g[0]
 				}, b.dataTypes[0] = "json", f = a[e], a[e] = function () {
 					g = arguments
 				}, d.always(function () {
 					void 0 === f ? r(a).removeProp(e) : a[e] = f, b[e] && (b.jsonpCallback = c.jsonpCallback, Qb.push(e)), g && r.isFunction(f) && f(g[0]), g = f = void 0
-				}), "script") : void 0
+				}), "script"
 			}), o.createHTMLDocument = function () {
 				var a = d.implementation.createHTMLDocument("").body;
 				return a.innerHTML = "<form></form><form></form>", 2 === a.childNodes.length
@@ -4594,7 +4598,7 @@ var FlexTour =
 				}
 			}), r.each(["top", "left"], function (a, b) {
 				r.cssHooks[b] = Na(o.pixelPosition, function (a, c) {
-					return c ? (c = Ma(a, b), Ka.test(c) ? r(a).position()[b] + "px" : c) : void 0
+					if (c)return c = Ma(a, b), Ka.test(c) ? r(a).position()[b] + "px" : c
 				})
 			}), r.each({Height: "height", Width: "width"}, function (a, b) {
 				r.each({padding: "inner" + a, content: b, "": "outer" + a}, function (c, d) {

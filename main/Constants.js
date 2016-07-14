@@ -72,7 +72,7 @@ module.exports = {
         endOnEsc: true,
         pauseOnExit: false
     },
-
+    // Attributes Block
     ID: "id",
     TITLE: "title",
     STEPS: "steps",
@@ -113,6 +113,7 @@ module.exports = {
     ACTION_TYPE: "action",
     DEFAULT_POSITION: "bottom",
 
+    // Utilities
     TIMES: "&times;",
     BORDER_WIDTH: 3,
     FLASH_BORDER_WIDTH: 2,

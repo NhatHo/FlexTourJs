@@ -3,17 +3,17 @@
  * NhatHo-nhatminhhoca@gmail.com
  ******************************************************************************/
 
-let Constants = require("./Constants");
-let Utils = require("./Utilities");
-let $ = require("./../node_modules/jquery/dist/jquery.min.js");
+var Constants = require("./Constants");
+var Utils = require("./Utilities");
+var $ = require("./../node_modules/jquery/dist/jquery.min.js");
 
 function Components(stepDescription) {
     Components.stepDescription = $.extend({}, stepDescription);
     Components.ui = $(Constants.DIV_COMP);
     Components.ui.addClass(Constants.FLEXTOUR);
     if (Utils.isStepWithTarget(stepDescription)) {
-        let target = $(stepDescription[Constants.TARGET]);
-        let actualLocation = {};
+        var target = $(stepDescription[Constants.TARGET]);
+        var actualLocation = {};
         actualLocation.top = target.offset().top;
         actualLocation.left = target.offset().left;
         actualLocation.width = target.outerWidth();
@@ -86,7 +86,7 @@ function _getRightOverlay() {
  * @return {object|*}       The DOM block that contains all overlays
  */
 function _createOverlayNode(locationObj) {
-    let overlay = $(Constants.DIV_COMP, {
+    var overlay = $(Constants.DIV_COMP, {
         "class": Constants.OVERLAY_STYLE,
         "width": locationObj.width,
         "height": locationObj.height
@@ -100,7 +100,7 @@ function _createOverlayNode(locationObj) {
  * Keep the same pattern as the padding. Top->Right->Bottom->Left
  */
 function _addOverlays() {
-    let overlayDiv = Utils.getEleFromClassName(Constants.OVERLAY_BLOCK, true);
+    var overlayDiv = Utils.getEleFromClassName(Constants.OVERLAY_BLOCK, true);
     if (!Utils.hasELement(overlayDiv)) {
         overlayDiv = $(Constants.DIV_COMP, {
             "class": Constants.OVERLAY_BLOCK
@@ -132,7 +132,7 @@ function _modifyOverlayNode(domNode, locationObj) {
  * This function assumes that there are 4 different overlays around the target to modify for the transition.
  */
 function _modifyOverlays() {
-    let overlays = Utils.getElesFromClassName(Constants.OVERLAY_STYLE);
+    var overlays = Utils.getElesFromClassName(Constants.OVERLAY_STYLE);
     if (Utils.hasELement(overlays) && overlays.length === 4) {
         _modifyOverlayNode(overlays[0], _getTopOverlay());
         _modifyOverlayNode(overlays[1], _getRightOverlay());
@@ -149,7 +149,7 @@ function _modifyOverlays() {
  * Check if already there is a UNIQUE Overlay in the DOM, if yes don't do anyway, if not create 1 and add to the DOM
  */
 function _addOverlay() {
-    let overlayDiv = $(Constants.DIV_COMP, {
+    var overlayDiv = $(Constants.DIV_COMP, {
         "class": Constants.OVERLAY_BLOCK
     });
     overlayDiv(_createOverlayNode({
@@ -166,8 +166,8 @@ function _addOverlay() {
  * If there is exactly 1 overlay, leave it be because it already covers the whole screen.
  */
 function _modifyOverlay() {
-    let overlays = Utils.getElesFromClassName(Constants.OVERLAY_STYLE);
-    let overlayDiv = Utils.getEleFromClassName(Constants.OVERLAY_BLOCK, true);
+    var overlays = Utils.getElesFromClassName(Constants.OVERLAY_STYLE);
+    var overlayDiv = Utils.getEleFromClassName(Constants.OVERLAY_BLOCK, true);
     if (Utils.hasELement(overlays)) {
         if (overlays.length !== 1) {
             overlays.remove();
@@ -189,7 +189,7 @@ function _modifyOverlay() {
  * @param {boolean} disableNext  True to disable either Next or Done button
  */
 function _createContentBubble(noButtons, showBack, showNext, disableNext) {
-    let bubble = $(Constants.DIV_COMP, {
+    var bubble = $(Constants.DIV_COMP, {
         "class": Constants.TOUR_BUBBLE
     });
 
@@ -197,7 +197,7 @@ function _createContentBubble(noButtons, showBack, showNext, disableNext) {
         "class": Constants.ICON_STYLE + " " + _getIconType()
     }).appendTo(bubble);
 
-    let contentBlock = $(Constants.DIV_COMP, {
+    var contentBlock = $(Constants.DIV_COMP, {
         "class": Constants.BUBBLE_CONTENT
     });
 
@@ -215,14 +215,14 @@ function _createContentBubble(noButtons, showBack, showNext, disableNext) {
 
     bubble.append(contentBlock);
 
-    let buttonGroup = $(Constants.DIV_COMP, {
+    var buttonGroup = $(Constants.DIV_COMP, {
         "class": Constants.BUTTON_GROUP
     });
     bubble.append(buttonGroup);
 
     if (Utils.isValid(Components.stepDescription[Constants.BUTTONS_CUS])) {
-        let customizedButtons = Components.stepDescription[Constants.BUTTONS_CUS];
-        for (let i = 0; i < customizedButtons.length; i++) {
+        var customizedButtons = Components.stepDescription[Constants.BUTTONS_CUS];
+        for (var i = 0; i < customizedButtons.length; i++) {
             _createCustomButton(customizedButtons[i], buttonGroup);
         }
     } else if (!noButtons) {
@@ -252,7 +252,7 @@ function _createContentBubble(noButtons, showBack, showNext, disableNext) {
  * @returns {jQuery|HTMLElement}        The button DOM Node with all of those given things
  */
 function _createCustomButton(buttonDesc, buttonGroup) {
-    let customizedButton = $(Constants.BUTTON_COMP, {
+    var customizedButton = $(Constants.BUTTON_COMP, {
         "class": buttonDesc[Constants.BUTTON_STYLE],
         text: buttonDesc[Constants.BUTTON_NAME]
     }).appendTo(buttonGroup);
@@ -343,7 +343,7 @@ function _getDoneButtonText() {
  * @returns {*}     String that describe the class that should represent the icon
  */
 function _getIconType() {
-    let currentStepType = Components.stepDescription[Constants.TYPE];
+    var currentStepType = Components.stepDescription[Constants.TYPE];
     if (Components.stepDescription[Constants.TRANSITION]) {
         return Constants.LOADING_ICON;
     } else if (currentStepType === Constants.ACTION_TYPE) {
@@ -365,10 +365,10 @@ function _modifyContentBubble(noButtons, showBack, showNext, disableNext) {
     /*
      * First block try to modify the icon in the bubble
      */
-    let currentIconType = _getIconType();
-    let currentIcon = Utils.getEleFromClassName(Constants.ICON_STYLE, true);
+    var currentIconType = _getIconType();
+    var currentIcon = Utils.getEleFromClassName(Constants.ICON_STYLE, true);
     if (!currentIcon.hasClass(currentIconType)) {
-        let classTokens = currentIcon.attr("class");
+        var classTokens = currentIcon.attr("class");
         if (classTokens.length > 0) {
             classTokens = classTokens.split(/\s+/g);
         }
@@ -383,8 +383,8 @@ function _modifyContentBubble(noButtons, showBack, showNext, disableNext) {
     /*
      * Modify title of the bubble to the new one
      */
-    let contentBlock = Utils.getEleFromClassName(Constants.BUBBLE_CONTENT, true);
-    let contentTitle = Utils.getEleFromClassName(Constants.BUBBLE_TITLE, true);
+    var contentBlock = Utils.getEleFromClassName(Constants.BUBBLE_CONTENT, true);
+    var contentTitle = Utils.getEleFromClassName(Constants.BUBBLE_TITLE, true);
     if (Utils.isValid(Components.stepDescription[Constants.TITLE])) {
         if (Utils.hasELement(contentTitle)) {
             contentTitle.html(Components.stepDescription[Constants.TITLE]);
@@ -402,7 +402,7 @@ function _modifyContentBubble(noButtons, showBack, showNext, disableNext) {
     /*
      * Modify the step description of the bubble to the new one
      */
-    let contentBody = Utils.getEleFromClassName(Constants.BUBBLE_CONTENT_BODY, true);
+    var contentBody = Utils.getEleFromClassName(Constants.BUBBLE_CONTENT_BODY, true);
     contentBody.html(Components.stepDescription[Constants.CONTENT]);
 
     /**
@@ -410,8 +410,8 @@ function _modifyContentBubble(noButtons, showBack, showNext, disableNext) {
      * 1. If the new step doesn't have buttons but the previous one has ... remove button-group.
      * 2. Modify the other buttons accordingly.
      */
-    let bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE, true);
-    let buttonGroup = Utils.getEleFromClassName(Constants.BUTTON_GROUP, true);
+    var bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE, true);
+    var buttonGroup = Utils.getEleFromClassName(Constants.BUTTON_GROUP, true);
     if (noButtons) {
         if (Utils.hasELement(buttonGroup)) {
             buttonGroup.remove();
@@ -425,8 +425,8 @@ function _modifyContentBubble(noButtons, showBack, showNext, disableNext) {
         });
         bubble.append(buttonGroup);
 
-        let customizedButtons = Components.stepDescription[Constants.BUTTONS_CUS];
-        for (let i = 0; i < customizedButtons.length; i++) {
+        var customizedButtons = Components.stepDescription[Constants.BUTTONS_CUS];
+        for (var i = 0; i < customizedButtons.length; i++) {
             _createCustomButton(customizedButtons[i], buttonGroup);
         }
     } else {
@@ -437,8 +437,8 @@ function _modifyContentBubble(noButtons, showBack, showNext, disableNext) {
             bubble.append(buttonGroup);
         }
 
-        let nextButton = Utils.getEleFromClassName(Constants.NEXT_BUTTON, true);
-        let doneButton = Utils.getEleFromClassName(Constants.DONE_BUTTON, true);
+        var nextButton = Utils.getEleFromClassName(Constants.NEXT_BUTTON, true);
+        var doneButton = Utils.getEleFromClassName(Constants.DONE_BUTTON, true);
         if (showNext) {
             // For the case where user go back from last step --> replace Done button with Next button
             if (Utils.hasELement(doneButton)) {
@@ -467,12 +467,12 @@ function _modifyContentBubble(noButtons, showBack, showNext, disableNext) {
             }
         }
 
-        let backButton = Utils.getEleFromClassName(Constants.BACK_BUTTON, true);
+        var backButton = Utils.getEleFromClassName(Constants.BACK_BUTTON, true);
         if (Utils.hasELement(backButton)) {
             backButton.prop('disabled', !showBack);
             backButton.text(_getBackButtonText());
         } else {
-            let backButton = _createBackButton(showBack);
+            backButton = _createBackButton(showBack);
             if (Utils.hasELement(nextButton)) {
                 backButton.insertBefore(nextButton);
             } else if (Utils.hasELement(doneButton)) {
@@ -480,8 +480,8 @@ function _modifyContentBubble(noButtons, showBack, showNext, disableNext) {
             }
         }
 
-        let skipRequirement = Components.stepDescription[Constants.SKIP];
-        let skipButton = Utils.getEleFromClassName(Constants.SKIP_BUTTON, true);
+        var skipRequirement = Components.stepDescription[Constants.SKIP];
+        var skipButton = Utils.getEleFromClassName(Constants.SKIP_BUTTON, true);
         if (Utils.isValid(skipRequirement)) {
             if (!Utils.hasELement(skipButton)) {
                 _createSkipButton().prependTo(buttonGroup);
@@ -500,18 +500,18 @@ function _modifyContentBubble(noButtons, showBack, showNext, disableNext) {
  * Also, create the arrow according to the position defined by user
  */
 function _placeBubbleLocation() {
-    let targetPosition = Components.rect;
-    let bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE, true);
+    var targetPosition = Components.rect;
+    var bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE, true);
 
     if (Utils.hasELement(bubble)) {
-        let bubbleRect = bubble[0].getBoundingClientRect();
-        let halfBubbleHeight = bubbleRect.height / 2;
-        let halfBubbleWidth = bubbleRect.width / 2;
+        var bubbleRect = bubble[0].getBoundingClientRect();
+        var halfBubbleHeight = bubbleRect.height / 2;
+        var halfBubbleWidth = bubbleRect.width / 2;
 
-        let halfTargetHeight = Components.rect.height / 2;
-        let halfTargetWidth = Components.rect.width / 2;
+        var halfTargetHeight = Components.rect.height / 2;
+        var halfTargetWidth = Components.rect.width / 2;
 
-        let arrow = $(Constants.SPAN_COMP, {
+        var arrow = $(Constants.SPAN_COMP, {
             "class": Constants.ARROW_LOCATION
         });
 
@@ -551,7 +551,7 @@ function _placeBubbleLocation() {
  * This will automatically trigger the
  */
 function _modifyBubbleLocation() {
-    let bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE, true);
+    var bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE, true);
     Utils.getEleFromClassName(Constants.ARROW_LOCATION, true).remove();
     /**
      * Remove the floating style if exist. In here we modify it so it will be concrete style
@@ -566,7 +566,7 @@ function _modifyBubbleLocation() {
  * Find the location of the bubble and put it in the middle of the screen.
  */
 function _placeFloatBubble() {
-    let bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE, true);
+    var bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE, true);
     bubble.addClass(Constants.FLOAT_STYLE);
 }
 
@@ -576,9 +576,9 @@ function _placeFloatBubble() {
  * Because Styles have higher priority than CSS styles.
  */
 function _modifyFloatBubble() {
-    let bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE, true);
+    var bubble = Utils.getEleFromClassName(Constants.TOUR_BUBBLE, true);
     bubble.addClass(Constants.FLOAT_STYLE);
-    let arrow = Utils.getEleFromClassName(Constants.ARROW_LOCATION, true);
+    var arrow = Utils.getEleFromClassName(Constants.ARROW_LOCATION, true);
     if (Utils.hasELement(arrow)) {
         arrow.remove();
         bubble.css({
@@ -593,7 +593,7 @@ function _modifyFloatBubble() {
  */
 function _addBorderAroundTarget() {
     if (Utils.isValid(Components.rect)) {
-        let borderOverlay = $(Constants.DIV_COMP, {
+        var borderOverlay = $(Constants.DIV_COMP, {
             "class": Constants.TARGET_BORDER
         });
         borderOverlay.css({
@@ -617,7 +617,7 @@ function _addBorderAroundTarget() {
  */
 function _modifyBorderAroundTarget() {
     if (Utils.isValid(Components.rect)) {
-        let borderOverlay = Utils.getEleFromClassName(Constants.TARGET_BORDER, true);
+        var borderOverlay = Utils.getEleFromClassName(Constants.TARGET_BORDER, true);
         borderOverlay.css({
             width: Components.rect.width + Constants.PX,
             height: Components.rect.height + Constants.PX,
@@ -639,7 +639,7 @@ function _modifyBorderAroundTarget() {
  * Alternatively, set scrollLock: true, so that user cannot scroll around unnecessary
  */
 function _scrollMethod() {
-    let modal = Components.stepDescription[Constants.MODAL];
+    var modal = Components.stepDescription[Constants.MODAL];
     if (!Utils.isValid(modal)) {
         Utils.smoothScroll(Components.rect);
     }
@@ -650,10 +650,10 @@ function _scrollMethod() {
  * This should be used with nextStepTrigger attribute --> so that user knows where to click.
  */
 function _addFlashBorder() {
-    let flashTarget = Components.stepDescription[Constants.FLASH_TARGET];
+    var flashTarget = Components.stepDescription[Constants.FLASH_TARGET];
     if (Utils.isValid(flashTarget)) {
-        let flashTargetLocation = $(flashTarget);
-        let flashOverlay = $(Constants.DIV_COMP, {
+        var flashTargetLocation = $(flashTarget);
+        var flashOverlay = $(Constants.DIV_COMP, {
             "class": Constants.FLASH_BORDER
         });
         flashOverlay.css({
@@ -671,11 +671,11 @@ function _addFlashBorder() {
  * If the new step doesn't require, and old step has the flashTarget --> remove it
  */
 function _modifyFlashBorder() {
-    let flashTarget = Components.stepDescription[Constants.FLASH_TARGET];
-    let flashOverlay = Utils.getEleFromClassName(Constants.FLASH_BORDER, true);
+    var flashTarget = Components.stepDescription[Constants.FLASH_TARGET];
+    var flashOverlay = Utils.getEleFromClassName(Constants.FLASH_BORDER, true);
     if (Utils.isValid(flashTarget)) {
         if (Utils.hasELement(flashOverlay)) {
-            let flashTargetLocation = $(flashTarget);
+            var flashTargetLocation = $(flashTarget);
             flashOverlay.css({
                 width: flashTargetLocation.outerWidth() + Constants.PX,
                 height: flashTargetLocation.outerHeight() + Constants.PX,

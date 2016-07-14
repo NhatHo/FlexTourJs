@@ -2,7 +2,7 @@
   "name": "flextourjs",
   "version": "1.0.0",
   "description": "Tour that work with dynamic pages and features",
-  "main": "./dist/framework.js",
+  "main": "./dist/flextour.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server",
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/NhatHo/FlexTourJs#readme",
   "dependencies": {
-    "jquery": "^3.0.0"
+    "jquery": "3.1.0"
   },
   "directories": {
     "test": "tests"

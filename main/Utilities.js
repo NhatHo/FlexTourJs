@@ -3,8 +3,8 @@
  * NhatHo-nhatminhhoca@gmail.com
  ******************************************************************************/
 
-let Constants = require("./Constants");
-let $ = require("./../node_modules/jquery/dist/jquery.min.js");
+var Constants = require("./Constants");
+var $ = require("./../node_modules/jquery/dist/jquery.min.js");
 
 module.exports = {
     /**
@@ -14,10 +14,10 @@ module.exports = {
      * @return {boolean}    True if target takes up a rectangle in the DOM, false otherwise
      */
     isVisible: function (targets) {
-        let result = true;
-        let targetsArray = this.convertToArray(targets);
-        for (let i = 0; i < targetsArray.length; i++) {
-            let element = $(targetsArray[i]);
+        var result = true;
+        var targetsArray = this.convertToArray(targets);
+        for (var i = 0; i < targetsArray.length; i++) {
+            var element = $(targetsArray[i]);
             if (this.hasELement(element)) {
                 result = result && element.is(":visible");
             } else {
@@ -35,10 +35,10 @@ module.exports = {
      * @returns {boolean}       True if target exists in DOM, false otherwise
      */
     doesExist: function (targets) {
-        let result = true;
+        var result = true;
         // Make sure the input becomes an array event if it's a single target
-        let targetsArray = this.convertToArray(targets);
-        for (let i = 0; i < targetsArray.length; i++) {
+        var targetsArray = this.convertToArray(targets);
+        for (var i = 0; i < targetsArray.length; i++) {
             result = result && this.hasELement($(targetsArray[i]));
         }
         return result;
@@ -128,7 +128,7 @@ module.exports = {
      * @returns {*}     The first element or nothing
      */
     getEleFromClassName: function (className, jquerySelector) {
-        let $el = $(this.getClassName(className));
+        var $el = $(this.getClassName(className));
 
         if (jquerySelector) {
             return $el;
@@ -183,7 +183,7 @@ module.exports = {
      * @param callback      The callback function that will be triggered when event is triggered
      */
     getElementsAndAttachEvent: function (className, event, callback) {
-        let els = this.getElesFromClassName(className);
+        var els = this.getElesFromClassName(className);
         this.addEvent(els, event, callback);
     },
 
@@ -195,7 +195,7 @@ module.exports = {
      * @param callback      The callback function that will be triggered when event is triggered
      */
     removeELementsAndAttachedEvent: function (className, event, callback) {
-        let els = this.getElesFromClassName(className);
+        var els = this.getElesFromClassName(className);
         this.removeEvent(els, event, callback);
     },
 
@@ -204,7 +204,7 @@ module.exports = {
      * @returns {Number|number}     window width through 1 of 3 methods
      */
     getFullWindowWidth: function () {
-        let width = 0;
+        var width = 0;
         if (typeof(window.innerWidth) == 'number') {
             //Non-IE
             width = window.innerWidth;
@@ -220,7 +220,7 @@ module.exports = {
      * @returns {Number|number}     window height through 1 of 3 methods
      */
     getFullWindowHeight: function () {
-        let height = 0;
+        var height = 0;
         if (typeof(window.innerHeight ) == 'number') {
             height = window.innerHeight;
         } else if (document.documentElement && document.documentElement.clientHeight) {
@@ -238,14 +238,14 @@ module.exports = {
      * Taken from Underscore.js
      */
     debounce: function (func, wait, immediate) {
-        let timeout;
+        var timeout;
         return function () {
-            let context = this, args = arguments;
-            let later = function () {
+            var context = this, args = arguments;
+            var later = function () {
                 timeout = null;
                 if (!immediate) func.apply(context, args);
             };
-            let callNow = immediate && !timeout;
+            var callNow = immediate && !timeout;
             clearTimeout(timeout);
             timeout = setTimeout(later, wait);
             if (callNow) func.apply(context, args);
@@ -257,10 +257,10 @@ module.exports = {
      * @param rect    The target of the step that needs to be scrolled to
      */
     smoothScroll: function (rect) {
-        let $elTop = rect.top;
-        let $elHeight = rect.height;
-        let windowHeight = $(window).height();
-        let offset;
+        var $elTop = rect.top;
+        var $elHeight = rect.height;
+        var windowHeight = $(window).height();
+        var offset;
         if ($elHeight < windowHeight) {
             offset = $elTop - ((windowHeight / 2) - ($elHeight / 2));
         } else {
@@ -279,7 +279,7 @@ module.exports = {
      */
     setKeyValuePairLS: function (key, value) {
         try {
-            let storageValue = JSON.parse(localStorage.getItem(Constants.LOCALSTORAGE_KEY));
+            var storageValue = JSON.parse(localStorage.getItem(Constants.LOCALSTORAGE_KEY));
             // Initialize the storageValue object if it was not previously set
             if (!this.isValid(storageValue)) {
                 storageValue = {};
@@ -312,7 +312,7 @@ module.exports = {
      */
     removeKeyValuePairLS: function (key) {
         try {
-            let flexTourLS = JSON.parse(localStorage.getItem(Constants.LOCALSTORAGE_KEY));
+            var flexTourLS = JSON.parse(localStorage.getItem(Constants.LOCALSTORAGE_KEY));
             delete flexTourLS[key];
             localStorage.setItem(Constants.LOCALSTORAGE_KEY, JSON.stringify(flexTourLS));
         } catch (e) {

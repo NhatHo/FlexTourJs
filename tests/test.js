@@ -3,7 +3,7 @@
  * NhatHo-nhatminhhoca@gmail.com
  ******************************************************************************/
 
-let actionsList = {};
+var actionsList = {};
 actionsList.action1 = function (currentStep) {
     currentStep.position = "top";
     return true;
@@ -12,7 +12,7 @@ actionsList.action2 = function () {
     return true;
 };
 actionsList.skipWhenElementIsNotShowed = function () {
-    let isShowed = document.querySelector("#randomEle");
+    var isShowed = document.querySelector("#randomEle");
     return isShowed.style.display === "block";
 };
 actionsList.showAlert = function () {
@@ -36,7 +36,7 @@ actionsList.afterStepRender = function () {
 };
 
 
-let tourDesc = [{
+var tourDesc = [{
     id: "test",
     endOnEsc: true,
     endOnOverlayClick: true,
@@ -126,13 +126,13 @@ let tourDesc = [{
 }];
 
 // Get the modal
-let modal = document.getElementById('myModal');
+var modal = document.getElementById('myModal');
 
 // Get the button that opens the modal
-let btn = document.getElementById("myBtn");
+var btn = document.getElementById("myBtn");
 
 // Get the <span> element that closes the modal
-let span = document.getElementsByClassName("close")[0];
+var span = document.getElementsByClassName("close")[0];
 
 // When the user clicks the button, open the modal
 btn.onclick = function () {
@@ -154,13 +154,13 @@ window.onclick = function (event) {
 };
 
 document.querySelector("#trigger").onclick = function () {
-    let flexTour = new FlexTour(tourDesc, actionsList);
+    var flexTour = new FlexTour(tourDesc, actionsList);
     flexTour.run();
 };
 
-let random = document.getElementById("randomEle");
+var random = document.getElementById("randomEle");
 
-let randomNum = Math.round(Math.random() * 1000);
+var randomNum = Math.round(Math.random() * 1000);
 if (randomNum % 2 === 0) {
     random.style.display = "block";
 } else {
