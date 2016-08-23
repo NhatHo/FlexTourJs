@@ -1,6 +1,6 @@
 {
   "name": "flextourjs",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Tour that work with dynamic pages and features",
   "main": "./dist/flextour.js",
   "scripts": {

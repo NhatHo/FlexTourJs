@@ -1,0 +1,1530 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="e440b142-2212-4b33-9b92-aea7833a896b" name="Default" comment="Change styling for 1st release">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/package.json" afterPath="$PROJECT_DIR$/package.json" />
+    </list>
+    <ignored path="FlexTourJs.iws" />
+    <ignored path=".idea/workspace.xml" />
+    <ignored path="$PROJECT_DIR$/out/" />
+    <ignored path=".idea/dataSources.local.xml" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="D:\NhatHoWorkSpace\FlexTourJs" />
+  </component>
+  <component name="DatabaseView">
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_TABLE_DETAILS" value="true" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FavoritesManager">
+    <favorites_list name="FlexTourJs" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file leaf-file-name="package.json" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/package.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="34">
+              <caret line="2" column="17" selection-start-line="2" selection-start-column="17" selection-end-line="2" selection-end-column="17" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="flextour.less" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/dist/flextour.less">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="136">
+              <caret line="8" column="12" selection-start-line="8" selection-start-column="12" selection-end-line="8" selection-end-column="12" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="CSS File" />
+        <option value="JavaScript File" />
+        <option value="HTML File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="Nhat Ho &lt;nhatminhhoca@gmail.com&gt;" />
+        <option value="Nhat Ho" />
+        <option value="Nhat Nhat Ho &lt;nhatminhhoca@gmail.com&gt;" />
+      </list>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/testfile.c" />
+        <option value="$PROJECT_DIR$/flextour.css" />
+        <option value="$PROJECT_DIR$/classes/utitlities.js" />
+        <option value="$PROJECT_DIR$/flextour.less" />
+        <option value="$PROJECT_DIR$/constants.js" />
+        <option value="$PROJECT_DIR$/main/components.js" />
+        <option value="$PROJECT_DIR$/flextour.js" />
+        <option value="$PROJECT_DIR$/main/framework.js" />
+        <option value="$PROJECT_DIR$/main/utilities.js" />
+        <option value="$PROJECT_DIR$/main/Framework.js" />
+        <option value="$PROJECT_DIR$/bundle.js" />
+        <option value="$PROJECT_DIR$/main/scripts/Framework.js" />
+        <option value="$PROJECT_DIR$/main/scripts/Utilities.js" />
+        <option value="$PROJECT_DIR$/main/scripts/FlexTour.js" />
+        <option value="$PROJECT_DIR$/main/styles/flextour.css" />
+        <option value="$PROJECT_DIR$/main/scripts/Constants.js" />
+        <option value="$PROJECT_DIR$/main/styles/flextour.less" />
+        <option value="$PROJECT_DIR$/main/scripts/Components.js" />
+        <option value="$PROJECT_DIR$/tests/test.html" />
+        <option value="$PROJECT_DIR$/webpack.config.js" />
+        <option value="$PROJECT_DIR$/tests/test.js" />
+        <option value="$PROJECT_DIR$/tests/errorcheckings/index.css" />
+        <option value="$PROJECT_DIR$/tests/errorcheckings/index.js" />
+        <option value="$PROJECT_DIR$/tests/errorcheckings/index.html" />
+        <option value="$PROJECT_DIR$/tests/longprocess/index.html" />
+        <option value="$PROJECT_DIR$/tests/longprocess/index.js" />
+        <option value="$PROJECT_DIR$/tests/multipage/index.html" />
+        <option value="$PROJECT_DIR$/tests/multipage/secondpage.html" />
+        <option value="$PROJECT_DIR$/tests/multipage/index.js" />
+        <option value="$PROJECT_DIR$/tests/multipage/index.css" />
+        <option value="$PROJECT_DIR$/tests/multipage/secondpage.js" />
+        <option value="$PROJECT_DIR$/tests/coolfeatures/index.css" />
+        <option value="$PROJECT_DIR$/tests/coolfeatures/index.js" />
+        <option value="$PROJECT_DIR$/tests/coolfeatures/index.html" />
+        <option value="$PROJECT_DIR$/tests/translation/index.css" />
+        <option value="$PROJECT_DIR$/tests/translation/index.js" />
+        <option value="$PROJECT_DIR$/dist/variables.less" />
+        <option value="$PROJECT_DIR$/dist/flextour.css" />
+        <option value="$PROJECT_DIR$/tests/translation/index.html" />
+        <option value="$PROJECT_DIR$/main/Utilities.js" />
+        <option value="$PROJECT_DIR$/main/Constants.js" />
+        <option value="$PROJECT_DIR$/tests/customizedstyles/index.less" />
+        <option value="$PROJECT_DIR$/main/Components.js" />
+        <option value="$PROJECT_DIR$/tests/customizedstyles/index.js" />
+        <option value="$PROJECT_DIR$/tests/customizedstyles/index.html" />
+        <option value="$PROJECT_DIR$/multipage/index.html" />
+        <option value="$PROJECT_DIR$/multipage/secondpage.html" />
+        <option value="$PROJECT_DIR$/main/FlexTour.js" />
+        <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/dist/flextour.less" />
+        <option value="$PROJECT_DIR$/package.json" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBowerSettings">
+    <exe-path />
+    <config-path />
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="NodeModulesDirectoryManager">
+    <handled-path value="$PROJECT_DIR$/node_modules" />
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="2576" />
+    <option name="height" value="1416" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+          <State>
+            <id>AOP</id>
+          </State>
+          <State>
+            <id>Abstraction issuesJava</id>
+          </State>
+          <State>
+            <id>Assignment issuesJava</id>
+          </State>
+          <State>
+            <id>Bitwise operation issuesJavaScript</id>
+          </State>
+          <State>
+            <id>CSS</id>
+          </State>
+          <State>
+            <id>Class structureJava</id>
+          </State>
+          <State>
+            <id>Cloning issuesJava</id>
+          </State>
+          <State>
+            <id>Code maturity issuesJava</id>
+          </State>
+          <State>
+            <id>Code quality toolsJavaScript</id>
+          </State>
+          <State>
+            <id>Code style issuesCSS</id>
+          </State>
+          <State>
+            <id>Code style issuesJava</id>
+          </State>
+          <State>
+            <id>Code style issuesJavaScript</id>
+          </State>
+          <State>
+            <id>Control flow issuesJava</id>
+          </State>
+          <State>
+            <id>DOM issuesJavaScript</id>
+          </State>
+          <State>
+            <id>Data flow issuesJava</id>
+          </State>
+          <State>
+            <id>Declaration redundancyJava</id>
+          </State>
+          <State>
+            <id>Encapsulation issuesJava</id>
+          </State>
+          <State>
+            <id>Error handlingJava</id>
+          </State>
+          <State>
+            <id>Error handlingJavaScript</id>
+          </State>
+          <State>
+            <id>General</id>
+          </State>
+          <State>
+            <id>GeneralJavaScript</id>
+          </State>
+          <State>
+            <id>HTML</id>
+          </State>
+          <State>
+            <id>Inheritance issuesJava</id>
+          </State>
+          <State>
+            <id>Internationalization issues</id>
+          </State>
+          <State>
+            <id>Invalid elementsCSS</id>
+          </State>
+          <State>
+            <id>J2ME issuesJava</id>
+          </State>
+          <State>
+            <id>JUnit issuesJava</id>
+          </State>
+          <State>
+            <id>Java</id>
+          </State>
+          <State>
+            <id>Java language level migration aidsJava</id>
+          </State>
+          <State>
+            <id>JavaBeans issuesJava</id>
+          </State>
+          <State>
+            <id>JavaFX</id>
+          </State>
+          <State>
+            <id>JavaScript</id>
+          </State>
+          <State>
+            <id>JavaScript validity issuesJavaScript</id>
+          </State>
+          <State>
+            <id>Kotlin</id>
+          </State>
+          <State>
+            <id>Language Injection</id>
+          </State>
+          <State>
+            <id>Logging issuesJava</id>
+          </State>
+          <State>
+            <id>Memory issuesJava</id>
+          </State>
+          <State>
+            <id>Method metricsJava</id>
+          </State>
+          <State>
+            <id>Naming conventionsJava</id>
+          </State>
+          <State>
+            <id>Node.jsJavaScript</id>
+          </State>
+          <State>
+            <id>Numeric issuesJava</id>
+          </State>
+          <State>
+            <id>OSGi</id>
+          </State>
+          <State>
+            <id>Packaging issuesJava</id>
+          </State>
+          <State>
+            <id>Pattern Validation</id>
+          </State>
+          <State>
+            <id>Performance issuesJava</id>
+          </State>
+          <State>
+            <id>Portability issuesJava</id>
+          </State>
+          <State>
+            <id>Potentially confusing code constructsJavaScript</id>
+          </State>
+          <State>
+            <id>Probable bugsCSS</id>
+          </State>
+          <State>
+            <id>Probable bugsJava</id>
+          </State>
+          <State>
+            <id>Probable bugsJavaScript</id>
+          </State>
+          <State>
+            <id>RELAX NG</id>
+          </State>
+          <State>
+            <id>SQL</id>
+          </State>
+          <State>
+            <id>Security issuesJava</id>
+          </State>
+          <State>
+            <id>Serialization issuesJava</id>
+          </State>
+          <State>
+            <id>Spelling</id>
+          </State>
+          <State>
+            <id>Threading issuesJava</id>
+          </State>
+          <State>
+            <id>TypeScript</id>
+          </State>
+          <State>
+            <id>Verbose or redundant code constructsJava</id>
+          </State>
+          <State>
+            <id>Visibility issuesJava</id>
+          </State>
+          <State>
+            <id>Web Services</id>
+          </State>
+          <State>
+            <id>XML</id>
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>AOP</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
+    <OptionsSetting value="true" id="Add" />
+    <OptionsSetting value="true" id="Remove" />
+    <OptionsSetting value="true" id="Checkout" />
+    <OptionsSetting value="true" id="Update" />
+    <OptionsSetting value="true" id="Status" />
+    <OptionsSetting value="true" id="Edit" />
+    <ConfirmationsSetting value="2" id="Add" />
+    <ConfirmationsSetting value="0" id="Remove" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource ProjectPane="true" />
+      <autoscrollFromSource ProjectPane="true" />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="PackagesPane" />
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="FlexTourJs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="FlexTourJs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="FlexTourJs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="FlexTourJs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="FlexTourJs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="dist" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+      <pane id="Scratches" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+    <property name="settings.editor.splitter.proportion" value="0.2" />
+    <property name="js-jscs-nodeInterpreter" value="C:\Program Files\nodejs\node.exe" />
+    <property name="nodejs_interpreter_path" value="C:\Program Files\nodejs\node" />
+    <property name="javascript.nodejs.core.library.configured.version" value="4.4.4" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.0" />
+    <property name="list.type.of.created.stylesheet" value="CSS" />
+    <property name="JavaScriptPreferStrict" value="true" />
+    <property name="JavaScriptWeakerCompletionTypeGuess" value="true" />
+    <property name="js.eslint.eslintPackage" value="" />
+    <property name="js.eslint.nodeInterpreter" value="project" />
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\NhatHoWorkSpace\FlexTourJs\tests" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\NhatHoWorkSpace\FlexTourJs\dist" />
+      <recent name="D:\NhatHoWorkSpace\FlexTourJs\main" />
+      <recent name="D:\NhatHoWorkSpace\FlexTourJs\main\styles\icons" />
+      <recent name="D:\NhatHoWorkSpace\FlexTourJs\main\styles" />
+      <recent name="D:\NhatHoWorkSpace\FlexTourJs\main\scripts" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Node.js.framework.js">
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <module />
+      <method />
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="Cold Fusion runner description" factoryName="Cold Fusion" custom_browser="" web_path="">
+      <method />
+    </configuration>
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
+      <method />
+    </configuration>
+    <configuration default="true" type="JUnitTestDiscovery" factoryName="JUnit Test Discovery" changeList="All">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
+      <method />
+    </configuration>
+    <configuration default="true" type="JarApplication" factoryName="JAR Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="Java Scratch" factoryName="Java Scratch">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <option name="SCRATCH_FILE_ID" value="0" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavaScriptTestRunnerKarma" factoryName="Karma">
+      <config-file value="" />
+      <node-interpreter value="project" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
+      <method />
+    </configuration>
+    <configuration default="true" type="JetRunConfigurationType" factoryName="Kotlin">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="FlexTourJs" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType" factoryName="Kotlin script">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <option name="filePath" />
+      <option name="vmParameters" />
+      <option name="alternativeJrePath" />
+      <option name="programParameters" />
+      <option name="passParentEnvs" value="true" />
+      <option name="workingDirectory" />
+      <option name="isAlternativeJrePathEnabled" value="false" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="project" working-dir="">
+      <method />
+    </configuration>
+    <configuration default="true" type="Remote" factoryName="Remote">
+      <option name="USE_SOCKET_TRANSPORT" value="true" />
+      <option name="SERVER_MODE" value="false" />
+      <option name="SHMEM_ADDRESS" value="javadebug" />
+      <option name="HOST" value="localhost" />
+      <option name="PORT" value="5005" />
+      <method />
+    </configuration>
+    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <gulpfile />
+      <tasks />
+      <arguments />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="js.build_tools.npm" factoryName="npm">
+      <command value="run-script" />
+      <scripts />
+      <node-interpreter value="project" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="mocha-javascript-test-runner" factoryName="Mocha">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <working-directory />
+      <pass-parent-env>true</pass-parent-env>
+      <envs />
+      <ui>bdd</ui>
+      <extra-mocha-options />
+      <test-kind>DIRECTORY</test-kind>
+      <test-directory />
+      <recursive>false</recursive>
+      <method />
+    </configuration>
+    <configuration default="true" type="osgi.bnd.run" factoryName="Run Launcher">
+      <method />
+    </configuration>
+    <configuration default="true" type="osgi.bnd.run" factoryName="Test Launcher (JUnit)">
+      <method />
+    </configuration>
+    <configuration default="false" name="framework.js" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="project" path-to-js-file="$PROJECT_DIR$/dist/framework.js" working-dir="$PROJECT_DIR$">
+      <method />
+    </configuration>
+    <list size="1">
+      <item index="0" class="java.lang.String" itemvalue="Node.js.framework.js" />
+    </list>
+    <configuration name="&lt;template&gt;" type="TestNG" default="true" selected="false">
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+    </configuration>
+    <configuration name="&lt;template&gt;" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" default="true" selected="false">
+      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
+    </configuration>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
+  </component>
+  <component name="StructureViewFactory">
+    <option name="AUTOSCROLL_FROM_SOURCE" value="true" />
+    <option name="ACTIVE_ACTIONS" value=",HIDE_INHERITED_FROM_OBJECT,HIDE_INHERITED,SHOW_CLASSES" />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="e440b142-2212-4b33-9b92-aea7833a896b" name="Default" comment="" />
+      <created>1463707330393</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1463707330393</updated>
+      <workItem from="1463707332167" duration="5661000" />
+      <workItem from="1463749782202" duration="13731000" />
+      <workItem from="1463837467960" duration="1938000" />
+      <workItem from="1463967663570" duration="24137000" />
+      <workItem from="1464048930208" duration="223000" />
+      <workItem from="1464049163217" duration="76000" />
+      <workItem from="1464049248938" duration="8642000" />
+      <workItem from="1464130247085" duration="4492000" />
+      <workItem from="1464212015908" duration="11378000" />
+      <workItem from="1464289819241" duration="3120000" />
+      <workItem from="1464354274164" duration="15443000" />
+      <workItem from="1464442340625" duration="10628000" />
+      <workItem from="1464476616705" duration="7009000" />
+      <workItem from="1464542080788" duration="9494000" />
+      <workItem from="1464652593165" duration="1108000" />
+      <workItem from="1464743455253" duration="22000" />
+      <workItem from="1464743490391" duration="2532000" />
+      <workItem from="1464821338765" duration="212000" />
+      <workItem from="1464829206513" duration="3042000" />
+      <workItem from="1464904381985" duration="8108000" />
+      <workItem from="1465004609877" duration="1759000" />
+      <workItem from="1465046265597" duration="17844000" />
+      <workItem from="1465138765042" duration="20404000" />
+      <workItem from="1465259491221" duration="622000" />
+      <workItem from="1465261710695" duration="5690000" />
+      <workItem from="1465345237887" duration="1218000" />
+      <workItem from="1465425414839" duration="3440000" />
+      <workItem from="1465515128954" duration="3522000" />
+      <workItem from="1465758379092" duration="4394000" />
+      <workItem from="1465766661781" duration="10615000" />
+      <workItem from="1465789205837" duration="1217000" />
+      <workItem from="1465821933136" duration="1933000" />
+      <workItem from="1465844208335" duration="3822000" />
+      <workItem from="1465848046691" duration="5395000" />
+      <workItem from="1465865853859" duration="6033000" />
+      <workItem from="1465944028735" duration="3614000" />
+      <workItem from="1466040704018" duration="3331000" />
+      <workItem from="1466124523781" duration="1418000" />
+      <workItem from="1466198767903" duration="9812000" />
+      <workItem from="1466255226964" duration="18931000" />
+      <workItem from="1466364788400" duration="8442000" />
+      <workItem from="1466465606683" duration="1254000" />
+      <workItem from="1466549843367" duration="7201000" />
+      <workItem from="1466641070881" duration="6003000" />
+      <workItem from="1466726549464" duration="6736000" />
+      <workItem from="1466802347854" duration="705000" />
+      <workItem from="1466813977591" duration="4537000" />
+      <workItem from="1466860532390" duration="31959000" />
+      <workItem from="1466957624917" duration="35417000" />
+      <workItem from="1467067604714" duration="8824000" />
+      <workItem from="1467115642882" duration="4165000" />
+      <workItem from="1467148178789" duration="14555000" />
+      <workItem from="1467205280527" duration="7710000" />
+      <workItem from="1467326848631" duration="10185000" />
+      <workItem from="1467379762875" duration="22583000" />
+      <workItem from="1467429472603" duration="631000" />
+      <workItem from="1467465121754" duration="10833000" />
+      <workItem from="1467507886170" duration="425000" />
+      <workItem from="1467509645833" duration="290000" />
+      <workItem from="1467570540737" duration="331000" />
+      <workItem from="1467572998970" duration="56000" />
+      <workItem from="1467770500105" duration="676000" />
+      <workItem from="1467808156154" duration="2092000" />
+      <workItem from="1467846403211" duration="4139000" />
+      <workItem from="1467860222957" duration="1698000" />
+      <workItem from="1467914740265" duration="4915000" />
+      <workItem from="1468004568452" duration="15822000" />
+      <workItem from="1468070803232" duration="29684000" />
+      <workItem from="1468189322648" duration="5840000" />
+      <workItem from="1468241712733" duration="14381000" />
+      <workItem from="1468265933484" duration="1617000" />
+      <workItem from="1468271332270" duration="1305000" />
+      <workItem from="1468283446207" duration="9021000" />
+      <workItem from="1468331664514" duration="12894000" />
+      <workItem from="1468415637923" duration="14455000" />
+      <workItem from="1468442370332" duration="1703000" />
+      <workItem from="1468465718217" duration="2539000" />
+      <workItem from="1468512167790" duration="228000" />
+      <workItem from="1468513348266" duration="2683000" />
+      <workItem from="1468525619151" duration="1028000" />
+      <workItem from="1468535009804" duration="1110000" />
+      <workItem from="1471136212431" duration="2647000" />
+      <workItem from="1471204904694" duration="1215000" />
+      <workItem from="1471229159445" duration="2636000" />
+      <workItem from="1471261372995" duration="30482000" />
+      <workItem from="1471365691497" duration="1201000" />
+      <workItem from="1471442631954" duration="28000" />
+      <workItem from="1471442818188" duration="275000" />
+      <workItem from="1471443284835" duration="2584000" />
+      <workItem from="1471522447100" duration="3384000" />
+      <workItem from="1471571903824" duration="3181000" />
+      <workItem from="1471612481206" duration="11247000" />
+      <workItem from="1471630281584" duration="15426000" />
+      <workItem from="1471661041960" duration="400000" />
+      <workItem from="1471661560037" duration="1861000" />
+      <workItem from="1471703297013" duration="15636000" />
+      <workItem from="1471803298315" duration="20583000" />
+      <workItem from="1471869556786" duration="36311000" />
+      <workItem from="1471983543306" duration="2949000" />
+      <workItem from="1471989513849" duration="2195000" />
+    </task>
+    <task id="LOCAL-00006" summary="Cleanup JSLint warning in flextour.js">
+      <created>1464487401641</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1464487401641</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Update to the latest version.">
+      <created>1464750206942</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1464750206942</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Split up things for easier maintainance.">
+      <created>1465172698206</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1465172698206</updated>
+    </task>
+    <task id="LOCAL-00009" summary="split into scripts and styles folders">
+      <created>1465172845494</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1465172845494</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Remove files">
+      <created>1465172907656</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1465172907656</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Add Listening events and cleaning up codes">
+      <created>1465271050964</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1465271050964</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Getting ready to run the first test">
+      <created>1465528095691</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1465528095691</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Add Test page and webpack configurations">
+      <created>1465783966839</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1465783966839</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Main framework file created by Webpack">
+      <created>1465784057243</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1465784057243</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Update copyright">
+      <created>1465845670158</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1465845670158</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Successfully compile framework and use it in test case - not neccessarily work perfectly yet.">
+      <created>1465866026203</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1465866026204</updated>
+    </task>
+    <task id="LOCAL-00017" summary="End of day commit">
+      <created>1465878337989</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1465878337989</updated>
+    </task>
+    <task id="LOCAL-00018" summary="End of day commit - Clean up the Components file to make it self-manage.">
+      <created>1465961282248</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1465961282248</updated>
+    </task>
+    <task id="LOCAL-00019" summary="Render the bubble and border at correct location">
+      <created>1466221828409</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1466221828409</updated>
+    </task>
+    <task id="LOCAL-00020" summary="First time successfully run the basic tour through static page. Hip Hip Hooray">
+      <created>1466303318172</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1466303318172</updated>
+    </task>
+    <task id="LOCAL-00021" summary="Clean up SVG example folder, added indicator icon next to text. Also, Allow Click on target to proceed to next step feature">
+      <created>1466399236360</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1466399236360</updated>
+    </task>
+    <task id="LOCAL-00022" summary="Import Jquery to clean up some codes.">
+      <created>1466568668840</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1466568668840</updated>
+    </task>
+    <task id="LOCAL-00023" summary="Add Dynamic functions to be executed, reverse jquery features">
+      <created>1466746022800</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1466746022800</updated>
+    </task>
+    <task id="LOCAL-00024" summary="Change icon and styling for the bubbles">
+      <created>1466829927322</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1466829927322</updated>
+    </task>
+    <task id="LOCAL-00025" summary="Enable Special features: WaitCondition, SkipCondition and regular Prerequisites Functions.">
+      <created>1466894322429</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1466894322429</updated>
+    </task>
+    <task id="LOCAL-00026" summary="Minor change to update README file with Trello link for easy management.">
+      <created>1466894635248</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1466894635248</updated>
+    </task>
+    <task id="LOCAL-00027" summary="Test case for wait for condition. As well as delay feature where it waits out the animation of target element.">
+      <created>1466910721770</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1466910721770</updated>
+    </task>
+    <task id="LOCAL-00028" summary="Test case for skip condition. Created an element where it randomly appears on the DOM. When it appears the tour doesn't skip, but when it doesn't, tour should skip.">
+      <created>1466911955978</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1466911955978</updated>
+    </task>
+    <task id="LOCAL-00029" summary="Enable Transition step, allow floating element. And also fixed the issue where the border around box elements. Turned out that I have used the wrong method to get window size.">
+      <created>1466972850423</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1466972850423</updated>
+    </task>
+    <task id="LOCAL-00030" summary="Change skip condition to process the same way as wait condition.">
+      <created>1466975448342</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1466975448342</updated>
+    </task>
+    <task id="LOCAL-00031" summary="Add loading icon to transition step so that it can indicate wait process for users.">
+      <created>1466976608082</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1466976608082</updated>
+    </task>
+    <task id="LOCAL-00032" summary="When the step has a title, show the title in the bubble box.">
+      <created>1466980345311</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1466980345311</updated>
+    </task>
+    <task id="LOCAL-00033" summary="Resize window trigger re-render, make sure it debounce so that it won't trigger too many events that can harm a complex UI.">
+      <created>1466981562158</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1466981562158</updated>
+    </task>
+    <task id="LOCAL-00034" summary="Enabled Transition Animation between steps.">
+      <created>1466997521368</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1466997521368</updated>
+    </task>
+    <task id="LOCAL-00035" summary="Either Transition or noButtons attributes indicate whether current step has any button showed.">
+      <created>1466997665737</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1466997665737</updated>
+    </task>
+    <task id="LOCAL-00036" summary="Either Transition or noButtons attributes indicate whether current step has any button showed. Missing built file">
+      <created>1466997697084</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1466997697084</updated>
+    </task>
+    <task id="LOCAL-00037" summary="Make sure click on overlay only ends tour when it is either NOT defined in tour description, or user set it to True, which is redundant. When they set it to false, disable the listener.">
+      <created>1466999070523</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1466999070523</updated>
+    </task>
+    <task id="LOCAL-00038" summary="Make sure click on overlay only ends tour when it is either NOT defined in tour description, or user set it to True, which is redundant. When they set it to false, disable the listener.">
+      <created>1466999116937</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1466999116937</updated>
+    </task>
+    <task id="LOCAL-00039" summary="Remove floating style when the bubble switch from floating to normal.">
+      <created>1467074210015</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1467074210015</updated>
+    </task>
+    <task id="LOCAL-00040" summary="Allow user to stop tours using ESC button">
+      <created>1467081789224</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1467081789224</updated>
+    </task>
+    <task id="LOCAL-00041" summary="Allow user to stop tours using ESC button">
+      <created>1467081836670</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1467081836670</updated>
+    </task>
+    <task id="LOCAL-00042" summary="Enable Skip Button only showed when there's a SKIP attribute set in the step.">
+      <created>1467120639723</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1467120639723</updated>
+    </task>
+    <task id="LOCAL-00043" summary="Added JQuery for easy manipulation events to prevent memory leaks and scroll around smoothly.">
+      <created>1467255716941</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1467255716941</updated>
+    </task>
+    <task id="LOCAL-00044" summary="Removed Tether, allow NLS for buttons, &#10;Enabled block scrolling for modals (2 options).">
+      <created>1467422061168</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1467422061168</updated>
+    </task>
+    <task id="LOCAL-00045" summary="Solve the issue where there's a small gap between overlays.">
+      <created>1467503133895</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1467503133895</updated>
+    </task>
+    <task id="LOCAL-00046" summary="Refactor for easy import in actual webpage">
+      <created>1467508299058</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1467508299058</updated>
+    </task>
+    <task id="LOCAL-00047" summary="Allow customize button text in each step, let user select different element in element block to trigger next step. Make sure that prerequisite functions can modify the step description. This is quite useful for new element creations that you don't know the exact element.">
+      <created>1468031703706</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1468031703706</updated>
+    </task>
+    <task id="LOCAL-00048" summary="Enable customization for stand-alone bubble, scrolling inside div, drag and drop feature and fixed for mixing up in buttons order.">
+      <created>1468122840389</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1468122840389</updated>
+    </task>
+    <task id="LOCAL-00049" summary="Missing Image file for test run">
+      <created>1468122892503</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1468122892503</updated>
+    </task>
+    <task id="LOCAL-00050" summary="Add features for multipage and flashing target.">
+      <created>1468268287804</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1468268287804</updated>
+    </task>
+    <task id="LOCAL-00051" summary="Enable SavePoint feature, and expose default functions to devs.">
+      <created>1468339007348</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1468339007348</updated>
+    </task>
+    <task id="LOCAL-00052" summary="Publish to NPM, change to ES5 for now.">
+      <created>1468519039363</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1468519039364</updated>
+    </task>
+    <task id="LOCAL-00053" summary="Release 1st version to the public">
+      <created>1471989778621</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1471989778621</updated>
+    </task>
+    <task id="LOCAL-00054" summary="Change styling for 1st release">
+      <created>1471992011690</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1471992011690</updated>
+    </task>
+    <option name="localTasksCounter" value="55" />
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="720923000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="2576" height="1416" extended-state="6" />
+    <editor active="false" />
+    <layout>
+      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.08426073" sideWeight="0.4913495" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26093873" sideWeight="0.48959237" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26560846" sideWeight="0.5450689" order="11" side_tool="true" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298887" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28003183" sideWeight="0.39800346" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.09976152" sideWeight="0.5" order="5" side_tool="true" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28003183" sideWeight="0.60199654" order="10" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.11406995" sideWeight="0.50865054" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32962963" sideWeight="0.48537314" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Thumbnails" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32969433" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.35135135" sideWeight="0.4822203" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="UpdateCopyrightCheckinHandler">
+    <option name="UPDATE_COPYRIGHT" value="true" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="RECENTLY_FILTERED_USER_GROUPS">
+                <collection />
+              </option>
+              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+                <collection />
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="Vcs.Log.UiProperties">
+    <option name="RECENTLY_FILTERED_USER_GROUPS">
+      <collection />
+    </option>
+    <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+      <collection />
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="CHECK_NEW_TODO" value="false" />
+    <MESSAGE value="Test case for skip condition. Created an element where it randomly appears on the DOM. When it appears the tour doesn't skip, but when it doesn't, tour should skip." />
+    <MESSAGE value="Enable Transition step, allow floating element. And also fixed the issue where the border around box elements. Turned out that I have used the wrong method to get window size." />
+    <MESSAGE value="Change skip condition to process the same way as wait condition." />
+    <MESSAGE value="Add loading icon to transition step so that it can indicate wait process for users." />
+    <MESSAGE value="When the step has a title, show the title in the bubble box." />
+    <MESSAGE value="Resize window trigger re-render, make sure it debounce so that it won't trigger too many events that can harm a complex UI." />
+    <MESSAGE value="Enabled Transition Animation between steps." />
+    <MESSAGE value="Either Transition or noButtons attributes indicate whether current step has any button showed." />
+    <MESSAGE value="Either Transition or noButtons attributes indicate whether current step has any button showed. Missing built file" />
+    <MESSAGE value="Make sure click on overlay only ends tour when it is either NOT defined in tour description, or user set it to True, which is redundant. When they set it to false, disable the listener." />
+    <MESSAGE value="Remove floating style when the bubble switch from floating to normal." />
+    <MESSAGE value="Allow user to stop tours using ESC button" />
+    <MESSAGE value="Enable Skip Button only showed when there's a SKIP attribute set in the step." />
+    <MESSAGE value="Added JQuery for easy manipulation events to prevent memory leaks and scroll around smoothly." />
+    <MESSAGE value="Removed Tether, allow NLS for buttons, &#10;Enabled block scrolling for modals (2 options)." />
+    <MESSAGE value="Solve the issue where there's a small gap between overlays." />
+    <MESSAGE value="Refactor for easy import in actual webpage" />
+    <MESSAGE value="Allow customize button text in each step, let user select different element in element block to trigger next step. Make sure that prerequisite functions can modify the step description. This is quite useful for new element creations that you don't know the exact element." />
+    <MESSAGE value="Enable customization for stand-alone bubble, scrolling inside div, drag and drop feature and fixed for mixing up in buttons order." />
+    <MESSAGE value="Missing Image file for test run" />
+    <MESSAGE value="Add features for multipage and flashing target." />
+    <MESSAGE value="Enable SavePoint feature, and expose default functions to devs." />
+    <MESSAGE value="Publish to NPM, change to ES5 for now." />
+    <MESSAGE value="Release 1st version to the public" />
+    <MESSAGE value="Change styling for 1st release" />
+    <option name="LAST_COMMIT_MESSAGE" value="Change styling for 1st release" />
+    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <option name="time" value="23" />
+    </breakpoint-manager>
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/.idea/codeStyleSettings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="10" column="34" selection-start-line="10" selection-start-column="34" selection-end-line="10" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/node_modules/tether/examples/scroll/index.html" />
+    <entry file="file://$PROJECT_DIR$/.idea/copyright/profiles_settings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="378">
+          <caret line="14" column="12" selection-start-line="14" selection-start-column="12" selection-end-line="14" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/icons/demo-files/demo.css" />
+    <entry file="file://$PROJECT_DIR$/main/styles/icons/eye.svg" />
+    <entry file="file://$PROJECT_DIR$/icons/selection.json" />
+    <entry file="file://$PROJECT_DIR$/icons/svgxuse.js" />
+    <entry file="file://$PROJECT_DIR$/icons/demo.html" />
+    <entry file="file://$PROJECT_DIR$/icons/Read Me.txt" />
+    <entry file="file://$PROJECT_DIR$/node_modules/jquery/package.json" />
+    <entry file="file://$PROJECT_DIR$/node_modules/tether/dist/js/tether.min.js" />
+    <entry file="file://$PROJECT_DIR$/node_modules/jquery/src/manipulation/_evalUrl.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/Cardio/css/bootstrap.css" />
+    <entry file="file://$PROJECT_DIR$/dist/framework.js" />
+    <entry file="file://$PROJECT_DIR$/webpack.config.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dist/flextour.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2176">
+          <caret line="1553" column="28" selection-start-line="1552" selection-start-column="28" selection-end-line="1552" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/errorcheckings/index.css" />
+    <entry file="file://$PROJECT_DIR$/tests/errorcheckings/index.js" />
+    <entry file="file://$PROJECT_DIR$/tests/errorcheckings/index.html" />
+    <entry file="file://$PROJECT_DIR$/tests/test.html" />
+    <entry file="file://$PROJECT_DIR$/tests/multipage/index.html" />
+    <entry file="file://$PROJECT_DIR$/tests/multipage/index.js" />
+    <entry file="file://$PROJECT_DIR$/tests/multipage/index.css" />
+    <entry file="file://$PROJECT_DIR$/tests/multipage/secondpage.js" />
+    <entry file="file://$PROJECT_DIR$/tests/multipage/secondpage.html" />
+    <entry file="file://$PROJECT_DIR$/tests/customizedstyles/img/portfolio/cake.png" />
+    <entry file="file://$PROJECT_DIR$/tests/customizedstyles/index.html" />
+    <entry file="file://$PROJECT_DIR$/dist/variables.less" />
+    <entry file="file://$PROJECT_DIR$/dist/icons/loading.gif" />
+    <entry file="file://$PROJECT_DIR$/dist/icons/loading.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dist/icons/action.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dist/icons/info.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dist/flextour.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="211">
+          <caret line="168" column="21" selection-start-line="168" selection-start-column="21" selection-end-line="168" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/test.jpg" />
+    <entry file="file://$PROJECT_DIR$/tests/translation/index.html" />
+    <entry file="file://$PROJECT_DIR$/main/Constants.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-754">
+          <caret line="47" column="49" selection-start-line="47" selection-start-column="49" selection-end-line="47" selection-end-column="49" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main/Utilities.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="69" column="62" selection-start-line="69" selection-start-column="16" selection-end-line="69" selection-end-column="62" />
+          <folding>
+            <element signature="e#10679#10776#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/customizedstyles/index.css" />
+    <entry file="file://$PROJECT_DIR$/main/Components.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1343">
+          <caret line="577" column="13" selection-start-line="577" selection-start-column="13" selection-end-line="577" selection-end-column="13" />
+          <folding>
+            <element signature="n#!!block;n#Components#0" expanded="true" />
+            <element signature="n#!!doc;n#_addOverlay#0" expanded="true" />
+            <element signature="n#!!doc;n#_createContentBubble#0" expanded="true" />
+            <element signature="n#!!block;n#_createContentBubble#0" expanded="true" />
+            <element signature="n#!!doc;n#_createCustomButton#0" expanded="true" />
+            <element signature="n#!!block;n#_createCustomButton#0" expanded="false" />
+            <element signature="n#!!block;n#_createSkipButton#0" expanded="true" />
+            <element signature="n#!!block;n#_createDoneButton#0" expanded="true" />
+            <element signature="n#!!doc;n#_modifyContentBubble#0" expanded="true" />
+            <element signature="n#!!block;n#_modifyContentBubble#0" expanded="true" />
+            <element signature="e#14997#15129#0" expanded="true" />
+            <element signature="e#16250#16324#0" expanded="false" />
+            <element signature="n#!!doc;n#_placeBubbleLocation#0" expanded="true" />
+            <element signature="n#!!block;n#_placeBubbleLocation#0" expanded="true" />
+            <element signature="e#29606#30265#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/customizedstyles/index.js" />
+    <entry file="file://$PROJECT_DIR$/tests/customizedstyles/index.html" />
+    <entry file="file://$PROJECT_DIR$/tests/customizedstyles/index.less" />
+    <entry file="file://$PROJECT_DIR$/tests/test.js" />
+    <entry file="file://$PROJECT_DIR$/FlexTourJs.iml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="8" column="9" selection-start-line="8" selection-start-column="9" selection-end-line="8" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/multipage/secondpage.html" />
+    <entry file="file://$PROJECT_DIR$/multipage/index.html" />
+    <entry file="file://$PROJECT_DIR$/main/FlexTour.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="449">
+          <caret line="667" column="1" selection-start-line="667" selection-start-column="1" selection-end-line="667" selection-end-column="1" />
+          <folding>
+            <element signature="n#!!block;n#_initializeTour#0" expanded="true" />
+            <element signature="e#3840#3955#0" expanded="true" />
+            <element signature="n#!!block;n#_centralOrganizer#0" expanded="false" />
+            <element signature="e#5376#5484#0" expanded="false" />
+            <element signature="e#5625#5666#0" expanded="false" />
+            <element signature="e#5792#5832#0" expanded="false" />
+            <element signature="e#5885#5928#0" expanded="false" />
+            <element signature="e#5997#6037#0" expanded="false" />
+            <element signature="e#6903#7023#0" expanded="false" />
+            <element signature="e#7112#7181#0" expanded="false" />
+            <element signature="e#8253#8408#0" expanded="false" />
+            <element signature="n#!!block;n#_addClickEvents#0" expanded="false" />
+            <element signature="e#9009#9046#0" expanded="false" />
+            <element signature="e#9365#9512#0" expanded="false" />
+            <element signature="e#9608#9637#0" expanded="false" />
+            <element signature="e#14488#14741#0" expanded="true" />
+            <element signature="n#!!block;n#_precheckForTransition#0" expanded="true" />
+            <element signature="n#!!doc;n#_skipStep#0" expanded="true" />
+            <element signature="n#!!block;n#_nextStep#0" expanded="true" />
+            <element signature="n#!!block;n#__transitionFunction#0;n#!!block;n#_transitionToNextStep#0" expanded="true" />
+            <element signature="n#!!block;n#_addResizeWindowListener#0" expanded="true" />
+            <element signature="n#!!block;n#_blockScrolling#0" expanded="true" />
+            <element signature="e#25506#25592#0" expanded="true" />
+            <element signature="n#!!block;n#_unblockScrolling#0" expanded="true" />
+            <element signature="n#!!doc;n#_dragStartPause#0" expanded="true" />
+            <element signature="n#!!block;n#_dragStartPause#0" expanded="false" />
+            <element signature="e#26448#26495#0" expanded="false" />
+            <element signature="n#!!doc;n#__moveOnDropTarget#0" expanded="true" />
+            <element signature="n#!!block;n#__moveOnDropTarget#0" expanded="true" />
+            <element signature="n#!!block;n#_removeAndUnbind#0" expanded="true" />
+            <element signature="n#!!doc;n#_exit#0" expanded="true" />
+            <element signature="n#!!block;n#_exit#0" expanded="true" />
+            <element signature="n#!!block;n#_runTourWithGivenSteps#0" expanded="true" />
+            <element signature="e#33213#33234#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="34">
+            <caret line="2" column="16" selection-start-line="2" selection-start-column="16" selection-end-line="2" selection-end-column="16" />
+            <folding />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dist/flextour.less">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="8" column="12" selection-start-line="8" selection-start-column="12" selection-end-line="8" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="17" selection-start-line="2" selection-start-column="17" selection-end-line="2" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="Copyright.UI">
+        <settings>
+          <last-edited>NhatHo</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="FacetStructureConfigurable.UI">
+        <settings>
+          <last-edited>No facets are configured</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="GlobalLibrariesConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>FlexTourJs</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+                <option value="0.6" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectJDKs.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <last-edited>FlexTourJs node_modules</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ScopeChooserConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>
