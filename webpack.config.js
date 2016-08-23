@@ -8,8 +8,9 @@ module.exports = {
     output: {
         path: __dirname,
         filename: "./dist/flextour.js",
-        libraryTarget: "var",
-        library: "FlexTour"
+        libraryTarget: "umd",
+        library: "FlexTour",
+        umdNamedDefine: true
     },
     module: {
         loaders: [

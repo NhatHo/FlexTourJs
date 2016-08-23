@@ -3,45 +3,61 @@
 
 @OverlayBackground: rgb(0, 0, 0, 0.5);
 @Opacity: 0.3;
-@BorderColor: #666;
+@BorderColor: #888;
 @FlashBorderColor: red;
 @ShadowColor: #888;
 @BubbleBackground: #FFFFFF;
-@HoverColor: #4F2F2F;
+@InnerArrowBackground: @BubbleBackground;
+@ButtonBackgroundColor: @BubbleBackground;
+@HoverColor: #206456;
 @ContentColor: #000;
 @ButtonColor: #206456;
+@NumberIconColor: #133233;
 @DisabledButtonColor: #333333;
 @DisabledButtonBorder: #CCC;
 @TitleUnderlineColor: #F00000;
 @TitleTextColor: #A80000;
 @HoverButtonColor: #FFFFFF;
-@InnerArrowBackground: #FFFFFF;
+@ZIndex: 100000;
+@TitleFontSize: 12pt;
+@ContentFontSize: 10pt;
+@ButtonFontSize: 8pt;
+@BubbleWidth: 350px;
+@ButtonWidth: 50px;
+@IconMinWidthHeight: 40px;
+@IconWidth: 8%;
+@NumberIconFont: 30px;
+@NumberIconLineHeight: 36px;
 
 /********************** COMMON STYLES ****************************/
-
 .arrow-style {
   position: absolute;
   display: block;
   width: 0;
   height: 0;
-  z-index: 20;
+  z-index: @ZIndex;
 }
 
 .icon-style {
-  min-width: 40px;
-  min-height: 40px;
-  width: 8%;
+  min-width: @IconMinWidthHeight;
+  min-height: @IconMinWidthHeight;
+  width: @IconWidth;
   float: left;
   margin-top: 5px;
   margin-bottom: 5px;
-  margin-left: 15px;
+  margin-left: 5px;
+}
+
+.button-style {
+  position: relative;
+  border: 2px solid @ButtonColor;
 }
 
 /********************* BUBBLES STYLE ***************************/
 
 .flextour-tour-bubble {
   position: absolute;
-  width: 400px;
+  width: @BubbleWidth;
   max-width: 1000px;
   height: auto;
   padding: 5px;
@@ -52,7 +68,7 @@
   border: 4px solid @BorderColor;
   text-align: left;
   color: @ContentColor;
-  z-index: 20;
+  z-index: @ZIndex;
   -webkit-box-shadow: 2px 2px 4px @ShadowColor;
   -moz-box-shadow: 2px 2px 4px @ShadowColor;
   box-shadow: 2px 2px 4px @ShadowColor;
@@ -62,15 +78,15 @@
   transition: all 0.5s;
 
   .flextour-content {
-    margin-left: 15px;
+    margin-left: 10px;
     width: 82%;
     float: left;
-    padding: 10px 0 10px 0;
+    padding: 5px 5px 10px 0;
 
     .flextour-bubble-title {
       border-bottom: 2px solid @TitleUnderlineColor;
       color: @TitleTextColor;
-      font-size: 14pt;
+      font-size: @TitleFontSize;
       padding-bottom: 3px;
       margin-bottom: 3px;
     }
@@ -78,7 +94,7 @@
 }
 
 .flextour-content-body {
-  font-size: 12pt;
+  font-size: @ContentFontSize;
 }
 
 .flextour-float-bubble {
@@ -180,8 +196,20 @@
 }
 
 .flextour-icon-loading {
-  background: url("icons/loading.gif") no-repeat;
+  background: url("icons/loading.png") no-repeat;
   background-size: contain;
+}
+
+.flextour-icon-number {
+  border-radius: 50%;
+
+  background: @BubbleBackground;
+  border: 2px solid @NumberIconColor;
+  color: @NumberIconColor;
+  text-align: center;
+
+  font: @NumberIconFont Arial, sans-serif;
+  line-height: @NumberIconLineHeight;
 }
 
 .flextour-button-group {
@@ -189,10 +217,10 @@
 
   & > button {
     padding: 5px 20px 5px 20px;
-    font-size: 10pt;
-    min-width: 100px;
+    font-size: @ButtonFontSize;
+    min-width: @ButtonWidth;
     text-decoration: none;
-    background-color: @BubbleBackground;
+    background-color: @ButtonBackgroundColor;
     color: @ContentColor;
     cursor: pointer;
     display: inline-block;
@@ -223,90 +251,29 @@
 
 .flextour-empty-button {
   border: 2px solid transparent;
-  min-width: 100px;
+  min-width: @ButtonWidth;
   display: inline-block;
 }
 
 .flextour-skip-button {
   margin-right: 15px;
-  position: relative;
-  border: 2px solid @ButtonColor;
-
-  &:after {
-    content: ">>";
-    position: absolute;
-    opacity: 0;
-    right: -10px;
-    transition: 0.5s;
-  }
-
-  &:hover:after {
-    opacity: 1;
-    right: 15px;
-  }
+  .button-style;
 }
 
 .flextour-back-button {
   margin-right: 5px;
-  position: relative;
-  border: 2px solid @ButtonColor;
-
-  &:after {
-    content: "<";
-    position: absolute;
-    opacity: 0;
-    left: -10px;
-    transition: 0.5s;
-  }
-
-  &:hover:after {
-    opacity: 1;
-    left: 15px;
-  }
+  .button-style;
 }
 
 .flextour-next-button {
   margin-right: 10px;
-  position: relative;
-  border: 2px solid @ButtonColor;
-
-  &:after {
-    content: ">";
-    position: absolute;
-    opacity: 0;
-    right: -10px;
-    transition: 0.5s;
-  }
-
-  &:hover:after {
-    opacity: 1;
-    right: 15px;
-  }
-}
-
-.flextour-done-button {
-  margin-right: 10px;
-  position: relative;
-  border: 2px solid @ButtonColor;
-
-  &:after {
-    content: "!";
-    position: absolute;
-    opacity: 0;
-    right: -10px;
-    transition: 0.5s;
-  }
-
-  &:hover:after {
-    opacity: 1;
-    right: 15px;
-  }
+  .button-style;
 }
 
 a.flextour-close {
   position: absolute;
   float: right;
-  top: 0;
+  top: 4px;
   right: 4px;
   cursor: pointer;
   color: @ContentColor;
@@ -314,10 +281,11 @@ a.flextour-close {
   font-weight: bold;
   display: inline-block;
   line-height: 0;
-  padding: 11px 3px;
+  padding: 8px 0;
 
   &:hover {
     color: @HoverColor;
+    text-decoration: none;
   }
 }
 
@@ -325,7 +293,7 @@ a.flextour-close {
 
 .flextour-overlay-blocks {
   opacity: @Opacity;
-  z-index: 10000;
+  z-index: @ZIndex;
 }
 
 .flextour-overlay-styles {
@@ -344,13 +312,12 @@ a.flextour-close {
 
 .flextour-target-border {
   background: none !important;
-  border: @BorderColor solid 3px;
   position: absolute;
   -webkit-transition: all 0.5s;
   -moz-transition: all 0.5s;
   -o-transition: all 0.5s;
   transition: all 0.5s;
-  z-index: 10;
+  z-index: @ZIndex;
 
   &.interactable {
     pointer-events: none;
@@ -383,7 +350,7 @@ a.flextour-close {
   -moz-transition: all 0.3s;
   -o-transition: all 0.3s;
   transition: all 0.3s;
-  z-index: 11;
+  z-index: @ZIndex;
   pointer-events: none;
   -webkit-animation: borderBlink 1s step-end infinite;
   animation: borderBlink 1s step-end infinite;

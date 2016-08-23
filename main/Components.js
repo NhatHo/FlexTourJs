@@ -7,12 +7,16 @@ var Constants = require("./Constants");
 var Utils = require("./Utilities");
 var $ = require("./../node_modules/jquery/dist/jquery.min.js");
 
-function Components(stepDescription) {
+function Components(stepDescription, stepNumber) {
     Components.stepDescription = $.extend({}, stepDescription);
+    Components.stepNumber = stepNumber;
     Components.ui = $(Constants.DIV_COMP);
     Components.ui.addClass(Constants.FLEXTOUR);
     if (Utils.isStepWithTarget(stepDescription)) {
         var target = $(stepDescription[Constants.TARGET]);
+        if (!Utils.hasELement(target)) {
+            return;
+        }
         var actualLocation = {};
         actualLocation.top = target.offset().top;
         actualLocation.left = target.offset().left;
@@ -31,7 +35,7 @@ function Components(stepDescription) {
 function _getTopOverlay() {
     return {
         width: Utils.getFullWindowWidth() + Constants.PX,
-        height: Components.rect.top - Constants.BORDER_WIDTH + Constants.PX,
+        height: Components.rect.top + Constants.PX,
         top: 0,
         left: 0
     };
@@ -43,8 +47,8 @@ function _getTopOverlay() {
 function _getBottomOverlay() {
     return {
         width: Utils.getFullWindowWidth() + Constants.PX,
-        height: Utils.getFullWindowHeight() - Components.rect.bottom - Constants.BORDER_WIDTH + Constants.PX,
-        top: Components.rect.bottom + Constants.BORDER_WIDTH + Constants.PX,
+        height: Utils.getFullWindowHeight() - Components.rect.bottom + Constants.PX,
+        top: Components.rect.bottom + Constants.PX,
         left: 0
     };
 }
@@ -58,9 +62,9 @@ function _getLeftOverlay() {
     // There is a really high chance that the overlays are not fit perfectly --> a small thin line will show --> UGLY.
     // We set this overlay overlap the top and bottom overlay, and make them blend together to cover the thin line. 1px would work
     return {
-        width: Components.rect.left - Constants.BORDER_WIDTH + Constants.PX,
-        height: Components.rect.height + Constants.OVERLAP_HEIGHT * 2 + Constants.BORDER_WIDTH * 2 + Constants.PX,
-        top: Components.rect.top - Constants.OVERLAP_HEIGHT - Constants.BORDER_WIDTH + Constants.PX,
+        width: Components.rect.left + Constants.PX,
+        height: Components.rect.height + Constants.OVERLAP_HEIGHT * 2 + Constants.PX,
+        top: Components.rect.top - Constants.OVERLAP_HEIGHT + Constants.PX,
         left: 0
     };
 }
@@ -73,10 +77,10 @@ function _getRightOverlay() {
     // There is a really high chance that the overlays are not fit perfectly --> a small thin line will show --> UGLY.
     // We set this overlay overlap the top and bottom overlay, and make them blend together to cover the thin line. 1px would work
     return {
-        width: Utils.getFullWindowWidth() - Components.rect.right - Constants.BORDER_WIDTH + Constants.PX,
-        height: Components.rect.height + Constants.OVERLAP_HEIGHT * 2 + Constants.BORDER_WIDTH * 2 + Constants.PX,
-        top: Components.rect.top - Constants.OVERLAP_HEIGHT - Constants.BORDER_WIDTH + Constants.PX,
-        left: Components.rect.right + Constants.BORDER_WIDTH + Constants.PX
+        width: Utils.getFullWindowWidth() - Components.rect.right + Constants.PX,
+        height: Components.rect.height + Constants.OVERLAP_HEIGHT * 2 + Constants.PX,
+        top: Components.rect.top - Constants.OVERLAP_HEIGHT + Constants.PX,
+        left: Components.rect.right + Constants.PX
     };
 }
 
@@ -86,6 +90,10 @@ function _getRightOverlay() {
  * @return {object|*}       The DOM block that contains all overlays
  */
 function _createOverlayNode(locationObj) {
+    if (locationObj.left < 0 || locationObj.top < 0) {
+        return undefined;
+    }
+
     var overlay = $(Constants.DIV_COMP, {
         "class": Constants.OVERLAY_STYLE,
         "width": locationObj.width,
@@ -192,10 +200,13 @@ function _createContentBubble(noButtons, showBack, showNext, disableNext) {
     var bubble = $(Constants.DIV_COMP, {
         "class": Constants.TOUR_BUBBLE
     });
-
-    $(Constants.DIV_COMP, {
+    var icon = $(Constants.DIV_COMP, {
         "class": Constants.ICON_STYLE + " " + _getIconType()
-    }).appendTo(bubble);
+    });
+    if (Utils.isValid(Components.stepNumber) && Components.stepDescription[Constants.TYPE] === Constants.NUMBER_TYPE) {
+        icon.html(Components.stepNumber);
+    }
+    icon.appendTo(bubble);
 
     var contentBlock = $(Constants.DIV_COMP, {
         "class": Constants.BUBBLE_CONTENT
@@ -255,9 +266,29 @@ function _createCustomButton(buttonDesc, buttonGroup) {
     var customizedButton = $(Constants.BUTTON_COMP, {
         "class": buttonDesc[Constants.BUTTON_STYLE],
         text: buttonDesc[Constants.BUTTON_NAME]
-    }).appendTo(buttonGroup);
-    Utils.addEvent(customizedButton, Constants.FLEX_CLICK, buttonDesc[Constants.ONCLICK_NAME]);
-    return customizedButton;
+    });
+    var clickEvent = buttonDesc[Constants.ONCLICK_NAME];
+    if (Utils.isValid(clickEvent) && typeof clickEvent == "function") {
+        Utils.addEvent(customizedButton, Constants.FLEX_CLICK, clickEvent);
+    } else if (Utils.isValid(clickEvent) && typeof clickEvent == "string") {
+        switch (clickEvent) {
+            case Constants.SKIP_TEXT:
+                customizedButton.addClass(Constants.SKIP_BUTTON_TRIGGER);
+                break;
+            case Constants.BACK_TEXT:
+                customizedButton.addClass(Constants.BACK_BUTTON_TRIGGER);
+                break;
+            case Constants.NEXT_TEXT:
+                customizedButton.addClass(Constants.NEXT_BUTTON_TRIGGER);
+                break;
+            case Constants.DONE_TEXT:
+                customizedButton.addClass(Constants.DONE_BUTTON_TRIGGER);
+                break;
+            default:
+                break;
+        }
+    }
+    customizedButton.appendTo(buttonGroup);
 }
 
 /**
@@ -265,7 +296,7 @@ function _createCustomButton(buttonDesc, buttonGroup) {
  */
 function _createSkipButton() {
     return $(Constants.BUTTON_COMP, {
-        "class": Constants.SKIP_BUTTON,
+        "class": Constants.SKIP_BUTTON + " " + Constants.SKIP_BUTTON_TRIGGER,
         text: _getSkipButtonText()
     });
 }
@@ -284,7 +315,7 @@ function _getSkipButtonText() {
  */
 function _createBackButton(showBack) {
     return $(Constants.BUTTON_COMP, {
-        "class": Constants.BACK_BUTTON,
+        "class": Constants.BACK_BUTTON + " " + Constants.BACK_BUTTON_TRIGGER,
         text: _getBackButtonText(),
         disabled: !showBack
     });
@@ -304,7 +335,7 @@ function _getBackButtonText() {
  */
 function _createNextButton(disableNext) {
     return $(Constants.BUTTON_COMP, {
-        "class": Constants.NEXT_BUTTON,
+        "class": Constants.NEXT_BUTTON + " " + Constants.NEXT_BUTTON_TRIGGER,
         text: _getNextButtonText(),
         disabled: disableNext
     });
@@ -324,7 +355,7 @@ function _getNextButtonText() {
  */
 function _createDoneButton(disableNext) {
     return $(Constants.BUTTON_COMP, {
-        "class": Constants.DONE_BUTTON,
+        "class": Constants.NEXT_BUTTON + " " + Constants.DONE_BUTTON_TRIGGER,
         text: _getDoneButtonText(),
         disabled: disableNext
     });
@@ -348,6 +379,8 @@ function _getIconType() {
         return Constants.LOADING_ICON;
     } else if (currentStepType === Constants.ACTION_TYPE) {
         return Constants.ACTION_ICON;
+    } else if (currentStepType === Constants.NUMBER_TYPE) {
+        return Constants.NUMBER_ICON;
     } else if (currentStepType === Constants.DEFAULT_TYPE) {
         return Constants.DEFAULT_ICON;
     }
@@ -378,6 +411,11 @@ function _modifyContentBubble(noButtons, showBack, showNext, disableNext) {
             }
         });
         currentIcon.addClass(currentIconType);
+    }
+    if (Utils.isValid(Components.stepNumber) && Components.stepDescription[Constants.TYPE] === Constants.NUMBER_TYPE) {
+        currentIcon.html(Components.stepNumber);
+    } else {
+        currentIcon.html(""); // clear out the number from previous step
     }
 
     /*
@@ -436,34 +474,22 @@ function _modifyContentBubble(noButtons, showBack, showNext, disableNext) {
             });
             bubble.append(buttonGroup);
         }
-
         var nextButton = Utils.getEleFromClassName(Constants.NEXT_BUTTON, true);
-        var doneButton = Utils.getEleFromClassName(Constants.DONE_BUTTON, true);
         if (showNext) {
             // For the case where user go back from last step --> replace Done button with Next button
-            if (Utils.hasELement(doneButton)) {
-                doneButton.removeClass(Constants.DONE_BUTTON);
-                doneButton.addClass(Constants.NEXT_BUTTON);
-                doneButton.text(_getNextButtonText());
-                doneButton.prop('disabled', disableNext);
-            } else if (Utils.hasELement(nextButton)) {
-                nextButton.prop('disabled', disableNext);
+            if (Utils.hasELement(nextButton)) {
                 nextButton.text(_getNextButtonText());
+                nextButton.prop('disabled', disableNext);
             } else {
-                _createNextButton(disableNext).appendTo(buttonGroup);
+                nextButton = _createNextButton(disableNext).appendTo(buttonGroup);
             }
         } else {
             // For last step, replace Next with Done button.
             if (Utils.hasELement(nextButton)) {
-                nextButton.removeClass(Constants.NEXT_BUTTON);
-                nextButton.addClass(Constants.DONE_BUTTON);
                 nextButton.prop('disabled', disableNext);
                 nextButton.text(_getDoneButtonText());
-            } else if (Utils.hasELement(doneButton)) {
-                doneButton.prop('disabled', disableNext);
-                doneButton.text(_getDoneButtonText());
             } else {
-                _createDoneButton(disableNext).appendTo(buttonGroup);
+                nextButton = _createDoneButton(disableNext).appendTo(buttonGroup);
             }
         }
 
@@ -475,16 +501,14 @@ function _modifyContentBubble(noButtons, showBack, showNext, disableNext) {
             backButton = _createBackButton(showBack);
             if (Utils.hasELement(nextButton)) {
                 backButton.insertBefore(nextButton);
-            } else if (Utils.hasELement(doneButton)) {
-                backButton.insertBefore(doneButton);
             }
         }
 
         var skipRequirement = Components.stepDescription[Constants.SKIP];
         var skipButton = Utils.getEleFromClassName(Constants.SKIP_BUTTON, true);
-        if (Utils.isValid(skipRequirement)) {
+        if (Utils.isValid(skipRequirement) && !Utils.isValid(Components.stepDescription[Constants.NO_SKIP])) {
             if (!Utils.hasELement(skipButton)) {
-                _createSkipButton().prependTo(buttonGroup);
+                skipButton = _createSkipButton().prependTo(buttonGroup);
             }
             skipButton.text(_getSkipButtonText());
         } else {
@@ -518,22 +542,22 @@ function _placeBubbleLocation() {
         switch (Components.stepDescription[Constants.POSITION]) {
             case Constants.TOP:
                 arrow.addClass(Constants.TOP);
-                bubble.css({'top': Components.rect.top - bubbleRect.height - Constants.ARROW_SIZE + Constants.PX});
+                bubble.css({'top': Components.rect.top - bubbleRect.height - Constants.ARROW_SIZE + Constants.BORDER_WIDTH * 4 + Constants.PX});
                 bubble.css({'left': Components.rect.left + halfTargetWidth - halfBubbleWidth + Constants.PX});
                 break;
             case Constants.RIGHT:
                 arrow.addClass(Constants.RIGHT);
                 bubble.css({'top': Components.rect.top + halfTargetHeight - halfBubbleHeight + Constants.PX});
-                bubble.css({'left': targetPosition.right + Constants.ARROW_SIZE + Constants.PX});
+                bubble.css({'left': targetPosition.right + Constants.ARROW_SIZE - Constants.BORDER_WIDTH * 4 + Constants.PX});
                 break;
             case Constants.LEFT:
                 arrow.addClass(Constants.LEFT);
                 bubble.css({'top': Components.rect.top + halfTargetHeight - halfBubbleHeight + Constants.PX});
-                bubble.css({'left': Components.rect.left - bubbleRect.width - Constants.ARROW_SIZE + Constants.PX});
+                bubble.css({'left': Components.rect.left - bubbleRect.width - Constants.ARROW_SIZE + Constants.BORDER_WIDTH * 4 + Constants.PX});
                 break;
             default: // This is either bottom or something that doesn't exist
                 arrow.addClass(Constants.BOTTOM);
-                bubble.css({'top': targetPosition.bottom + Constants.ARROW_SIZE + Constants.PX});
+                bubble.css({'top': targetPosition.bottom + Constants.ARROW_SIZE - Constants.BORDER_WIDTH * 4 + Constants.PX});
                 bubble.css({'left': Components.rect.left + halfTargetWidth - halfBubbleWidth + Constants.PX});
                 break;
         }
@@ -599,8 +623,8 @@ function _addBorderAroundTarget() {
         borderOverlay.css({
             width: Components.rect.width + Constants.PX,
             height: Components.rect.height + Constants.PX,
-            top: Components.rect.top - Constants.BORDER_WIDTH + Constants.PX,
-            left: Components.rect.left - Constants.BORDER_WIDTH + Constants.PX
+            top: Components.rect.top + Constants.PX,
+            left: Components.rect.left + Constants.PX
         });
 
         if (Components.stepDescription[Constants.CAN_INTERACT]) {
@@ -621,8 +645,8 @@ function _modifyBorderAroundTarget() {
         borderOverlay.css({
             width: Components.rect.width + Constants.PX,
             height: Components.rect.height + Constants.PX,
-            top: Components.rect.top - Constants.BORDER_WIDTH + Constants.PX,
-            left: Components.rect.left - Constants.BORDER_WIDTH + Constants.PX
+            top: Components.rect.top + Constants.PX,
+            left: Components.rect.left + Constants.PX
         });
 
         if (Components.stepDescription[Constants.CAN_INTERACT]) {
@@ -641,7 +665,7 @@ function _modifyBorderAroundTarget() {
 function _scrollMethod() {
     var modal = Components.stepDescription[Constants.MODAL];
     if (!Utils.isValid(modal)) {
-        Utils.smoothScroll(Components.rect);
+        Utils.smoothScroll(Components.rect, Components.stepDescription.position);
     }
 }
 
@@ -657,8 +681,8 @@ function _addFlashBorder() {
             "class": Constants.FLASH_BORDER
         });
         flashOverlay.css({
-            width: flashTargetLocation.outerWidth() + Constants.PX,
-            height: flashTargetLocation.outerHeight() + Constants.PX,
+            width: flashTargetLocation.outerWidth() + Constants.BORDER_WIDTH * 2 + Constants.PX,
+            height: flashTargetLocation.outerHeight() + Constants.BORDER_WIDTH * 2 + Constants.PX,
             top: flashTargetLocation.offset().top - Constants.FLASH_BORDER_WIDTH + Constants.PX,
             left: flashTargetLocation.offset().left - Constants.FLASH_BORDER_WIDTH + Constants.PX
         });
@@ -677,8 +701,8 @@ function _modifyFlashBorder() {
         if (Utils.hasELement(flashOverlay)) {
             var flashTargetLocation = $(flashTarget);
             flashOverlay.css({
-                width: flashTargetLocation.outerWidth() + Constants.PX,
-                height: flashTargetLocation.outerHeight() + Constants.PX,
+                width: flashTargetLocation.outerWidth() + Constants.BORDER_WIDTH * 2 + Constants.PX,
+                height: flashTargetLocation.outerHeight() + Constants.BORDER_WIDTH * 2 + Constants.PX,
                 top: flashTargetLocation.offset().top - Constants.FLASH_BORDER_WIDTH + Constants.PX,
                 left: flashTargetLocation.offset().left - Constants.FLASH_BORDER_WIDTH + Constants.PX
             });
@@ -706,9 +730,6 @@ Components.prototype.createComponents = function (noButtons, showBack, showNext,
         // Note to self: must append every to the body here so that we can modify the location of the bubble later
         $(document.body).append(Components.ui);
         _placeBubbleLocation();
-        if (!Components.stepDescription[Constants.SCROLL_LOCK]) {
-            _scrollMethod();
-        }
     } else {
         // The target element cannot be found which mean this is a floating step
         _createContentBubble(noButtons, showBack, showNext, disableNext);
@@ -716,6 +737,9 @@ Components.prototype.createComponents = function (noButtons, showBack, showNext,
         // Note to self: must append every to the body here so that we can modify the location of the bubble later
         $(document.body).append(Components.ui);
         _placeFloatBubble();
+    }
+    if (!Components.stepDescription[Constants.SCROLL_LOCK]) {
+        _scrollMethod();
     }
 };
 
@@ -736,14 +760,14 @@ Components.prototype.modifyComponents = function (noButtons, showBack, showNext,
         _modifyContentBubble(noButtons, showBack, showNext, disableNext);
         _modifyOverlays();
         _modifyBubbleLocation();
-        if (!Components.stepDescription[Constants.SCROLL_LOCK]) {
-            _scrollMethod();
-        }
     } else {
         // The target element cannot be found which mean this is a floating step
         _modifyContentBubble(noButtons, showBack, showNext, disableNext);
         _modifyFloatBubble();
         _modifyOverlay();
+    }
+    if (!Components.stepDescription[Constants.SCROLL_LOCK]) {
+        _scrollMethod();
     }
 };
 
@@ -752,6 +776,16 @@ Components.prototype.modifyComponents = function (noButtons, showBack, showNext,
  */
 Components.prototype.removeComponents = function () {
     Components.ui.remove();
+};
+
+/**
+ * This function is used to remove the overlays of current step. Only used for resizing windows so that new window size is recalculated properly.
+ */
+Components.prototype.removeOverlays = function () {
+    var overlayDiv = Utils.getEleFromClassName(Constants.OVERLAY_BLOCK, true);
+    if (Utils.hasELement(overlayDiv)) {
+        overlayDiv.remove();
+    }
 };
 
 module.exports = Components;

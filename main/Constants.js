@@ -34,14 +34,20 @@ module.exports = {
     ACTION_ICON: "flextour-icon-action",
     DEFAULT_ICON: "flextour-icon-info",
     LOADING_ICON: "flextour-icon-loading",
+    NUMBER_ICON: "flextour-icon-number",
 
     CLOSE_TOUR: "flextour-close",
+
+    BUTTON_GROUP: "flextour-button-group",
 
     SKIP_BUTTON: "flextour-skip-button",
     BACK_BUTTON: "flextour-back-button",
     NEXT_BUTTON: "flextour-next-button",
-    DONE_BUTTON: "flextour-done-button",
-    BUTTON_GROUP: "flextour-button-group",
+
+    SKIP_BUTTON_TRIGGER: "flextour-skip-trigger",
+    BACK_BUTTON_TRIGGER: "flextour-back-trigger",
+    NEXT_BUTTON_TRIGGER: "flextour-next-trigger",
+    DONE_BUTTON_TRIGGER: "flextour-done-trigger",
 
     // Event Block
     FLEX_CLICK: "click.flextour",
@@ -68,6 +74,7 @@ module.exports = {
         canInteract: false,
         noButtons: false,
         noBack: false,
+        noSkip: false,
         endOnOverlayClick: true,
         endOnEsc: true,
         pauseOnExit: false
@@ -78,6 +85,7 @@ module.exports = {
     STEPS: "steps",
     NO_BUTTONS: "noButtons",
     NO_BACK: "noBack",
+    NO_SKIP: "noSkip",
     CAN_INTERACT: "canInteract",
     TYPE: "type",
     CONTENT: "content",
@@ -96,27 +104,32 @@ module.exports = {
     MODAL: "modal",
     SCROLL_LOCK: "scrollLock",
     STYLES: "styles",
+
     NEXT_BUTTON_CUS: "nextButton",
     BACK_BUTTON_CUS: "backButton",
     SKIP_BUTTON_CUS: "skipButton",
     DONE_BUTTON_CUS: "doneButton",
-    DND: "dragAndDrop",
+
     BUTTONS_CUS: "buttons",
     BUTTON_NAME: "name",
     BUTTON_STYLE: "style",
     ONCLICK_NAME: "onclick",
+
     MULTIPAGE: "multipage",
     SAVE_POINT: "savePoint",
     PAUSE_ON_EXIT: "pauseOnExit",
+    DND: "dragAndDrop",
 
     DEFAULT_TYPE: "info",
     ACTION_TYPE: "action",
+    NUMBER_TYPE: "number",
+
     DEFAULT_POSITION: "bottom",
 
     // Utilities
     TIMES: "&times;",
-    BORDER_WIDTH: 3,
-    FLASH_BORDER_WIDTH: 2,
+    BORDER_WIDTH: 1,
+    FLASH_BORDER_WIDTH: 1,
     OVERLAP_HEIGHT: 1,
     ARROW_SIZE: 20,
     PX: "px",

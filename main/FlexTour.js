@@ -39,6 +39,10 @@ function _initializeTour(tour) {
 
     for (var i = 0; i < numOfSteps; i++) {
         var currentStep = rawTour[Constants.STEPS][i];
+        var content = currentStep[Constants.CONTENT];
+        if (Utils.isValid(FlexTour.translation) && FlexTour.translation.hasOwnProperty(content)) {
+            currentStep[Constants.CONTENT] = FlexTour.translation[content];
+        }
 
         currentStep[Constants.TYPE] = currentStep[Constants.TYPE] || Constants.DEFAULT_TYPE;
         currentStep[Constants.POSITION] = currentStep[Constants.POSITION] || Constants.DEFAULT_POSITION;
@@ -67,10 +71,10 @@ function _initializeTour(tour) {
          */
         var currentStepCustomizedButtons = currentStep[Constants.BUTTONS_CUS] || rawTour[Constants.BUTTONS_CUS];
         if (Utils.isValid(currentStepCustomizedButtons)) {
-            for (var i = 0; i < currentStepCustomizedButtons.length; i++) {
-                var onClickFunctionName = currentStepCustomizedButtons[i][Constants.ONCLICK_NAME];
+            for (var j = 0; j < currentStepCustomizedButtons.length; j++) {
+                var onClickFunctionName = currentStepCustomizedButtons[j][Constants.ONCLICK_NAME];
                 if (FlexTour.actionsList.hasOwnProperty(onClickFunctionName)) {
-                    currentStepCustomizedButtons[i][Constants.ONCLICK_NAME] = FlexTour.actionsList[onClickFunctionName];
+                    currentStepCustomizedButtons[j][Constants.ONCLICK_NAME] = FlexTour.actionsList[onClickFunctionName];
                 }
             }
             currentStep[Constants.BUTTONS_CUS] = currentStepCustomizedButtons;
@@ -86,8 +90,8 @@ function _initializeTour(tour) {
  * @param newStep           Flag to be set when this is the first time this step is rendered. Used to avoid duplicated event attachment
  */
 function _centralOrganizer(stepDesc, newStep) {
-    FlexTour.Component = new Components(stepDesc);
     var currentStepNumber = FlexTour.currentStepNumber;
+    FlexTour.Component = new Components(stepDesc, currentStepNumber + 1);
 
     if (Utils.isValid(FlexTour.Component)) {
         var showBack = false,
@@ -138,9 +142,8 @@ function _centralOrganizer(stepDesc, newStep) {
 
         // Add event to Skip button if it exist
         if (Utils.isValid(stepDesc[Constants.SKIP])) {
-            Utils.getElementsAndAttachEvent(Constants.SKIP_BUTTON, Constants.FLEX_CLICK, _skipStep);
+            Utils.getElementsAndAttachEvent(Constants.SKIP_BUTTON_TRIGGER, Constants.FLEX_CLICK, _skipStep);
         }
-
         if (stepDesc[Constants.TRANSITION] && _isAllowToMove(currentStepNumber + 1, 0)) {
             _transitionToNextStep(currentStepNumber + 1);
         }
@@ -156,33 +159,32 @@ function _centralOrganizer(stepDesc, newStep) {
                 _bindScrollListener();
             }
 
-            _addClickEvents();
-
             if (Utils.isValid(stepDesc[Constants.SCROLL_LOCK])) {
                 _blockScrolling();
             }
 
+            _addClickEvents();
+
             if (Utils.isDnDStep(stepDesc)) {
                 _dragStartPause(stepDesc[Constants.TARGET]);
             }
-
             if (Utils.isValid(stepDesc[Constants.MULTIPAGE])) {
                 _saveCurrentTourState();
                 Utils.setKeyValuePairLS(Constants.MULTIPAGE_KEY, true);
                 // We assume that the URL will be changed after this step, so we attach cleanup step on hashchange in case that happens.
-                Utils.addEvent($(window), FlexTour.HASH_CHANGE, __cleanUpAfterHashChange);
-
-                // Clean up everything and de-attach hashchange event in window.
-                function __cleanUpAfterHashChange() {
-                    _exit();
+                Utils.addEvent($(window), FlexTour.HASH_CHANGE, function () {
+                    debugger;
                     Utils.removeEvent($(window), FlexTour.HASH_CHANGE);
-                }
+                    _exit(false);
+                });
             }
         }
 
         _executeGeneralFunction(Constants.AFTER_STEP);
     } else {
-        console.log("Target of step: " + JSON.stringify(stepDesc) + " is not found.");
+        console.log("Target of step: " + JSON.stringify(stepDesc) + " is not found in the DOM in the current step.");
+        _exit(true);
+        Utils.removeLSValue(Constants.LOCALSTORAGE_KEY); // Cleanup Local Storage if anything goes wrong.
     }
 }
 
@@ -191,16 +193,23 @@ function _centralOrganizer(stepDesc, newStep) {
  */
 function _addClickEvents() {
     if (FlexTour.currentTour[Constants.END_ON_OVERLAY_CLICK]) {
-        Utils.getElementsAndAttachEvent(Constants.OVERLAY_STYLE, Constants.FLEX_CLICK, _exit);
+        Utils.getElementsAndAttachEvent(Constants.OVERLAY_STYLE, Constants.FLEX_CLICK, function () {
+            _exit(false);
+        });
     }
 
-    Utils.getElementsAndAttachEvent(Constants.BACK_BUTTON, Constants.FLEX_CLICK, _previousStep);
+    Utils.getElementsAndAttachEvent(Constants.BACK_BUTTON_TRIGGER, Constants.FLEX_CLICK, _previousStep);
 
-    Utils.getElementsAndAttachEvent(Constants.NEXT_BUTTON, Constants.FLEX_CLICK, _nextStep);
+    Utils.getElementsAndAttachEvent(Constants.NEXT_BUTTON_TRIGGER, Constants.FLEX_CLICK, _nextStep);
 
-    Utils.getElementsAndAttachEvent(Constants.DONE_BUTTON, Constants.FLEX_CLICK, _exit);
+    Utils.getElementsAndAttachEvent(Constants.DONE_BUTTON_TRIGGER, Constants.FLEX_CLICK, function () {
+        _exit(true);
+        Utils.removeLSValue(Constants.LOCALSTORAGE_KEY); // When the tour is done ... remove everything stored before.
+    });
 
-    Utils.getElementsAndAttachEvent(Constants.CLOSE_TOUR, Constants.FLEX_CLICK, _exit);
+    Utils.getElementsAndAttachEvent(Constants.CLOSE_TOUR, Constants.FLEX_CLICK, function () {
+        _exit(false);
+    });
 }
 
 /**
@@ -220,11 +229,11 @@ function _addClickEventOnTargetClick(nextTrigger) {
 function _removeEvents() {
     Utils.removeELementsAndAttachedEvent(Constants.OVERLAY_STYLE, Constants.FLEX_CLICK);
 
-    Utils.removeELementsAndAttachedEvent(Constants.BACK_BUTTON, Constants.FLEX_CLICK);
+    Utils.removeELementsAndAttachedEvent(Constants.BACK_BUTTON_TRIGGER, Constants.FLEX_CLICK);
 
-    Utils.removeELementsAndAttachedEvent(Constants.NEXT_BUTTON, Constants.FLEX_CLICK);
+    Utils.removeELementsAndAttachedEvent(Constants.NEXT_BUTTON_TRIGGER, Constants.FLEX_CLICK);
 
-    Utils.removeELementsAndAttachedEvent(Constants.DONE_BUTTON, Constants.FLEX_CLICK);
+    Utils.removeELementsAndAttachedEvent(Constants.DONE_BUTTON_TRIGGER, Constants.FLEX_CLICK);
 
     Utils.removeELementsAndAttachedEvent(Constants.CLOSE_TOUR, Constants.FLEX_CLICK);
 }
@@ -263,8 +272,11 @@ function _removeClickEventOnTargetClick(nextTrigger) {
  * @returns {boolean}   True will var the transition happens, false will make it stay at the current step until the conditions are met
  */
 function _isAllowToMove(possibleStepNumber, currPrerequisite) {
-    var prerequisites = FlexTour.currentTour[Constants.STEPS][possibleStepNumber][Constants.PREREQUISITES];
     var possibleStep = FlexTour.currentTour[Constants.STEPS][possibleStepNumber];
+    if (!Utils.isValid(possibleStep)) {
+        return false;
+    }
+    var prerequisites = possibleStep[Constants.PREREQUISITES];
     var prerequisiteBlock;
     if (Utils.isValid(prerequisites) && currPrerequisite < prerequisites.length) {
         var prerequisite = prerequisites[currPrerequisite].trim();
@@ -274,11 +286,12 @@ function _isAllowToMove(possibleStepNumber, currPrerequisite) {
             var temporaryResult = _executePrerequisiteCondition(possibleStepNumber, prerequisiteBlock);
 
             if (!temporaryResult) {
-                if (possibleStep[Constants.RETRIES] === 0) {
+                if (possibleStep[Constants.RETRIES] <= 0) {
                     // Reset the retries entry for current step, only works if Retries is set on Tour Description
                     if (FlexTour.currentTour.hasOwnProperty(Constants.RETRIES)) {
                         possibleStep[Constants.RETRIES] = FlexTour.currentTour[Constants.RETRIES];
                     }
+                    _isAllowToMove(possibleStepNumber, ++currPrerequisite);
                     return temporaryResult; // Return false when retries reaches 0;
                 } else {
                     possibleStep[Constants.RETRIES]--;
@@ -301,10 +314,10 @@ function _isAllowToMove(possibleStepNumber, currPrerequisite) {
 
             if (!_executePrerequisiteCondition(possibleStepNumber, prerequisiteBlock)) {
                 var skipNumber = possibleStep[Constants.SKIP];
-                if (possibleStepNumber > FlexTour.currentStepNumber) {
+                if (possibleStepNumber >= FlexTour.currentStepNumber) {
                     // If the tour is going forward then skip it forward
                     if (Utils.isValid(skipNumber)) {
-                        _precheckForTransition(skipNumber, 0);
+                        _precheckForTransition(skipNumber - 1, 0);
                     } else {
                         _precheckForTransition(possibleStepNumber + 1, 0);
                     }
@@ -403,6 +416,9 @@ function _executePrerequisiteCondition(stepNumber, prerequisite) {
  * @param prerequisiteNumber        The prerequisite to be checked
  */
 function _precheckForTransition(stepNumber, prerequisiteNumber) {
+    if (stepNumber >= FlexTour.currentTour[Constants.STEPS].length) {
+        _exit(true);
+    }
     if (_isAllowToMove(stepNumber, prerequisiteNumber)) {
         _transitionToNextStep(stepNumber);
     }
@@ -414,11 +430,11 @@ function _precheckForTransition(stepNumber, prerequisiteNumber) {
 function _skipStep(event) {
     Utils.noDefault(event);
     _cleanUpAfterStep();
-    Utils.removeELementsAndAttachedEvent(Constants.SKIP_BUTTON, Constants.FLEX_CLICK);
+    Utils.removeELementsAndAttachedEvent(Constants.SKIP_BUTTON_TRIGGER, Constants.FLEX_CLICK);
 
     var skipToStep = FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber][Constants.SKIP];
     if (Utils.isValid(skipToStep)) {
-        _precheckForTransition(skipToStep, 0);
+        _precheckForTransition(skipToStep - 1, 0);
     }
 }
 
@@ -465,14 +481,24 @@ function _transitionToNextStep(stepNumber) {
  * Add window resize event to recalculate location of tour step.
  */
 function _addResizeWindowListener() {
-    Utils.addEvent($(window), Constants.FLEX_RESIZE, Utils.debounce(__rerenderComponents, 500, false));
+    Utils.addEvent($(window), Constants.FLEX_RESIZE, Utils.debounce(__rerenderResize, 500, false));
 }
 
 /**
  * CallBack function that get executed when window is resized
  * This event is only trigger once every 1/2 second. So that it won't go crazy and trigger too many event on resizing
  */
-function __rerenderComponents() {
+function __rerenderResize() {
+    _removeEvents();
+    FlexTour.Component.removeOverlays();
+    _centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber], false);
+    _addClickEvents();
+}
+
+/**
+ * Rerender current step.
+ */
+function __rerenderScroll() {
     _centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber], false);
 }
 
@@ -498,7 +524,7 @@ function _addKeyBoardListener() {
 function _keyUpCallBack(event) {
     // Escape key is triggered
     if (event.keyCode === 27 && Utils.isValid(FlexTour.currentTour[Constants.END_ON_ESC])) {
-        _exit();
+        _exit(false);
     }
 }
 
@@ -513,7 +539,7 @@ function _unbindKeyboardListener() {
  * Bind scrolling event to the window. Debounce function call every 0.1 second so that it won't overload the app
  */
 function _bindScrollListener() {
-    Utils.addEvent($(window), Constants.SCROLL, Utils.debounce(__rerenderComponents, 200, false));
+    Utils.addEvent($(window), Constants.SCROLL, Utils.debounce(__rerenderScroll, 200, false));
 }
 
 /**
@@ -528,6 +554,9 @@ function _unbindScrollListener() {
  */
 function _cleanUpAfterStep() {
     var currentStep = FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber];
+    if (!Utils.isValid(currentStep)) {
+        return;
+    }
     if (Utils.isValid(currentStep[Constants.NEXT_STEP_TRIGGER])) {
         // Clean up next on target click here.
         _removeClickEventOnTargetClick(currentStep[Constants.NEXT_STEP_TRIGGER]);
@@ -558,33 +587,45 @@ function _blockScrolling() {
     var top = $(window).scrollTop();
     var left = $(window).scrollLeft();
 
-    $('body').css('overflow', 'hidden');
-    Utils.addEvent($(window), Constants.SCROLL, function () {
+    Utils.addEvent($(window), Constants.SCROLL, function (e) {
+        e.preventDefault();
         $(window).scrollTop(top).scrollLeft(left);
     });
     // Re-render the components after the scrolling has been locked.
-    Utils.debounce(__rerenderComponents(), 10, true);
+    Utils.debounce(__rerenderScroll, 10, true);
 }
 
 /**
  * Unblock scrolling so that it won't interfere with the application
  */
 function _unblockScrolling() {
-    $('body').css('overflow', 'auto');
     Utils.removeEvent($(window), Constants.SCROLL);
 }
 
 /**
  * Attach event to pause the tour engine when users start dragging something.
+ * Ondrop, the framework will check if the next step should be proceed, in case it's not --> stay at the same step
  * Syntax: {Boolean}. If it's set to true, it will temporarily remove all overlays and var users drag at will.
  * @param stepTarget {String}     DOM Selector string for current step target
  */
 function _dragStartPause(stepTarget) {
     Utils.addEvent($(stepTarget), Constants.DRAG_START, _removeAndUnbind);
-    Utils.addEvent($(stepTarget), Constants.DRAG_END, function __moveOnDropTarget(stepTarget) {
-        _precheckForTransition(FlexTour.currentStepNumber + 1, 0);
-        _dragEndResume(stepTarget);
+    Utils.addEvent($(stepTarget), Constants.DRAG_END, function () {
+        __moveOnDropTarget(stepTarget);
     });
+}
+
+/**
+ * Function that corresponds to drag end call.
+ * @param stepTarget        The dragged element that is dropped
+ */
+function __moveOnDropTarget(stepTarget) {
+    _dragEndResume(stepTarget);
+    if (_isAllowToMove(FlexTour.currentStepNumber + 1, 0)) {
+        _transitionToNextStep(FlexTour.currentStepNumber + 1);
+    } else {
+        _centralOrganizer(FlexTour.currentTour[Constants.STEPS][FlexTour.currentStepNumber], true);
+    }
 }
 
 /**
@@ -605,16 +646,19 @@ function _removeAndUnbind() {
     _unbindKeyboardListener();
     _cleanUpAfterStep();
 
-    FlexTour.Component.removeComponents();
+    if (Utils.isValid(FlexTour.Component)) {
+        FlexTour.Component.removeComponents();
+    }
     FlexTour.running = false; // Reset this flag when users quit the tour
 }
 
 /**
  * Clean up everything when the tour is exited. This is to prevent memory leaks for attached events in DOM elements.
  * Remove all components and set the running flag to false, and set currentStepNumber to false
+ * @param isDone: Boolean       Only set when users have finished the tour successfully.
  */
-function _exit() {
-    if (FlexTour.currentTour[Constants.PAUSE_ON_EXIT]) {
+function _exit(isDone) {
+    if (FlexTour.currentTour[Constants.PAUSE_ON_EXIT] && (!Utils.isValid(isDone) || !isDone)) {
         _saveCurrentTourState();
         Utils.setKeyValuePairLS(Constants.PAUSED_KEY, true);
     }
@@ -686,14 +730,16 @@ function _findSavePoint() {
  * Constructor of the whole thing.
  * @param tourDesc      The JSON file that describe what the tours should be like
  * @param actionsList   The object contains all functions that control the flow of the tours
+ * @param translation   The object contains all translated string for this tour, the content will be sub in
  * @constructor
  */
-function FlexTour(tourDesc, actionsList) {
+function FlexTour(tourDesc, actionsList, translation) {
     FlexTour.toursMap = {};
     FlexTour.currentTourId = "";
     FlexTour.currentStepNumber = 0;
     FlexTour.currentTour = {};
-    FlexTour.actionsList = actionsList;
+    FlexTour.actionsList = actionsList || {};
+    FlexTour.translation = translation || {};
     FlexTour.running = false; // A flag that var the system know that a tour is being run
     _preprocessingTours(tourDesc);
 }
@@ -706,7 +752,6 @@ FlexTour.prototype.run = function () {
     if ($.isEmptyObject(FlexTour.toursMap)) {
         return;
     }
-
     _executeGeneralFunction(Constants.ON_START);
 
     var multipageFlag = Utils.getKeyValuePairLS(Constants.MULTIPAGE);
@@ -736,7 +781,7 @@ FlexTour.prototype.run = function () {
  * User can trigger this function to end tour premature
  */
 FlexTour.prototype.exit = function () {
-    _exit();
+    _exit(false);
 };
 
 /**

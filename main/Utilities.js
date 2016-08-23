@@ -204,15 +204,7 @@ module.exports = {
      * @returns {Number|number}     window width through 1 of 3 methods
      */
     getFullWindowWidth: function () {
-        var width = 0;
-        if (typeof(window.innerWidth) == 'number') {
-            //Non-IE
-            width = window.innerWidth;
-        } else if (document.documentElement && document.documentElement.clientWidth) {
-            //IE 6+ in 'standards compliant mode'
-            width = document.documentElement.clientWidth;
-        }
-        return Math.max($(document).width(), $(window).width(), width);
+        return Math.max($(document).width(), $(window).width());
     },
 
     /**
@@ -220,14 +212,7 @@ module.exports = {
      * @returns {Number|number}     window height through 1 of 3 methods
      */
     getFullWindowHeight: function () {
-        var height = 0;
-        if (typeof(window.innerHeight ) == 'number') {
-            height = window.innerHeight;
-        } else if (document.documentElement && document.documentElement.clientHeight) {
-            //IE 6+ in 'standards compliant mode'
-            height = document.documentElement.clientHeight;
-        }
-        return Math.max($(document).height(), $(window).height(), height);
+        return Math.max($(document).height(), $(window).innerHeight());
     },
 
     /**
@@ -255,16 +240,12 @@ module.exports = {
     /**
      * Smooth scroll to the element
      * @param rect    The target of the step that needs to be scrolled to
+     * @param position  The position of the tooltip relative to the content
      */
-    smoothScroll: function (rect) {
-        var $elTop = rect.top;
-        var $elHeight = rect.height;
-        var windowHeight = $(window).height();
-        var offset;
-        if ($elHeight < windowHeight) {
-            offset = $elTop - ((windowHeight / 2) - ($elHeight / 2));
-        } else {
-            offset = $elTop + windowHeight / 2;
+    smoothScroll: function (rect, position) {
+        var offset = rect.top - 40; // Minus extra 20 pixels from the top of the target
+        if (position === Constants.TOP) {
+            offset -= this.getEleFromClassName(Constants.TOUR_BUBBLE, true).height();
         }
         $('html, body').animate({
             scrollTop: offset
@@ -317,6 +298,19 @@ module.exports = {
             localStorage.setItem(Constants.LOCALSTORAGE_KEY, JSON.stringify(flexTourLS));
         } catch (e) {
             // Ignore the error message
+        }
+    },
+
+    /**
+     * Remove the key-value pair in current localStorage
+     * @param key       The key that needs to be removed
+     */
+    removeLSValue: function (key) {
+        try {
+            localStorage.removeItem(key);
+        } catch (e) {
+            // Ignore the error if the key doesn't exist
+            console.log("The localstorage might not contain the given key");
         }
     },
 
