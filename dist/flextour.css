@@ -1,8 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2016. MIT License.
- * NhatHo-nhatminhhoca@gmail.com
- ******************************************************************************/
-
 /********************* STYLES FOR FLEX TOUR ********************/
 /*** Override these variables with your own color styles ***/
 /********************** COMMON STYLES ****************************/
@@ -11,7 +6,7 @@
   display: block;
   width: 0;
   height: 0;
-    z-index: 100000;
+  z-index: 100000;
 }
 .icon-style {
   min-width: 40px;
@@ -20,27 +15,27 @@
   float: left;
   margin-top: 5px;
   margin-bottom: 5px;
-    margin-left: 5px;
+  margin-left: 5px;
 }
 .button-style {
-    position: relative;
-    border: 2px solid #206456;
+  position: relative;
+  border: 2px solid #206456;
 }
 /********************* BUBBLES STYLE ***************************/
 .flextour-tour-bubble {
   position: absolute;
-    width: 350px;
+  width: 350px;
   max-width: 1000px;
   height: auto;
   padding: 5px;
-    background: lavender;
+  background: lavender;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 10px;
-    border: 4px solid lavender;
+  border: 4px solid lavender;
   text-align: left;
   color: #000;
-    z-index: 100000;
+  z-index: 100000;
   -webkit-box-shadow: 2px 2px 4px #888;
   -moz-box-shadow: 2px 2px 4px #888;
   box-shadow: 2px 2px 4px #888;
@@ -50,20 +45,20 @@
   transition: all 0.5s;
 }
 .flextour-tour-bubble .flextour-content {
-    margin-left: 10px;
+  margin-left: 10px;
   width: 82%;
   float: left;
-    padding: 5px 5px 10px 0;
+  padding: 5px 5px 10px 0;
 }
 .flextour-tour-bubble .flextour-content .flextour-bubble-title {
   border-bottom: 2px solid #F00000;
   color: #A80000;
-    font-size: 12pt;
+  font-size: 12pt;
   padding-bottom: 3px;
   margin-bottom: 3px;
 }
 .flextour-content-body {
-    font-size: 10pt;
+  font-size: 10pt;
 }
 .flextour-float-bubble {
   position: fixed;
@@ -80,10 +75,10 @@
   display: block;
   width: 0;
   height: 0;
-    z-index: 100000;
+  z-index: 100000;
   border-left: 20px solid transparent;
   border-right: 20px solid transparent;
-    border-top: 20px solid lavender;
+  border-top: 20px solid lavender;
   margin-left: -20px;
   bottom: -20px;
   left: 50%;
@@ -93,10 +88,10 @@
   display: block;
   width: 0;
   height: 0;
-    z-index: 100000;
+  z-index: 100000;
   border-left: 14px solid transparent;
   border-right: 14px solid transparent;
-    border-top: 14px solid lavender;
+  border-top: 14px solid lavender;
   left: -14px;
   bottom: 6px;
 }
@@ -105,10 +100,10 @@
   display: block;
   width: 0;
   height: 0;
-    z-index: 100000;
+  z-index: 100000;
   border-left: 20px solid transparent;
   border-right: 20px solid transparent;
-    border-bottom: 20px solid lavender;
+  border-bottom: 20px solid lavender;
   margin-left: -20px;
   top: -20px;
   left: 50%;
@@ -118,10 +113,10 @@
   display: block;
   width: 0;
   height: 0;
-    z-index: 100000;
+  z-index: 100000;
   border-left: 14px solid transparent;
   border-right: 14px solid transparent;
-    border-bottom: 14px solid lavender;
+  border-bottom: 14px solid lavender;
   left: -14px;
   top: 6px;
 }
@@ -130,10 +125,10 @@
   display: block;
   width: 0;
   height: 0;
-    z-index: 100000;
+  z-index: 100000;
   border-top: 20px solid transparent;
   border-bottom: 20px solid transparent;
-    border-left: 20px solid lavender;
+  border-left: 20px solid lavender;
   margin-top: -20px;
   right: -20px;
   top: 50%;
@@ -143,10 +138,10 @@
   display: block;
   width: 0;
   height: 0;
-    z-index: 100000;
+  z-index: 100000;
   border-top: 14px solid transparent;
   border-bottom: 14px solid transparent;
-    border-left: 14px solid lavender;
+  border-left: 14px solid lavender;
   top: -14px;
   left: -20px;
 }
@@ -155,10 +150,10 @@
   display: block;
   width: 0;
   height: 0;
-    z-index: 100000;
+  z-index: 100000;
   border-top: 20px solid transparent;
   border-bottom: 20px solid transparent;
-    border-right: 20px solid lavender;
+  border-right: 20px solid lavender;
   margin-top: -20px;
   left: -20px;
   top: 50%;
@@ -168,10 +163,10 @@
   display: block;
   width: 0;
   height: 0;
-    z-index: 100000;
+  z-index: 100000;
   border-top: 14px solid transparent;
   border-bottom: 14px solid transparent;
-    border-right: 14px solid lavender;
+  border-right: 14px solid lavender;
   top: -14px;
   left: 6px;
 }
@@ -184,27 +179,27 @@
   background-size: contain;
 }
 .flextour-icon-loading {
-    background: url("icons/loading.png") no-repeat;
+  background: url("icons/loading.png") no-repeat;
   background-size: contain;
 }
 .flextour-icon-number {
-    border-radius: 50%;
-    background: lavender;
-    border: 2px solid #133233;
-    color: #133233;
-    text-align: center;
-    font: 30px Arial, sans-serif;
-    line-height: 36px;
+  border-radius: 50%;
+  background: lavender;
+  border: 2px solid #133233;
+  color: #133233;
+  text-align: center;
+  font: 30px Arial, sans-serif;
+  line-height: 36px;
 }
 .flextour-button-group {
   float: right;
 }
 .flextour-button-group > button {
   padding: 5px 20px 5px 20px;
-    font-size: 8pt;
-    min-width: 50px;
+  font-size: 8pt;
+  min-width: 50px;
   text-decoration: none;
-    background-color: lavender;
+  background-color: lavender;
   color: #000;
   cursor: pointer;
   display: inline-block;
@@ -227,13 +222,13 @@
   -ms-user-select: none;
   /* Internet Explorer/Edge */
   cursor: not-allowed;
-    background-color: lavender;
+  background-color: lavender;
   color: #333333;
   border-color: #CCC;
 }
 .flextour-empty-button {
   border: 2px solid transparent;
-    min-width: 50px;
+  min-width: 50px;
   display: inline-block;
 }
 .flextour-skip-button {
@@ -254,7 +249,7 @@
 a.flextour-close {
   position: absolute;
   float: right;
-    top: 4px;
+  top: 4px;
   right: 4px;
   cursor: pointer;
   color: #000;
@@ -262,26 +257,23 @@ a.flextour-close {
   font-weight: bold;
   display: inline-block;
   line-height: 0;
-    padding: 8px 0;
+  padding: 8px 0;
 }
 a.flextour-close:hover {
-    color: #206456;
-    text-decoration: none;
+  color: #206456;
+  text-decoration: none;
 }
 /*******************************OVERLAY STYLES***********************************/
-.flextour-overlay-blocks {
-  opacity: 0.3;
-    z-index: 100000;
-}
 .flextour-overlay-styles {
   position: absolute;
-  background-color: #000000;
+  background-color: rgba(0, 0, 0, 0.3);
   /*Enough to dim the back ground*/
   -webkit-transition: all 0.5s;
   -moz-transition: all 0.5s;
   -o-transition: all 0.5s;
   transition: all 0.5s;
   overflow: hidden;
+  z-index: 99999;
 }
 .flextour-fixed-overlay {
   position: fixed;
@@ -293,7 +285,7 @@ a.flextour-close:hover {
   -moz-transition: all 0.5s;
   -o-transition: all 0.5s;
   transition: all 0.5s;
-    z-index: 100000;
+  z-index: 100000;
 }
 .flextour-target-border.interactable {
   pointer-events: none;
@@ -324,7 +316,7 @@ a.flextour-close:hover {
   -moz-transition: all 0.3s;
   -o-transition: all 0.3s;
   transition: all 0.3s;
-    z-index: 100000;
+  z-index: 100000;
   pointer-events: none;
   -webkit-animation: borderBlink 1s step-end infinite;
   animation: borderBlink 1s step-end infinite;

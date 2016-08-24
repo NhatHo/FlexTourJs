@@ -18,7 +18,8 @@
 @TitleUnderlineColor: #F00000;
 @TitleTextColor: #A80000;
 @HoverButtonColor: #FFFFFF;
-@ZIndex: 100000;
+@BubbleZIndex: 100000;
+@OverlayZIndex: 99999;
 @TitleFontSize: 12pt;
 @ContentFontSize: 10pt;
 @ButtonFontSize: 8pt;
@@ -28,6 +29,7 @@
 @IconWidth: 8%;
 @NumberIconFont: 30px;
 @NumberIconLineHeight: 36px;
+@AnimationTime: 0.3s;
 
 /********************** COMMON STYLES ****************************/
 .arrow-style {
@@ -35,7 +37,7 @@
   display: block;
   width: 0;
   height: 0;
-  z-index: @ZIndex;
+  z-index: @BubbleZIndex;
 }
 
 .icon-style {
@@ -68,14 +70,14 @@
   border: 4px solid @BorderColor;
   text-align: left;
   color: @ContentColor;
-  z-index: @ZIndex;
+  z-index: @BubbleZIndex;
   -webkit-box-shadow: 2px 2px 4px @ShadowColor;
   -moz-box-shadow: 2px 2px 4px @ShadowColor;
   box-shadow: 2px 2px 4px @ShadowColor;
-  -webkit-transition: all 0.5s;
-  -moz-transition: all 0.5s;
-  -o-transition: all 0.5s;
-  transition: all 0.5s;
+  -webkit-transition: all @AnimationTime;
+  -moz-transition: all @AnimationTime;
+  -o-transition: all @AnimationTime;
+  transition: all @AnimationTime;
 
   .flextour-content {
     margin-left: 10px;
@@ -291,19 +293,15 @@ a.flextour-close {
 
 /*******************************OVERLAY STYLES***********************************/
 
-.flextour-overlay-blocks {
-  opacity: @Opacity;
-  z-index: @ZIndex;
-}
-
 .flextour-overlay-styles {
   position: absolute;
-  background-color: @OverlayBackground; /*Enough to dim the back ground*/
-  -webkit-transition: all 0.5s;
-  -moz-transition: all 0.5s;
-  -o-transition: all 0.5s;
-  transition: all 0.5s;
+  background-color: rgba(0,0,0,0.3); /*Enough to dim the back ground*/
+  -webkit-transition: all @AnimationTime;
+  -moz-transition: all @AnimationTime;
+  -o-transition: all @AnimationTime;
+  transition: all @AnimationTime;
   overflow: hidden;
+  z-index: @OverlayZIndex;
 }
 
 .flextour-fixed-overlay {
@@ -313,11 +311,11 @@ a.flextour-close {
 .flextour-target-border {
   background: none !important;
   position: absolute;
-  -webkit-transition: all 0.5s;
-  -moz-transition: all 0.5s;
-  -o-transition: all 0.5s;
-  transition: all 0.5s;
-  z-index: @ZIndex;
+  -webkit-transition: all @AnimationTime;
+  -moz-transition: all @AnimationTime;
+  -o-transition: all @AnimationTime;
+  transition: all @AnimationTime;
+  z-index: @BubbleZIndex;
 
   &.interactable {
     pointer-events: none;
@@ -350,7 +348,7 @@ a.flextour-close {
   -moz-transition: all 0.3s;
   -o-transition: all 0.3s;
   transition: all 0.3s;
-  z-index: @ZIndex;
+  z-index: @BubbleZIndex;
   pointer-events: none;
   -webkit-animation: borderBlink 1s step-end infinite;
   animation: borderBlink 1s step-end infinite;

@@ -2,7 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e440b142-2212-4b33-9b92-aea7833a896b" name="Default" comment="Change styling for 1st release">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/package.json" afterPath="$PROJECT_DIR$/package.json" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dist/flextour.css" afterPath="$PROJECT_DIR$/dist/flextour.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dist/flextour.js" afterPath="$PROJECT_DIR$/dist/flextour.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dist/flextour.less" afterPath="$PROJECT_DIR$/dist/flextour.less" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/Components.js" afterPath="$PROJECT_DIR$/main/Components.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/Constants.js" afterPath="$PROJECT_DIR$/main/Constants.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main/Utilities.js" afterPath="$PROJECT_DIR$/main/Utilities.js" />
     </list>
     <ignored path="FlexTourJs.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -31,28 +37,106 @@
     <favorites_list name="FlexTourJs" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="package.json" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/package.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="34">
-              <caret line="2" column="17" selection-start-line="2" selection-start-column="17" selection-end-line="2" selection-end-column="17" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="flextour.less" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dist/flextour.less">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="8" column="12" selection-start-line="8" selection-start-column="12" selection-end-line="8" selection-end-column="12" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <splitter split-orientation="horizontal" split-proportion="0.5">
+      <split-first>
+        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+          <file leaf-file-name="package.json" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/package.json">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="323">
+                  <caret line="19" column="47" selection-start-line="19" selection-start-column="47" selection-end-line="19" selection-end-column="47" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="flextour.js" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/dist/flextour.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="10040">
+                  <caret line="1544" column="28" selection-start-line="1544" selection-start-column="28" selection-end-line="1544" selection-end-column="28" />
+                  <folding>
+                    <marker date="1472066249387" expanded="true" signature="36319:38735" ph="{...}" />
+                    <marker date="1472066249387" expanded="false" signature="36323:36556" ph="/** Copyright (c) 2016. MIT License. ...*/" />
+                    <marker date="1472066249387" expanded="false" signature="36720:37559" ph="{...}" />
+                    <marker date="1472066249387" expanded="true" signature="36971:37556" ph="{...}" />
+                    <marker date="1472066249387" expanded="true" signature="37073:37106" ph="{...}" />
+                    <marker date="1472066249387" expanded="false" signature="37562:37609" ph="/** Add top overlay into document body ...*/" />
+                    <marker date="1472066249387" expanded="false" signature="37637:37809" ph="{...}" />
+                    <marker date="1472066249387" expanded="true" signature="37651:37805" ph="{...}" />
+                    <marker date="1472066249387" expanded="false" signature="37812:37853" ph="/** Generate Bottom overlay rect ...*/" />
+                    <marker date="1472066249387" expanded="false" signature="37884:38125" ph="{...}" />
+                    <marker date="1472066249387" expanded="true" signature="37898:38121" ph="{...}" />
+                    <marker date="1472066249387" expanded="false" signature="38128:38167" ph="/** Generate Left overlay rect ...*/" />
+                    <marker date="1472066249387" expanded="false" signature="38196:38735" ph="{...}" />
+                    <marker date="1472066249387" expanded="true" signature="38203:38615" ph="//..." />
+                    <marker date="1472066249387" expanded="true" signature="38628:38735" ph="{...}" />
+                    <marker date="1472066249387" expanded="true" signature="67977:71811" ph="{&quot;CLASS&quot;: &quot;.&quot;...}" />
+                    <marker date="1472066249387" expanded="false" signature="67977:71821" ph="{...}" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="flextour.less" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/dist/flextour.less">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="219">
+                  <caret line="310" column="25" selection-start-line="310" selection-start-column="25" selection-end-line="310" selection-end-column="25" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="Utilities.js" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/main/Utilities.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="548">
+                  <caret line="251" column="14" selection-start-line="251" selection-start-column="14" selection-end-line="251" selection-end-column="14" />
+                  <folding>
+                    <element signature="e#2491#2644#0" expanded="true" />
+                    <element signature="e#8778#8975#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="Components.js" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/main/Components.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="102">
+                  <caret line="9" column="49" selection-start-line="9" selection-start-column="49" selection-end-line="9" selection-end-column="49" />
+                  <folding>
+                    <element signature="n#!!block;n#_getBottomOverlay#0" expanded="true" />
+                    <element signature="e#1565#1783#0" expanded="false" />
+                    <element signature="n#!!block;n#_getLeftOverlay#0" expanded="true" />
+                    <element signature="n#!!block;n#_createOverlayNode#0" expanded="true" />
+                    <element signature="n#!!block;n#_addOverlays#0" expanded="true" />
+                    <element signature="n#!!block;n#_modifyOverlays#0" expanded="true" />
+                    <element signature="n#!!block;n#_modifyBubbleLocation#0" expanded="true" />
+                    <element signature="e#30236#30396#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-first>
+      <split-second>
+        <leaf>
+          <file leaf-file-name="Constants.js" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/main/Constants.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="289">
+                  <caret line="20" column="40" selection-start-line="20" selection-start-column="40" selection-end-line="20" selection-end-column="40" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-second>
+    </splitter>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -76,7 +160,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/testfile.c" />
         <option value="$PROJECT_DIR$/flextour.css" />
         <option value="$PROJECT_DIR$/classes/utitlities.js" />
         <option value="$PROJECT_DIR$/flextour.less" />
@@ -115,18 +198,19 @@
         <option value="$PROJECT_DIR$/dist/variables.less" />
         <option value="$PROJECT_DIR$/dist/flextour.css" />
         <option value="$PROJECT_DIR$/tests/translation/index.html" />
-        <option value="$PROJECT_DIR$/main/Utilities.js" />
-        <option value="$PROJECT_DIR$/main/Constants.js" />
         <option value="$PROJECT_DIR$/tests/customizedstyles/index.less" />
-        <option value="$PROJECT_DIR$/main/Components.js" />
         <option value="$PROJECT_DIR$/tests/customizedstyles/index.js" />
         <option value="$PROJECT_DIR$/tests/customizedstyles/index.html" />
         <option value="$PROJECT_DIR$/multipage/index.html" />
         <option value="$PROJECT_DIR$/multipage/secondpage.html" />
         <option value="$PROJECT_DIR$/main/FlexTour.js" />
         <option value="$PROJECT_DIR$/README.md" />
-        <option value="$PROJECT_DIR$/dist/flextour.less" />
         <option value="$PROJECT_DIR$/package.json" />
+        <option value="$PROJECT_DIR$/coolfeatures/index.html" />
+        <option value="$PROJECT_DIR$/main/Constants.js" />
+        <option value="$PROJECT_DIR$/main/Components.js" />
+        <option value="$PROJECT_DIR$/dist/flextour.less" />
+        <option value="$PROJECT_DIR$/main/Utilities.js" />
       </list>
     </option>
   </component>
@@ -373,7 +457,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -402,13 +485,14 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="dist" />
+              <option name="myItemId" value="main" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="Scratches" />
     </panes>
   </component>
@@ -741,7 +825,11 @@
       <workItem from="1471803298315" duration="20583000" />
       <workItem from="1471869556786" duration="36311000" />
       <workItem from="1471983543306" duration="2949000" />
-      <workItem from="1471989513849" duration="2195000" />
+      <workItem from="1471989513849" duration="3848000" />
+      <workItem from="1472008612425" duration="10000" />
+      <workItem from="1472045011289" duration="1190000" />
+      <workItem from="1472046591764" duration="1074000" />
+      <workItem from="1472062322949" duration="3673000" />
     </task>
     <task id="LOCAL-00006" summary="Cleanup JSLint warning in flextour.js">
       <created>1464487401641</created>
@@ -1090,7 +1178,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="720923000" />
+    <option name="totallyTimeSpent" value="728523000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1102,30 +1190,30 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="2576" height="1416" extended-state="6" />
+    <frame x="-8" y="-8" width="2576" height="1416" extended-state="0" />
     <editor active="false" />
     <layout>
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.08426073" sideWeight="0.4913495" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.08585056" sideWeight="0.4913495" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26093873" sideWeight="0.48959237" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26560846" sideWeight="0.5450689" order="11" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298887" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28003183" sideWeight="0.39800346" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2796875" sideWeight="0.39487404" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.09976152" sideWeight="0.5" order="5" side_tool="true" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28003183" sideWeight="0.60199654" order="10" side_tool="true" content_ui="tabs" />
+      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28003183" sideWeight="0.60512596" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.11406995" sideWeight="0.50865054" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32962963" sideWeight="0.48537314" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Thumbnails" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32969433" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.35135135" sideWeight="0.4822203" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="UpdateCopyrightCheckinHandler">
@@ -1195,18 +1283,11 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="23" />
+      <option name="time" value="24" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/.idea/codeStyleSettings.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="10" column="34" selection-start-line="10" selection-start-column="34" selection-end-line="10" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/node_modules/tether/examples/scroll/index.html" />
     <entry file="file://$PROJECT_DIR$/.idea/copyright/profiles_settings.xml">
       <provider selected="true" editor-type-id="text-editor">
@@ -1243,13 +1324,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="238">
           <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dist/flextour.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2176">
-          <caret line="1553" column="28" selection-start-line="1552" selection-start-column="28" selection-end-line="1552" selection-end-column="29" />
         </state>
       </provider>
     </entry>
@@ -1290,49 +1364,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/tests/test.jpg" />
     <entry file="file://$PROJECT_DIR$/tests/translation/index.html" />
-    <entry file="file://$PROJECT_DIR$/main/Constants.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-754">
-          <caret line="47" column="49" selection-start-line="47" selection-start-column="49" selection-end-line="47" selection-end-column="49" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main/Utilities.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="69" column="62" selection-start-line="69" selection-start-column="16" selection-end-line="69" selection-end-column="62" />
-          <folding>
-            <element signature="e#10679#10776#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/tests/customizedstyles/index.css" />
-    <entry file="file://$PROJECT_DIR$/main/Components.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1343">
-          <caret line="577" column="13" selection-start-line="577" selection-start-column="13" selection-end-line="577" selection-end-column="13" />
-          <folding>
-            <element signature="n#!!block;n#Components#0" expanded="true" />
-            <element signature="n#!!doc;n#_addOverlay#0" expanded="true" />
-            <element signature="n#!!doc;n#_createContentBubble#0" expanded="true" />
-            <element signature="n#!!block;n#_createContentBubble#0" expanded="true" />
-            <element signature="n#!!doc;n#_createCustomButton#0" expanded="true" />
-            <element signature="n#!!block;n#_createCustomButton#0" expanded="false" />
-            <element signature="n#!!block;n#_createSkipButton#0" expanded="true" />
-            <element signature="n#!!block;n#_createDoneButton#0" expanded="true" />
-            <element signature="n#!!doc;n#_modifyContentBubble#0" expanded="true" />
-            <element signature="n#!!block;n#_modifyContentBubble#0" expanded="true" />
-            <element signature="e#14997#15129#0" expanded="true" />
-            <element signature="e#16250#16324#0" expanded="false" />
-            <element signature="n#!!doc;n#_placeBubbleLocation#0" expanded="true" />
-            <element signature="n#!!block;n#_placeBubbleLocation#0" expanded="true" />
-            <element signature="e#29606#30265#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/tests/customizedstyles/index.js" />
     <entry file="file://$PROJECT_DIR$/tests/customizedstyles/index.html" />
     <entry file="file://$PROJECT_DIR$/tests/customizedstyles/index.less" />
@@ -1341,7 +1373,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
           <caret line="8" column="9" selection-start-line="8" selection-start-column="9" selection-end-line="8" selection-end-column="9" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1351,69 +1382,102 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="449">
           <caret line="667" column="1" selection-start-line="667" selection-start-column="1" selection-end-line="667" selection-end-column="1" />
-          <folding>
-            <element signature="n#!!block;n#_initializeTour#0" expanded="true" />
-            <element signature="e#3840#3955#0" expanded="true" />
-            <element signature="n#!!block;n#_centralOrganizer#0" expanded="false" />
-            <element signature="e#5376#5484#0" expanded="false" />
-            <element signature="e#5625#5666#0" expanded="false" />
-            <element signature="e#5792#5832#0" expanded="false" />
-            <element signature="e#5885#5928#0" expanded="false" />
-            <element signature="e#5997#6037#0" expanded="false" />
-            <element signature="e#6903#7023#0" expanded="false" />
-            <element signature="e#7112#7181#0" expanded="false" />
-            <element signature="e#8253#8408#0" expanded="false" />
-            <element signature="n#!!block;n#_addClickEvents#0" expanded="false" />
-            <element signature="e#9009#9046#0" expanded="false" />
-            <element signature="e#9365#9512#0" expanded="false" />
-            <element signature="e#9608#9637#0" expanded="false" />
-            <element signature="e#14488#14741#0" expanded="true" />
-            <element signature="n#!!block;n#_precheckForTransition#0" expanded="true" />
-            <element signature="n#!!doc;n#_skipStep#0" expanded="true" />
-            <element signature="n#!!block;n#_nextStep#0" expanded="true" />
-            <element signature="n#!!block;n#__transitionFunction#0;n#!!block;n#_transitionToNextStep#0" expanded="true" />
-            <element signature="n#!!block;n#_addResizeWindowListener#0" expanded="true" />
-            <element signature="n#!!block;n#_blockScrolling#0" expanded="true" />
-            <element signature="e#25506#25592#0" expanded="true" />
-            <element signature="n#!!block;n#_unblockScrolling#0" expanded="true" />
-            <element signature="n#!!doc;n#_dragStartPause#0" expanded="true" />
-            <element signature="n#!!block;n#_dragStartPause#0" expanded="false" />
-            <element signature="e#26448#26495#0" expanded="false" />
-            <element signature="n#!!doc;n#__moveOnDropTarget#0" expanded="true" />
-            <element signature="n#!!block;n#__moveOnDropTarget#0" expanded="true" />
-            <element signature="n#!!block;n#_removeAndUnbind#0" expanded="true" />
-            <element signature="n#!!doc;n#_exit#0" expanded="true" />
-            <element signature="n#!!block;n#_exit#0" expanded="true" />
-            <element signature="n#!!block;n#_runTourWithGivenSteps#0" expanded="true" />
-            <element signature="e#33213#33234#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="34">
-            <caret line="2" column="16" selection-start-line="2" selection-start-column="16" selection-end-line="2" selection-end-column="16" />
-            <folding />
+          <first_editor relative-caret-position="289">
+            <caret line="15" column="0" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
           </first_editor>
           <second_editor />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dist/flextour.less">
+    <entry file="file://$PROJECT_DIR$/package.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="8" column="12" selection-start-line="8" selection-start-column="12" selection-end-line="8" selection-end-column="12" />
+        <state relative-caret-position="323">
+          <caret line="19" column="47" selection-start-line="19" selection-start-column="47" selection-end-line="19" selection-end-column="47" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/package.json">
+    <entry file="file://$PROJECT_DIR$/dist/flextour.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="17" selection-start-line="2" selection-start-column="17" selection-end-line="2" selection-end-column="17" />
+        <state relative-caret-position="10040">
+          <caret line="1544" column="28" selection-start-line="1544" selection-start-column="28" selection-end-line="1544" selection-end-column="28" />
+          <folding>
+            <marker date="1472066249387" expanded="true" signature="36319:38735" ph="{...}" />
+            <marker date="1472066249387" expanded="false" signature="36323:36556" ph="/** Copyright (c) 2016. MIT License. ...*/" />
+            <marker date="1472066249387" expanded="false" signature="36720:37559" ph="{...}" />
+            <marker date="1472066249387" expanded="true" signature="36971:37556" ph="{...}" />
+            <marker date="1472066249387" expanded="true" signature="37073:37106" ph="{...}" />
+            <marker date="1472066249387" expanded="false" signature="37562:37609" ph="/** Add top overlay into document body ...*/" />
+            <marker date="1472066249387" expanded="false" signature="37637:37809" ph="{...}" />
+            <marker date="1472066249387" expanded="true" signature="37651:37805" ph="{...}" />
+            <marker date="1472066249387" expanded="false" signature="37812:37853" ph="/** Generate Bottom overlay rect ...*/" />
+            <marker date="1472066249387" expanded="false" signature="37884:38125" ph="{...}" />
+            <marker date="1472066249387" expanded="true" signature="37898:38121" ph="{...}" />
+            <marker date="1472066249387" expanded="false" signature="38128:38167" ph="/** Generate Left overlay rect ...*/" />
+            <marker date="1472066249387" expanded="false" signature="38196:38735" ph="{...}" />
+            <marker date="1472066249387" expanded="true" signature="38203:38615" ph="//..." />
+            <marker date="1472066249387" expanded="true" signature="38628:38735" ph="{...}" />
+            <marker date="1472066249387" expanded="true" signature="67977:71811" ph="{&quot;CLASS&quot;: &quot;.&quot;...}" />
+            <marker date="1472066249387" expanded="false" signature="67977:71821" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/coolfeatures/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="613">
+          <caret line="159" column="21" selection-start-line="159" selection-start-column="21" selection-end-line="159" selection-end-column="21" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main/Constants.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="20" column="40" selection-start-line="20" selection-start-column="40" selection-end-line="20" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main/Components.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="9" column="49" selection-start-line="9" selection-start-column="49" selection-end-line="9" selection-end-column="49" />
+          <folding>
+            <element signature="n#!!block;n#_getBottomOverlay#0" expanded="true" />
+            <element signature="e#1565#1783#0" expanded="false" />
+            <element signature="n#!!block;n#_getLeftOverlay#0" expanded="true" />
+            <element signature="n#!!block;n#_createOverlayNode#0" expanded="true" />
+            <element signature="n#!!block;n#_addOverlays#0" expanded="true" />
+            <element signature="n#!!block;n#_modifyOverlays#0" expanded="true" />
+            <element signature="n#!!block;n#_modifyBubbleLocation#0" expanded="true" />
+            <element signature="e#30236#30396#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dist/flextour.less">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="219">
+          <caret line="310" column="25" selection-start-line="310" selection-start-column="25" selection-end-line="310" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main/Utilities.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="548">
+          <caret line="251" column="14" selection-start-line="251" selection-start-column="14" selection-end-line="251" selection-end-column="14" />
+          <folding>
+            <element signature="e#2491#2644#0" expanded="true" />
+            <element signature="e#8778#8975#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

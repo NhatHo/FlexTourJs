@@ -13,7 +13,6 @@ module.exports = {
     IS_VISIBLE: "isVisible",
     DOES_EXIST: "doesExist",
     OVERLAY_STYLE: "flextour-overlay-styles",
-    OVERLAY_BLOCK: "flextour-overlay-blocks",
 
     FLEXTOUR: "flextour",
 

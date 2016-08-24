@@ -930,8 +930,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // We set this overlay overlap the top and bottom overlay, and make them blend together to cover the thin line. 1px would work
 	    return {
 	        width: Components.rect.left + Constants.PX,
-	        height: Components.rect.height + Constants.OVERLAP_HEIGHT * 2 + Constants.PX,
-	        top: Components.rect.top - Constants.OVERLAP_HEIGHT + Constants.PX,
+	        height: Components.rect.height + Constants.PX,
+	        top: Components.rect.top + Constants.PX,
 	        left: 0
 	    };
 	}
@@ -945,8 +945,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // We set this overlay overlap the top and bottom overlay, and make them blend together to cover the thin line. 1px would work
 	    return {
 	        width: Utils.getFullWindowWidth() - Components.rect.right + Constants.PX,
-	        height: Components.rect.height + Constants.OVERLAP_HEIGHT * 2 + Constants.PX,
-	        top: Components.rect.top - Constants.OVERLAP_HEIGHT + Constants.PX,
+	        height: Components.rect.height + Constants.PX,
+	        top: Components.rect.top + Constants.PX,
 	        left: Components.rect.right + Constants.PX
 	    };
 	}
@@ -975,18 +975,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * Keep the same pattern as the padding. Top->Right->Bottom->Left
 	 */
 	function _addOverlays() {
-	    var overlayDiv = Utils.getEleFromClassName(Constants.OVERLAY_BLOCK, true);
-	    if (!Utils.hasELement(overlayDiv)) {
-	        overlayDiv = $(Constants.DIV_COMP, {
-	            "class": Constants.OVERLAY_BLOCK
-	        });
-	    }
-	    overlayDiv.append(_createOverlayNode(_getTopOverlay()));
-	    overlayDiv.append(_createOverlayNode(_getRightOverlay()));
-	    overlayDiv.append(_createOverlayNode(_getBottomOverlay()));
-	    overlayDiv.append(_createOverlayNode(_getLeftOverlay()));
-
-	    overlayDiv.appendTo(Components.ui);
+	    _createOverlayNode(_getTopOverlay()).appendTo(Components.ui);
+	    _createOverlayNode(_getRightOverlay()).appendTo(Components.ui);
+	    _createOverlayNode(_getBottomOverlay()).appendTo(Components.ui);
+	    _createOverlayNode(_getLeftOverlay()).appendTo(Components.ui);
 	}
 
 	/**
@@ -1025,7 +1017,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	function _addOverlay() {
 	    var overlayDiv = $(Constants.DIV_COMP, {
-	        "class": Constants.OVERLAY_BLOCK
+	        "class": Constants.OVERLAY_STYLE
 	    });
 	    overlayDiv(_createOverlayNode({
 	        width: Utils.getFullWindowWidth() + Constants.PX,
@@ -1042,16 +1034,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	function _modifyOverlay() {
 	    var overlays = Utils.getElesFromClassName(Constants.OVERLAY_STYLE);
-	    var overlayDiv = Utils.getEleFromClassName(Constants.OVERLAY_BLOCK, true);
 	    if (Utils.hasELement(overlays)) {
 	        if (overlays.length !== 1) {
 	            overlays.remove();
-	            overlayDiv.append(_createOverlayNode({
+	            var overlay = _createOverlayNode({
 	                width: Utils.getFullWindowWidth() + Constants.PX,
 	                height: Utils.getFullWindowHeight() + Constants.PX,
 	                top: 0,
 	                left: 0
-	            }));
+	            });
+	            overlay.appendTo(Components.ui);
 	        }
 	    }
 	}
@@ -1649,9 +1641,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * This function is used to remove the overlays of current step. Only used for resizing windows so that new window size is recalculated properly.
 	 */
 	Components.prototype.removeOverlays = function () {
-	    var overlayDiv = Utils.getEleFromClassName(Constants.OVERLAY_BLOCK, true);
-	    if (Utils.hasELement(overlayDiv)) {
-	        overlayDiv.remove();
+	    var overlayDivs = Utils.getEleFromClassName(Constants.OVERLAY_STYLE, true);
+	    if (Utils.hasELement(overlayDivs)) {
+	        overlayDivs.remove();
 	    }
 	};
 
@@ -1676,7 +1668,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    IS_VISIBLE: "isVisible",
 	    DOES_EXIST: "doesExist",
 	    OVERLAY_STYLE: "flextour-overlay-styles",
-	    OVERLAY_BLOCK: "flextour-overlay-blocks",
 
 	    FLEXTOUR: "flextour",
 
@@ -2078,7 +2069,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        $('html, body').animate({
 	            scrollTop: offset
-	        }, 700);
+	        }, 300);
 	    },
 
 	    /**

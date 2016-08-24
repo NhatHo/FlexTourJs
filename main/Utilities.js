@@ -249,7 +249,7 @@ module.exports = {
         }
         $('html, body').animate({
             scrollTop: offset
-        }, 700);
+        }, 300);
     },
 
     /**
