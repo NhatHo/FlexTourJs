@@ -12,4 +12,6 @@
 ## Features Request: https://trello.com/b/EPsXtJYx/flextourjs
 Please check the link to see if the features you want is in Backlog list or not. If not, please let me know so I can add them.
 
-####Please don't hesitate to create issues, I will try my best to resolve them as soon as possible. This is my first public library --> I will take care of it as much as I can.
+#### Update Notes:
+Removed Jquery from the bundle file, reduce the size of FlexTourJS bundle file to 85KB from 167KB (included Jquery). 
+This update helps avoid duplicate jquery imports in both your application and the framework.

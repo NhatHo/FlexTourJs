@@ -5,7 +5,7 @@
 
 var Constants = require("./Constants");
 var Utils = require("./Utilities");
-var $ = require("./../node_modules/jquery/dist/jquery.min.js");
+var $ = require('jquery');
 
 function Components(stepDescription, stepNumber) {
     Components.stepDescription = $.extend({}, stepDescription);

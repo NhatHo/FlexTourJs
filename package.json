@@ -1,12 +1,12 @@
 {
   "name": "flextourjs",
-  "version": "1.1.0",
+  "version": "1.1.2",
   "description": "Tour that work with dynamic pages and features",
   "main": "./dist/flextour.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack-dev-server",
-    "build": "webpack --progress --colors"
+    "production": "webpack -p --config webpack.prod.config.js --progress --colors",
+    "dev": "webpack --config webpack.config.js --progress --colors",
+    "start": "webpack-dev-server --progress --colors"
   },
   "repository": {
     "type": "git",
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/NhatHo/FlexTourJs#readme",
   "dependencies": {
-    "jquery": "3.1.0"
+    "jquery": "^3.1.0"
   },
   "directories": {
     "test": "tests"
